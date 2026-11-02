@@ -47,3 +47,7 @@ coordinados por la agente `coordinadora`.
 - Se puede dar cita sin pago hecho, pero se anota como pendiente. Al pedir el pago, siempre con el número de pedido en el concepto o el justificante.
 - Primero la fecha de la ceremonia; sin ella no se confirma nada.
 - Mientras Pilar no dé el OK, el correo de la clienta se queda sin leer en info@: nadie lo marca como leído, lo archiva ni lo etiqueta. Pasa a leído solo cuando se aprueba y se envía la respuesta.
+- Estilo de los borradores: como Pilar en un correo normal, no como una empresa. Cercano, de tú, corto y respondiendo justo a lo que pregunta. Sin "gracias por contactar con nosotras", "no dudes en", "quedamos a tu disposición" ni "un abrazo". Cierre: "Muchas gracias. Un saludo".
+- Fecha máxima para encargar: "No tenemos una fecha máxima, pero te recomendamos hacerlo cuanto antes porque después se nos va llenando la agenda y tenemos que rechazar pedidos."
+- Medidas: se toman por videollamada (no hace falta ir al taller): dar cita con margen de tiempo porque tardan unos minutos, y la clienta debe tener un metro de costura y al niño o niña delante; se pide un teléfono para llamarla. Además se envía el documento que explica cómo medirles (hay que adjuntarlo antes de enviar).
+- Precios: nunca "se puede estudiar" para un producto de la web. Se busca el precio en la web de La Nonna y se da el precio exacto. Si piden un cambio que no está en la web, se da el precio del modelo base y se dice que el cambio se confirma. Nunca inventar precios.
