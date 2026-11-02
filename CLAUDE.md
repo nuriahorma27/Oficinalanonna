@@ -17,7 +17,10 @@ coordinados por la agente `coordinadora`.
 |---|---|
 | `coordinadora` | Dirección: reparte el trabajo entre departamentos |
 | `comunicacion` | Redes sociales, newsletter, textos, imagen de marca |
-| `contabilidad` | Gastos (Gmail → Drive → Excel trimestral) e ingresos (pedidos WordPress completados → Excel) |
+| `contabilidad-director` | Álvaro Mena, director de Contabilidad: supervisa a los encargados, informe semanal y conciliación mensual |
+| `contabilidad-ingresos` | Iván Soler, encargado de ingresos (pedidos completados → pestaña Ingresos) |
+| `contabilidad-gastos` | Rubén Casas, encargado de gastos (facturas de proveedores → pestaña Gastos) |
+| `contabilidad` | Manual común de Contabilidad: Drive, formato de hojas y reglas (lo leen los tres anteriores) |
 | `atencion-cliente` | Consultas, citas de medidas y pruebas, seguimiento de pedidos, reseñas |
 | `compras-operaciones` | Telas, proveedores, taller/modistas, plazos de producción |
 
