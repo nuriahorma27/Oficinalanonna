@@ -1,90 +1,297 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oficina virtual · La Nonna</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Young+Serif&display=swap">
 <style>
-:root{--bg:#faf5ee;--ink:#3b2f2a;--muted:#8a7a70;--card:#fffdf9;--line:#e8dccd;--accent:#b5654a}
-@media (prefers-color-scheme:dark){:root{--bg:#1f1a17;--ink:#f1e8de;--muted:#a89a8e;--card:#2a231f;--line:#3d332d;--accent:#e0937a}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,'Times New Roman',serif}
-header{padding:28px 16px 8px;text-align:center}
-h1{margin:0;font-size:2rem;letter-spacing:.02em}
-header p{margin:4px 0 0;color:var(--muted)}
-main{max-width:1000px;margin:0 auto;padding:16px}
-.office{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.room{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px;text-align:left;cursor:pointer;color:inherit;font:inherit;transition:.15s}
-.room:hover,.room[aria-pressed=true]{border-color:var(--c);transform:translateY(-2px)}
-.room .emoji{font-size:2.4rem;display:block}
-.room h2{margin:6px 0 2px;font-size:1.15rem;color:var(--c)}
-.room small{color:var(--muted)}
-.dir{grid-column:1/-1;display:flex;gap:16px;align-items:center}
-.dir .emoji{font-size:2.4rem}
-.panel{margin-top:20px;background:var(--card);border:2px solid var(--c,var(--line));border-radius:14px;padding:22px}
-.panel h3{margin:0 0 4px;color:var(--c)}
-.panel h4{margin:18px 0 6px}
-.panel ul{margin:0;padding-left:20px}
-.ex{display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0}
-.ex span{flex:1}
-button.copy{background:var(--c);color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:.85rem}
-code{background:var(--bg);padding:2px 6px;border-radius:6px}
-footer{text-align:center;color:var(--muted);padding:24px 16px;font-size:.9rem}
-</style>
-</head>
-<body>
-<header>
-  <h1>🧵 Oficina virtual · La Nonna</h1>
-  <p>Arras, bautizo y comunión a medida · Elige un departamento</p>
-</header>
-<main>
-  <div class="office" id="office" role="group" aria-label="Departamentos"></div>
-  <section class="panel" id="panel" aria-live="polite"></section>
-</main>
-<footer>Usa estos agentes desde Claude Code en este repositorio: <code>@comunicacion</code>, <code>@contabilidad</code>… o pide a <code>@coordinadora</code> que reparta el trabajo.</footer>
-<script>
-const DEPTS=[
-{id:"coordinadora",emoji:"👩‍💼",name:"Dirección",sub:"Coordinadora",color:"#7a5c8a",dir:true,
- desc:"Recibe cualquier petición, decide qué departamentos intervienen y te devuelve un resumen con pendientes y decisiones.",
- tasks:["Repartir trabajo entre departamentos","Resumen semanal de pedidos y alertas","Priorizar por fecha de ceremonia"],
- ex:["Ha entrado un pedido de comunión para el 18 de mayo, ¿qué hay que hacer?","Dame el resumen de la semana con lo urgente"]},
-{id:"comunicacion",emoji:"📣",name:"Comunicación",sub:"Redes, newsletter, textos",color:"#c0507a",
- desc:"Da voz a la marca: cercana, cálida y artesanal.",
- tasks:["Calendario editorial mensual","Posts y reels (ideas, textos, hashtags)","Newsletter y campañas de temporada","Descripciones de producto y web"],
- ex:["Calendario de Instagram para noviembre con foco en comuniones 2027","Escribe 3 versiones de un post sobre una prueba de traje de arras","Newsletter para abrir reservas de citas de comunión"]},
-{id:"contabilidad",emoji:"🧾",name:"Contabilidad",sub:"Facturas, cobros, gastos",color:"#3f8a6a",
- desc:"Ordena el dinero de cada pedido a medida. Todo se valida con la gestoría.",
- tasks:["Facturas y presupuestos (borrador)","Señales y pagos pendientes por pedido","Clasificar gastos","Resumen mensual e IVA trimestral"],
- ex:["Prepara una factura: vestido de comunión 380 € + IVA, señal de 100 €","¿Qué cobros pendientes tengo este mes?","Clasifica estos gastos de octubre"]},
-{id:"atencion-cliente",emoji:"💬",name:"Atención al cliente",sub:"Consultas, citas, seguimiento",color:"#d08a2e",
- desc:"Acompaña a las familias desde la primera consulta hasta la entrega.",
- tasks:["Respuestas a WhatsApp, email y redes","Citas de medidas y pruebas","Seguimiento de cada pedido","Reseñas y reclamaciones"],
- ex:["Responde a una clienta que quiere vestido de comunión para dentro de 5 semanas","Planifica las citas de medidas y pruebas para una ceremonia el 25 de abril","Pide una reseña a una clienta que ya recogió su pedido"]},
-{id:"compras-operaciones",emoji:"✂️",name:"Compras y operaciones",sub:"Telas, proveedores, taller",color:"#3f78a8",
- desc:"Que la tela llegue y el traje esté listo antes de la ceremonia.",
- tasks:["Planificar producción hacia atrás desde la fecha","Pedidos a proveedores (borrador)","Carga del taller y alertas ⚠️","Stock y previsión de temporada"],
- ex:["Calendario de producción para 6 comuniones en mayo","Lista de telas y complementos para un traje de arras","Qué pedidos tienen el plazo en riesgo"]}
-];
-const office=document.getElementById('office'),panel=document.getElementById('panel');
-function show(d){
-  document.querySelectorAll('.room').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===d.id));
-  panel.style.setProperty('--c',d.color);
-  panel.innerHTML=`<h3>${d.emoji} ${d.name}</h3><p>${d.desc}</p>
-  <p>Agente: <code>@${d.id}</code></p>
-  <h4>Qué hace</h4><ul>${d.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
-  <h4>Ejemplos de petición</h4>
-  ${d.ex.map(e=>`<div class="ex"><span>${e}</span><button class="copy" data-t="@${d.id} ${e.replace(/"/g,'&quot;')}">Copiar</button></div>`).join('')}`;
-  panel.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{
-    try{await navigator.clipboard.writeText(b.dataset.t);b.textContent='¡Copiado!'}catch{b.textContent='Selecciona y copia'}
-    setTimeout(()=>b.textContent='Copiar',1500)});
+/* Plano de oficina: una fila de departamentos arriba; debajo, el equipo en organigrama a la izquierda y el chat de la persona elegida a la derecha. */
+:root{
+  --bg:#f2f3f7; --surface:#ffffff; --ink:#1b2233; --muted:#5b6679; --line:#dbe0ea; --soft:#e9ecf3;
+  --dir:#5b4bd1; --com:#b4423a; --cont:#17775a; --ate:#a46a0c; --comp:#1f62a8;
+  --on-accent:#ffffff;
+  --font-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --font-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
-DEPTS.forEach(d=>{
-  const b=document.createElement('button');
-  b.className='room'+(d.dir?' dir':'');b.dataset.id=d.id;b.style.setProperty('--c',d.color);b.setAttribute('aria-pressed','false');
-  b.innerHTML=`<span class="emoji">${d.emoji}</span><div><h2>${d.name}</h2><small>${d.sub}</small></div>`;
-  b.onclick=()=>show(d);office.appendChild(b);
-});
-show(DEPTS[0]);
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141b; --surface:#1a1f2b; --ink:#eceff6; --muted:#9aa5b8; --line:#2b3345; --soft:#232a39;
+    --dir:#9d92ff; --com:#ff8b80; --cont:#5fcfa6; --ate:#e7b155; --comp:#79b4f0;
+    --on-accent:#10131a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141b; --surface:#1a1f2b; --ink:#eceff6; --muted:#9aa5b8; --line:#2b3345; --soft:#232a39;
+  --dir:#9d92ff; --com:#ff8b80; --cont:#5fcfa6; --ate:#e7b155; --comp:#79b4f0;
+  --on-accent:#10131a; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;
+  padding-block:24px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
+header p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+.links a:hover,.links a:focus-visible{border-color:var(--ink)}
+.floor{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.room{--c:var(--dir);text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);
+  border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.room b{font-weight:600;font-size:15px}
+.room span{color:var(--muted);font-size:13px}
+.room[aria-pressed="true"]{outline:2px solid var(--c);outline-offset:1px;background:var(--soft)}
+.room:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+h2{font-family:var(--font-display);font-weight:400;font-size:1.35rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.person{--c:var(--dir);position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.person[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 2px var(--c)}
+.person:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.who{display:flex;gap:12px;align-items:center}
+.avatar{flex:none;width:44px;height:44px;border-radius:50%;background:var(--c);color:var(--on-accent);display:grid;place-items:center;font-weight:700;font-size:15px;letter-spacing:.02em}
+.who b{display:block;font-weight:600}
+.who small{display:block;color:var(--muted);font-size:13px}
+.agent{font-family:var(--font-mono);font-size:12px;color:var(--c);margin-top:8px;display:block}
+.person ul{margin:10px 0 0;padding-left:18px;color:var(--ink);font-size:14px}
+.person li{margin:2px 0}
+.person .rep{margin:10px 0 0;color:var(--muted);font-size:13px}
+.org-link{position:relative;height:16px}
+.org-link::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid var(--line)}
+.org-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:16px}
+.org-row::before{content:"";position:absolute;top:0;left:25%;right:25%;border-top:2px solid var(--line)}
+.org-row>.person::before{content:"";position:absolute;top:-16px;left:50%;height:16px;border-left:2px solid var(--line)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.rhythm{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.rhythm h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.rhythm dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:14px}
+.rhythm dt{font-family:var(--font-mono);font-size:12px;color:var(--cont);padding-top:2px}
+.rhythm dd{margin:0}
+.chat{display:flex;flex-direction:column;gap:12px;position:sticky;top:max(16px, env(safe-area-inset-top, 0px))}
+.chat-head{display:flex;gap:12px;align-items:center;--c:var(--dir)}
+.chat-head .avatar{width:40px;height:40px;font-size:14px}
+.chat-head b{display:block;font-weight:600}
+.chat-head small{color:var(--muted);font-size:13px}
+.log{height:min(46vh,400px);min-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px}
+.msg{max-width:88%;padding:9px 12px;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.msg.yo{align-self:flex-end;background:var(--ink);color:var(--bg)}
+.msg.ellos{align-self:flex-start;background:var(--soft)}
+.msg.aviso{align-self:center;background:transparent;color:var(--muted);font-size:13px;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chips button:hover,.chips button:focus-visible{border-color:var(--ink)}
+form.send{display:flex;gap:8px}
+form.send textarea{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;resize:vertical;min-height:44px;max-height:160px}
+form.send textarea:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+form.send button{font:inherit;font-weight:600;background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:0 16px;cursor:pointer}
+form.send button:disabled{opacity:.5;cursor:default}
+.note{color:var(--muted);font-size:12.5px;margin:0}
+.note code{font-family:var(--font-mono);font-size:12px}
+@media (max-width:900px){
+  .floor{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{grid-template-columns:minmax(0,1fr)}
+  .chat{position:static}
+}
+@media (max-width:560px){
+  .org-row{grid-template-columns:1fr}
+  .org-row::before,.org-row>.person::before{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Oficina virtual · La Nonna</h1>
+      <p>Arras, bautizo y comunión a medida. Elige un departamento, mira quién trabaja en él y habla con cada persona.</p>
+    </div>
+    <nav class="links" aria-label="Accesos directos">
+      <a href="https://docs.google.com/spreadsheets/d/1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8/edit" target="_blank" rel="noopener">Hoja T4 2026</a>
+      <a href="https://drive.google.com/drive/folders/1FtBib-KoabcZjQtU-z31vhQgJgVrli5W" target="_blank" rel="noopener">Facturas pendientes</a>
+      <a href="https://drive.google.com/drive/folders/1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg" target="_blank" rel="noopener">Emitidas pendientes</a>
+    </nav>
+  </header>
+
+  <div class="floor" id="floor" role="group" aria-label="Departamentos"></div>
+
+  <div class="main">
+    <section class="panel" id="team" aria-live="polite"></section>
+    <aside class="panel chat" id="chatPanel" aria-label="Chat"></aside>
+  </div>
+</div>
+
+<script>
+const FACTS = [
+  "La Nonna es una tienda de ropa a medida para arras, bautizo y comunión (atelierlanonna.com). Hablas en español, con tono cercano, claro y cálido, tuteando.",
+  "Cómo funciona hoy la contabilidad: cada mañana a las 7:30 un flujo guarda en Drive (carpeta Facturas pendientes) los PDF que llegan por correo; a las 7:45 otro flujo guarda las facturas de los pedidos completados de WooCommerce (FACTURAS EMITIDAS > PENDIENTES).",
+  "Los encargados clasifican esos archivos y los apuntan en la hoja de Google del trimestre (pestañas Ingresos y Gastos). IVA de las ventas: 21 % incluido en el total. Los gastos van al trimestre de su fecha de factura y los ingresos al de la fecha de completado.",
+  "Dato a 2 de noviembre de 2026: T4 2026 tiene 36 ingresos apuntados por 11.074,45 € (IVA 1.921,99 €, neto 9.152,46 €) y una factura de gasto (Google, 32,40 €).",
+  "Límites de este chat: no tienes acceso a Drive, hojas ni correo desde aquí. Si te piden cifras exactas o que hagas el trabajo en los archivos, explica que deben consultar la hoja o llamarte como agente en Claude Code con tu nombre de agente. Nunca inventes cifras ni datos fiscales. Responde en menos de 120 palabras salvo que te pidan más."
+].join("\n");
+
+const DEPTS = [
+  { id:"direccion", name:"Dirección", sub:"Reparte el trabajo", c:"dir",
+    blurb:"Recibe cualquier petición, decide qué departamento interviene y devuelve un resumen con lo pendiente.",
+    people:[{ id:"carla", name:"Carla Montes", role:"Directora de la oficina", agent:"coordinadora",
+      tasks:["Reparte las peticiones entre departamentos","Resume lo hecho y lo que necesita decisión","Prioriza por fecha de ceremonia"],
+      rep:"Informa a la dueña",
+      persona:"Eres Carla Montes, directora de la oficina virtual de La Nonna. Coordinas a los departamentos de Comunicación, Contabilidad (Álvaro Mena, Iván Soler y Rubén Casas), Atención al cliente (Sofía Lara) y Compras y operaciones (Hugo Prieto). Ayudas a la dueña a decidir quién se ocupa de cada cosa y a priorizar.",
+      prompts:["Ha entrado un pedido de comunión para mayo, ¿qué hacemos?","¿Qué debería revisar esta semana?"] }] },
+  { id:"comunicacion", name:"Comunicación", sub:"Redes, newsletter, textos", c:"com",
+    blurb:"Da voz a la marca: cercana, cálida y artesanal.",
+    people:[{ id:"nerea", name:"Nerea Vidal", role:"Responsable de comunicación", agent:"comunicacion",
+      tasks:["Calendario editorial por temporada","Posts y reels con ideas, textos y hashtags","Newsletter y textos de producto"],
+      rep:"Informa a la dueña",
+      persona:"Eres Nerea Vidal, responsable de comunicación de La Nonna. Escribes para Instagram, TikTok, newsletter y web con un tono cercano, cálido y artesanal. Ofreces siempre 2 o 3 variantes breves. No publicas nada: dejas borradores para aprobar, y pides permiso antes de mostrar fotos de niños o clientas.",
+      prompts:["Dame 3 ideas de posts sobre una prueba de traje de arras","Calendario de Instagram para noviembre"] }] },
+  { id:"contabilidad", name:"Contabilidad", sub:"Ingresos, gastos, cierre", c:"cont",
+    blurb:"Álvaro supervisa a dos encargados. Cada semana envía el informe de cómo queda la foto y cada mes revisa la conciliación final.",
+    org:true,
+    people:[
+      { id:"alvaro", name:"Álvaro Mena", role:"Director de Contabilidad", agent:"contabilidad-director",
+        tasks:["Supervisa el trabajo de los dos encargados","Prepara cada semana el informe de cómo queda la foto","Revisa la conciliación final de cada mes"],
+        rep:"Informa a la dueña",
+        persona:"Eres Álvaro Mena, director de Contabilidad de La Nonna. Supervisas a Iván Soler (encargado de ingresos) y a Rubén Casas (encargado de gastos). Cada semana preparas el informe de cómo queda la foto (ingresos, gastos, IVA repercutido y soportado, pendientes y alertas) y cada mes revisas la conciliación final contra el extracto del banco. No apuntas filas: delegas en tus encargados. Ante dudas fiscales las anotas para la gestoría.",
+        prompts:["¿Qué incluirá el informe semanal?","¿Cómo hacemos la conciliación de octubre?"] },
+      { id:"ivan", name:"Iván Soler", role:"Encargado de ingresos", agent:"contabilidad-ingresos",
+        tasks:["Apunta los pedidos completados en Ingresos","Archiva las facturas emitidas por trimestre","Avisa de pedidos sin factura o con importes raros"],
+        rep:"Informa a Álvaro Mena",
+        persona:"Eres Iván Soler, encargado de ingresos de La Nonna. Respondes ante Álvaro Mena. Apuntas en la pestaña Ingresos los pedidos completados de WooCommerce (nº de factura, pedido, fecha de completado, total con IVA, IVA 21 % incluido) y archivas sus facturas en FACTURAS EMITIDAS por año y trimestre. Avisas de pedidos sin factura, reembolsos o importes que no cuadran.",
+        prompts:["¿Cómo apuntas un pedido?","¿Qué pasa si un pedido no tiene factura?"] },
+      { id:"ruben", name:"Rubén Casas", role:"Encargado de gastos", agent:"contabilidad-gastos",
+        tasks:["Clasifica las facturas de proveedores","Las archiva en FACTURAS RECIBIDAS y las apunta en Gastos","Marca lo dudoso: IVA 0, duplicados, importes que no cuadran"],
+        rep:"Informa a Álvaro Mena",
+        persona:"Eres Rubén Casas, encargado de gastos de La Nonna. Respondes ante Álvaro Mena. Lees las facturas de la carpeta Facturas pendientes, descartas lo que no es factura (albaranes, packing lists, avisos del banco), las archivas en FACTURAS RECIBIDAS por año y trimestre de la fecha de factura y las apuntas en la pestaña Gastos. Marcas para la gestoría las facturas de la UE con IVA 0.",
+        prompts:["¿Qué haces con un albarán?","¿Cómo tratas una factura de Google con IVA 0?"] }
+    ],
+    rhythm:[["Cada día","7:30 y 7:45: llegan las facturas recibidas y emitidas a sus carpetas de pendientes"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","Álvaro revisa la conciliación final con el banco y da el mes por cerrado"]] },
+  { id:"atencion", name:"Atención al cliente", sub:"Consultas, citas, seguimiento", c:"ate",
+    blurb:"Acompaña a las familias desde la primera consulta hasta la entrega.",
+    people:[{ id:"sofia", name:"Sofía Lara", role:"Atención al cliente y reservas", agent:"atencion-cliente",
+      tasks:["Respuestas a WhatsApp, email y redes","Citas de medidas y pruebas contando desde la ceremonia","Seguimiento de pedidos, reseñas y reclamaciones"],
+      rep:"Informa a la dueña",
+      persona:"Eres Sofía Lara, de atención al cliente y reservas de La Nonna. Tratas con familias ilusionadas y a veces nerviosas, con paciencia y claridad. Organizas citas de medidas y pruebas contando hacia atrás desde la fecha de ceremonia. No prometes plazos, precios ni descuentos sin confirmación y no envías mensajes: dejas borradores.",
+      prompts:["Responde a una clienta que quiere un vestido de comunión para dentro de 5 semanas","Planifica las citas para una ceremonia el 25 de abril"] }] },
+  { id:"compras", name:"Compras y operaciones", sub:"Telas, proveedores, taller", c:"comp",
+    blurb:"Que la tela llegue y el traje esté listo antes de la ceremonia.",
+    people:[{ id:"hugo", name:"Hugo Prieto", role:"Compras y operaciones", agent:"compras-operaciones",
+      tasks:["Planifica la producción hacia atrás desde la fecha","Prepara pedidos a proveedores en borrador","Vigila la carga del taller y los plazos ajustados"],
+      rep:"Informa a la dueña",
+      persona:"Eres Hugo Prieto, de compras y operaciones de La Nonna. Planificas la producción hacia atrás desde la fecha de ceremonia, preparas pedidos de telas y complementos en borrador y avisas de los plazos ajustados. No haces pedidos ni compromisos con proveedores sin confirmación, y no inventas precios ni plazos de proveedor.",
+      prompts:["Calendario de producción para 6 comuniones en mayo","¿Qué telas necesito para un traje de arras?"] }] }
+];
+
+const $ = (s, el=document) => el.querySelector(s);
+const chats = {};           // personId -> [{role, content}]
+let sample = null;
+let deptId = (location.hash || "").replace("#","");
+if (!DEPTS.some(d => d.id === deptId)) deptId = "contabilidad";
+let personId = null;
+let busy = false;
+
+const initials = n => n.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+const dept = () => DEPTS.find(d => d.id === deptId);
+const allPeople = () => DEPTS.flatMap(d => d.people.map(p => ({...p, c:d.c, dept:d})));
+const person = () => allPeople().find(p => p.id === personId);
+
+function el(tag, attrs={}, text){
+  const e = document.createElement(tag);
+  for (const k in attrs){ if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]); }
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function renderFloor(){
+  const f = $("#floor"); f.textContent = "";
+  DEPTS.forEach(d => {
+    const b = el("button", {class:"room", type:"button", "aria-pressed": String(d.id === deptId), style:"--c:var(--"+d.c+")"});
+    b.append(el("b", {}, d.name), el("span", {}, d.sub));
+    b.onclick = () => { deptId = d.id; personId = d.people[0].id; history.replaceState(null, "", "#"+d.id); renderAll(); };
+    f.append(b);
+  });
+}
+
+function personCard(p, c){
+  const b = el("button", {class:"person", type:"button", "aria-pressed": String(p.id === personId), style:"--c:var(--"+c+")"});
+  const who = el("div", {class:"who"});
+  const t = el("div"); t.append(el("b", {}, p.name), el("small", {}, p.role));
+  who.append(el("div", {class:"avatar", "aria-hidden":"true"}, initials(p.name)), t);
+  const ul = el("ul"); p.tasks.forEach(x => ul.append(el("li", {}, x)));
+  b.append(who, ul, el("p", {class:"rep"}, p.rep), el("code", {class:"agent"}, "@"+p.agent));
+  b.onclick = () => { personId = p.id; renderTeam(); renderChat(); };
+  return b;
+}
+
+function renderTeam(){
+  const d = dept(); const t = $("#team"); t.textContent = "";
+  t.append(el("h2", {}, d.name), el("p", {class:"sub"}, d.blurb));
+  if (d.org){
+    const [dir, ...rest] = d.people;
+    t.append(personCard(dir, d.c), el("div", {class:"org-link"}));
+    const row = el("div", {class:"org-row"}); rest.forEach(p => row.append(personCard(p, d.c))); t.append(row);
+    if (d.rhythm){
+      const r = el("div", {class:"rhythm"}); r.append(el("h3", {}, "Ritmo del equipo"));
+      const dl = el("dl"); d.rhythm.forEach(([a,b]) => dl.append(el("dt", {}, a), el("dd", {}, b))); r.append(dl); t.append(r);
+    }
+  } else {
+    const s = el("div", {class:"stack"}); d.people.forEach(p => s.append(personCard(p, d.c))); t.append(s);
+  }
+}
+
+function addMsg(kind, text){
+  const m = el("div", {class:"msg "+kind}, text); $("#log").append(m); $("#log").scrollTop = $("#log").scrollHeight; return m;
+}
+
+function renderChat(){
+  const p = person(); const c = $("#chatPanel"); c.textContent = "";
+  const head = el("div", {class:"chat-head", style:"--c:var(--"+p.c+")"});
+  const w = el("div"); w.append(el("b", {}, p.name), el("small", {}, p.role));
+  head.append(el("div", {class:"avatar", "aria-hidden":"true"}, initials(p.name)), w);
+  const log = el("div", {class:"log", id:"log", role:"log", "aria-live":"polite"});
+  c.append(head, log);
+  addMsg("ellos", "Hola, soy " + p.name.split(" ")[0] + ". " + (sample ? "Pregúntame lo que quieras sobre mi trabajo." : ""));
+  (chats[p.id] || []).forEach(m => addMsg(m.role === "user" ? "yo" : "ellos", m.content));
+  if (!sample){
+    addMsg("aviso", "El chat no está disponible en esta vista. Para hablar con el agente, escribe @" + p.agent + " en Claude Code.");
+    return;
+  }
+  const chips = el("div", {class:"chips"});
+  p.prompts.forEach(q => { const b = el("button", {type:"button"}, q); b.onclick = () => send(q); chips.append(b); });
+  const form = el("form", {class:"send", id:"sendForm"});
+  const ta = el("textarea", {id:"msgInput", rows:"2", placeholder:"Escribe a " + p.name.split(" ")[0] + "…", "aria-label":"Mensaje"});
+  const go = el("button", {type:"submit", id:"sendBtn"}, "Enviar");
+  form.append(ta, go);
+  form.onsubmit = e => { e.preventDefault(); const v = ta.value.trim(); if (v) { ta.value = ""; send(v); } };
+  ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); } });
+  const n = el("p", {class:"note"}); n.append("Este chat sirve para planificar, redactar y aclarar dudas. Para que trabaje sobre Drive y la hoja, llámale en Claude Code: ");
+  n.append(el("code", {}, "@" + p.agent)); n.append(".");
+  c.append(chips, form, n);
+}
+
+async function send(text){
+  if (busy || !sample) return;
+  const p = person(); const hist = (chats[p.id] = chats[p.id] || []);
+  hist.push({role:"user", content:text}); addMsg("yo", text);
+  const bubble = addMsg("ellos", "…");
+  const input = hist.map((m, i) => i === 0 ? {role:"user", content: p.persona + "\n\n" + FACTS + "\n\n---\nMensaje de la dueña:\n" + m.content} : m);
+  busy = true; const btn = $("#sendBtn"); if (btn) btn.disabled = true;
+  try {
+    const r = await sample(input, { cache:false, onText: ({text}) => { bubble.textContent = text; $("#log").scrollTop = $("#log").scrollHeight; } });
+    const out = (r && r.text) ? r.text : bubble.textContent;
+    bubble.textContent = out; hist.push({role:"assistant", content: out});
+  } catch (err) {
+    hist.pop();
+    bubble.className = "msg aviso";
+    bubble.textContent = err && err.code === "not_granted" ? "Para chatear, permite que la página consulte a Claude cuando te lo pida."
+      : err && err.code === "rate_limited" ? "Demasiadas preguntas seguidas. Espera un momento y vuelve a intentarlo."
+      : "No he podido responder. Inténtalo de nuevo.";
+  } finally {
+    busy = false; const b2 = $("#sendBtn"); if (b2) b2.disabled = false;
+  }
+}
+
+function renderAll(){ if (!personId || !dept().people.some(p => p.id === personId)) personId = dept().people[0].id; renderFloor(); renderTeam(); renderChat(); }
+window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
+renderAll();
+(async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample) renderChat(); })();
 </script>
-</body>
-</html>
