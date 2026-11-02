@@ -123,6 +123,50 @@ form.send button:disabled{opacity:.5;cursor:default}
   .org-row{grid-template-columns:1fr}
   .org-row::before,.org-row>.person::before{display:none}
 }
+
+.floor{grid-template-columns:repeat(6,minmax(0,1fr))}
+#bandeja{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+#bandeja[hidden],.main[hidden]{display:none}
+.bandeja-cab{display:flex;flex-wrap:wrap;gap:10px;align-items:start;justify-content:space-between;margin-bottom:8px}
+.bandeja-cab>div{flex:1 1 280px}
+.bandeja-cab button,.prop button,.minichat+textarea+button{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.bandeja-cab button.sec,.prop button.sec{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
+.prop button.ok{background:var(--cont);border-color:var(--cont);color:#fff}
+.prop button:disabled{opacity:.5;cursor:default}
+.enl{color:var(--ink);font-size:14px;padding:8px 4px}
+.lista{display:flex;flex-direction:column;gap:14px}
+.lista h3,#bandeja h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 0;font-weight:600}
+.lista h4,.prop h4{font-size:13px;margin:12px 0 4px;color:var(--muted);font-weight:600}
+.prop{border:1px solid var(--line);border-left:4px solid var(--ate);border-radius:10px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.prop-cab{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+.prop-cab b{display:block;font-weight:600}
+.prop-cab small{display:block;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.ins{display:flex;flex-wrap:wrap;gap:6px;align-items:start}
+.ins-i{font-family:var(--font-mono);font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted);background:var(--surface)}
+.prop details{font-size:14px}
+.prop summary{cursor:pointer;color:var(--muted)}
+.orig{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;margin:6px 0 0;max-height:240px;overflow:auto}
+.borrador,.prop textarea,.prop input[type=text]{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical}
+.borrador[readonly]{background:var(--soft)}
+.motivo,.cuenta,.vacio{margin:0;color:var(--muted);font-size:13.5px}
+.cuenta{color:var(--ink);font-weight:600}
+.acciones,.zona{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.zona{flex-direction:column;align-items:stretch}
+.zona>button{align-self:flex-start}
+.minichat .msg{max-width:100%}
+.nota{margin:0;color:var(--muted);font-size:13px}
+#bandeja .estado{margin:0;min-height:1.2em;color:var(--muted);font-size:13.5px}
+#bandeja .estado.ok{color:var(--cont)}
+#bandeja .estado.mal{color:var(--com)}
+.corta{margin:0;padding-left:18px;font-size:14px}
+.gente{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gp{font:inherit;color:inherit;text-align:left;background:var(--bg);border:1px solid var(--line);border-top:3px solid var(--ate);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column}
+.gp small{color:var(--muted);font-size:12.5px}.gp .n{margin-top:4px;font-size:13px;font-weight:600}
+.quien{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14px}
+.quien dt{font-family:var(--font-mono);font-size:12px;color:var(--muted);padding-top:3px}.quien dd{margin:0}
+.enl-b{font:inherit;font-size:14px;font-weight:600;background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;cursor:pointer}
+@media (max-width:900px){.floor{grid-template-columns:repeat(2,minmax(0,1fr))}.gente{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.gente{grid-template-columns:1fr}.quien{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -133,6 +177,7 @@ form.send button:disabled{opacity:.5;cursor:default}
       <p>Arras, bautizo y comunión a medida. Elige un departamento, mira quién trabaja en él y habla con cada persona.</p>
     </div>
     <nav class="links" aria-label="Accesos directos">
+      <a href="https://docs.google.com/spreadsheets/d/1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ/edit" target="_blank" rel="noopener">Bandeja de ventas</a>
       <a href="https://docs.google.com/spreadsheets/d/1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8/edit" target="_blank" rel="noopener">Hoja T4 2026</a>
       <a href="https://drive.google.com/drive/folders/1FtBib-KoabcZjQtU-z31vhQgJgVrli5W" target="_blank" rel="noopener">Facturas pendientes</a>
       <a href="https://drive.google.com/drive/folders/1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg" target="_blank" rel="noopener">Emitidas pendientes</a>
@@ -143,7 +188,9 @@ form.send button:disabled{opacity:.5;cursor:default}
 
   <section class="scene" id="scene" aria-label="Plano de la oficina"></section>
 
-  <div class="main">
+  <section id="bandeja" aria-live="polite" hidden></section>
+
+  <div class="main" id="mainGrid">
     <section class="panel" id="team" aria-live="polite"></section>
     <aside class="panel chat" id="chatPanel" aria-label="Chat"></aside>
   </div>
@@ -155,6 +202,7 @@ const FACTS = [
   "Cómo funciona hoy la contabilidad: cada mañana a las 7:30 un flujo guarda en Drive (carpeta Facturas pendientes) los PDF que llegan por correo; a las 7:45 otro flujo guarda las facturas de los pedidos completados de WooCommerce (FACTURAS EMITIDAS > PENDIENTES).",
   "Iván, el contable, clasifica esos archivos y los apunta en la hoja de Google del trimestre (pestañas Ingresos y Gastos). IVA de las ventas: 21 % incluido en el total. Los gastos van al trimestre de su fecha de factura y los ingresos al de la fecha de completado.",
   "Cada mes, el día 1, Álvaro pide por correo a Juan el extracto de ingresos del banco (Juan contesta al correo con el archivo adjunto); Iván empareja cada cobro con su pedido (Stripe, transferencias, pagos en dos partes) y lo que no cuadra va a una reunión mensual de una hora, el primer martes del mes (a partir del día 4). A la reunión asiste Juan como interlocutor: lo que él decide es lo que se hace. Dato a 2 de noviembre de 2026: T4 2026 tiene 36 ingresos apuntados por 11.074,45 € (IVA 1.921,99 €, neto 9.152,46 €) y una factura de gasto (Google, 32,40 €).",
+  "Ventas y atención al cliente: seis personas. Clara Vega (triaje de la bandeja de info@), Marta Ibáñez (capacidad por semana y fecha de ceremonia), Lucía Ortega (solo citas), Sofía Lara (consultas y pedidos nuevos), Paula Navarro (seguimiento de pedidos activos) y Diego Salas (incidencias). Ninguna contesta sola a una clienta: dejan la propuesta en su bandeja y Pilar aprueba (Aceptar, Rechazar o Modificar). Confirmar citas, aceptar o rechazar pedidos y cerrar fechas necesita siempre antes la confirmación de Pilar. Se puede dar cita sin pago hecho, pero se anota como pendiente. Al pedir pago, siempre con el número de pedido en el concepto o el justificante. Lo primero que se pregunta en un bautizo, arras o comunión es la fecha de la ceremonia. El taller cierra en noviembre hasta el 5 de diciembre y no se aceptan pedidos que no den tiempo. El correo de la clienta se queda sin leer hasta que Pilar aprueba.",
   "Límites de este chat: no tienes acceso a Drive, hojas ni correo desde aquí. Si te piden cifras exactas o que hagas el trabajo en los archivos, di que lo miren en la hoja o que te llamen como agente en Claude Code. Nunca inventes cifras ni datos fiscales.",
   "Cómo hablas: como una persona real de la oficina que escribe por chat. Frases cortas, tuteando y en primera persona. Contesta primero a lo que te preguntan, en una o dos frases, y añade algo más solo si hace falta (menos de 80 palabras salvo que te pidan más). Sin listas, títulos ni negritas salvo que haya cifras que comparar. Sin aperturas ni cierres de manual (nada de 'Claro', 'Por supuesto', 'Espero haberte ayudado'), sin emojis y sin jerga técnica. Si algo no cuadra o no lo sabes, dilo tal cual y pregunta una sola cosa."
 ].join("\n");
@@ -165,7 +213,7 @@ const DEPTS = [
     people:[{ id:"carla", name:"Carla Montes", role:"Directora de la oficina", agent:"coordinadora",
       tasks:["Reparte las peticiones entre departamentos","Resume lo hecho y lo que necesita decisión","Prioriza por fecha de ceremonia"],
       rep:"Informa a la dueña",
-      persona:"Eres Carla Montes, directora de la oficina virtual de La Nonna. Coordinas a los departamentos de Comunicación, Contabilidad (Álvaro Mena e Iván Soler), Atención al cliente (Sofía Lara) y Compras y operaciones (Hugo Prieto). Ayudas a la dueña a decidir quién se ocupa de cada cosa y a priorizar.",
+      persona:"Eres Carla Montes, directora de la oficina virtual de La Nonna. Coordinas a los departamentos de Comunicación, Contabilidad (Álvaro Mena e Iván Soler), Ventas y atención al cliente (Clara Vega, Marta Ibáñez, Lucía Ortega, Sofía Lara, Paula Navarro y Diego Salas) y Compras y operaciones (Hugo Prieto). Ayudas a la dueña a decidir quién se ocupa de cada cosa y a priorizar.",
       prompts:["Ha entrado un pedido de comunión para mayo, ¿qué hacemos?","¿Qué debería revisar esta semana?"] }] },
   { id:"comunicacion", name:"Comunicación", sub:"Redes, newsletter, textos", c:"com",
     blurb:"Da voz a la marca: cercana, cálida y artesanal.",
@@ -190,13 +238,41 @@ const DEPTS = [
         prompts:["¿Qué has apuntado esta semana?","¿Qué haces con un albarán?"] }
     ],
     rhythm:[["Cada día","A las 7:30 y a las 7:45 llegan las facturas del día; Iván las apunta y las archiva"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","Álvaro pide el extracto a Juan por correo; Iván lo cuadra con los pedidos. En la reunión, de una hora (se alarga si hace falta), Juan resuelve las dudas y sus decisiones mandan"]] },
-  { id:"atencion", name:"Atención al cliente", sub:"Consultas, citas, seguimiento", c:"ate",
-    blurb:"Acompaña a las familias desde la primera consulta hasta la entrega.",
-    people:[{ id:"sofia", name:"Sofía Lara", role:"Atención al cliente y reservas", agent:"atencion-cliente",
-      tasks:["Respuestas a WhatsApp, email y redes","Citas de medidas y pruebas contando desde la ceremonia","Seguimiento de pedidos, reseñas y reclamaciones"],
-      rep:"Informa a la dueña",
-      persona:"Eres Sofía Lara, de atención al cliente y reservas de La Nonna. Tratas con familias ilusionadas y a veces nerviosas, con paciencia y claridad. Organizas citas de medidas y pruebas contando hacia atrás desde la fecha de ceremonia. No prometes plazos, precios ni descuentos sin confirmación y no envías mensajes: dejas borradores.",
-      prompts:["Responde a una clienta que quiere un vestido de comunión para dentro de 5 semanas","Planifica las citas para una ceremonia el 25 de abril"] }] },
+  { id:"ventas", name:"Ventas y atención", sub:"Citas, pedidos, seguimiento", c:"ate",
+    blurb:"Seis personas acompañan a las familias desde la primera consulta hasta la entrega. Ninguna contesta sola: propone y Pilar aprueba.",
+    people:[
+      { id:"clara", name:"Clara Vega", role:"Triaje del correo", agent:"ventas-triaje",
+        tasks:["Lee la bandeja de info@ cada hora", "Aparta lo que no es de clientas", "Reparte cada correo a quien toca"],
+        rep:"Informa a Pilar",
+        persona:"Eres Clara Vega, triaje de Ventas de La Nonna. Lees los correos que entran en info@, apartas lo que no es de clientas (Stripe, MRW, proveedores, comerciales) y repartes el resto entre Lucía (citas), Sofía (pedidos nuevos), Paula (seguimiento) y Diego (incidencias), avisando a Marta si afecta a las fechas. No contestas a nadie y no marcas ningún correo como leído.",
+        prompts:["¿A quién va un correo que pregunta por el envío?", "¿Qué apartas como ruido?"] },
+      { id:"marta", name:"Marta Ibáñez", role:"Control de capacidad", agent:"ventas-capacidad",
+        tasks:["Cuenta pedidos por semana y fecha de ceremonia", "Avisa cuando las fechas se acumulan", "Pide a Pilar la decisión: cerrar o aceptar"],
+        rep:"Informa a Pilar",
+        persona:"Eres Marta Ibáñez, control de capacidad de La Nonna. Vigilas cuántos pedidos hay por semana de entrega y por fecha de ceremonia, tienes en cuenta el cierre del taller en noviembre hasta el 5 de diciembre y la temporada alta, y cuando una fecha se llena pides a Pilar que decida si se cierran pedidos o se aceptan. No inventas cuántos pedidos aguanta el taller: lo preguntas.",
+        prompts:["¿Llegamos a un bautizo el 12 de diciembre?", "¿Qué fechas se están llenando?"] },
+      { id:"lucia", name:"Lucía Ortega", role:"Citas", agent:"ventas-citas",
+        tasks:["Responde a quien pide cita (web, Cal, correo)", "Vigila que no se pisen citas", "Deriva a Sofía, Paula o Diego según el caso"],
+        rep:"Informa a Pilar",
+        persona:"Eres Lucía Ortega, de citas de La Nonna. Solo te ocupas de citas (videollamada o showroom). Se puede dar cita sin pago hecho, pero lo anotas como pendiente. Pides siempre la fecha de la ceremonia y, tras la cita, derivas: primera consulta a Sofía, medidas o pruebas a Paula, quejas a Diego. No confirmas nada sin que Pilar lo apruebe antes.",
+        prompts:["Redacta la respuesta a una clienta que pide cita para el sábado", "¿Qué haces si no sabe la fecha del bautizo?"] },
+      { id:"sofia", name:"Sofía Lara", role:"Pedidos nuevos", agent:"ventas-pedidos-nuevos",
+        tasks:["Contesta las primeras consultas", "Prepara presupuestos y la ficha del pedido", "Apunta el pedido en el calendario y lo deja listo para WordPress"],
+        rep:"Informa a Pilar",
+        persona:"Eres Sofía Lara, de pedidos nuevos de La Nonna. Contestas consultas con la información que piden (telas, piezas, plazos), preparas el presupuesto y dejas lista la ficha del pedido para crearlo en WordPress y apuntarlo en el calendario. Preguntas siempre primero la fecha de la ceremonia, no inventas precios ni plazos y pides el pago con el número de pedido en el concepto o el justificante.",
+        prompts:["Responde a una clienta que quiere un faldón para el 12 de diciembre", "¿Qué telas ofrecemos para invierno?"] },
+      { id:"paula", name:"Paula Navarro", role:"Seguimiento de pedidos activos", agent:"ventas-seguimiento",
+        tasks:["Calcula cuándo pedir las medidas de cada pedido", "Contesta envíos, pagos y justificantes", "Coordina con el taller para que ninguno quede sin hacer"],
+        rep:"Informa a Pilar",
+        persona:"Eres Paula Navarro, de seguimiento de pedidos activos de La Nonna. Sabes cuándo hay que pedir las medidas (por videollamada) contando hacia atrás desde la ceremonia, contestas los correos de seguimiento (envío, pagos, justificantes) y te coordinas con Compras y operaciones para que ningún pedido se quede sin hacer.",
+        prompts:["¿Cuándo pedimos las medidas para un bautizo el 12 de diciembre?", "Redacta el aviso de que su faldón está listo"] },
+      { id:"diego", name:"Diego Salas", role:"Incidencias", agent:"ventas-incidencias",
+        tasks:["Revisa cada incidencia (talla, retraso, envío, queja)", "Propone la mejor solución y alternativas", "Si hay dinero o excepción, decide Pilar"],
+        rep:"Informa a Pilar",
+        persona:"Eres Diego Salas, de incidencias de La Nonna. Estudias lo que ha pasado, propones la mejor solución con un par de alternativas y lo que cuesta cada una, y redactas la respuesta con empatía. Si hay dinero o una excepción de por medio, lo decide Pilar.",
+        prompts:["Una clienta dice que el faldón le queda pequeño, ¿qué hacemos?", "¿Cómo respondes a una queja por un retraso?"] }
+    ],
+    rhythm:[["Cada hora","Clara lee info@ y reparte los correos; cada uno deja su propuesta en su bandeja"],["Siempre","Nada se envía sin el botón de Pilar, y el correo se queda sin leer hasta que se aprueba"],["Antes de aceptar un pedido","Marta comprueba las fechas; si se llenan, pide la decisión a Pilar"]] },
   { id:"compras", name:"Compras y operaciones", sub:"Telas, proveedores, taller", c:"comp",
     blurb:"Que la tela llegue y el traje esté listo antes de la ceremonia.",
     people:[{ id:"hugo", name:"Hugo Prieto", role:"Compras y operaciones", agent:"compras-operaciones",
@@ -210,6 +286,7 @@ const $ = (s, el=document) => el.querySelector(s);
 const chats = {};           // personId -> [{role, content}]
 let sample = null;
 let deptId = (location.hash || "").replace("#","");
+const empiezaPilar = deptId === "pilar";
 if (!DEPTS.some(d => d.id === deptId)) deptId = "contabilidad";
 let personId = null;
 let busy = false;
@@ -229,11 +306,15 @@ function el(tag, attrs={}, text){
 function renderFloor(){
   const f = $("#floor"); f.textContent = "";
   DEPTS.forEach(d => {
-    const b = el("button", {class:"room", type:"button", "aria-pressed": String(d.id === deptId), style:"--c:var(--"+d.c+")"});
+    const b = el("button", {class:"room", type:"button", "aria-pressed": String(modo === "oficina" && d.id === deptId), style:"--c:var(--"+d.c+")"});
     b.append(el("b", {}, d.name), el("span", {}, d.sub));
-    b.onclick = () => { deptId = d.id; personId = d.people[0].id; history.replaceState(null, "", "#"+d.id); renderAll(); };
+    b.onclick = () => { modo = "oficina"; deptId = d.id; personId = d.people[0].id; history.replaceState(null, "", "#"+d.id); renderAll(); };
     f.append(b);
   });
+  const bp = el("button", {class:"room", type:"button", "aria-pressed": String(modo === "pilar"), style:"--c:var(--dir)"});
+  bp.append(el("b", {}, "Panel de Pilar"), el("span", {}, "Decisiones y tareas"));
+  bp.onclick = () => { modo = "pilar"; history.replaceState(null, "", "#pilar"); renderAll(); };
+  f.append(bp);
 }
 
 function personCard(p, c){
@@ -407,8 +488,223 @@ function bloqueExtracto(){
   return box;
 }
 
+/* ---------- Bandeja de Ventas (hoja BANDEJA VENTAS, via mcp) ---------- */
+const BANDEJA = "1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ";
+const BANDEJA_URL = "https://docs.google.com/spreadsheets/d/" + BANDEJA + "/edit";
+const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+const celdas = r => { const p = r && r.payload; return (p && (p.values || (p.valueRange && p.valueRange.values))) || []; };
+const FIRMA = "A T E L I E R   L A   N O N N A\nwww.atelierlanonna.com\ninfo@atelierlanonna.com\n669 49 68 31";
+
+function mensajeHoja(e){
+  const c = e && e.code;
+  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "Permite que esta página use tus hojas de Google cuando te lo pida y vuelve a intentarlo.";
+  if (c === "server_not_connected" || c === "selection_required") return "Google Sheets no está conectado en tu cuenta de Claude. Conéctalo en Ajustes → Conectores.";
+  if (c === "needs_reauth") return "La conexión con Google Sheets ha caducado. Vuelve a conectarla en Ajustes → Conectores.";
+  if (c === "server_unavailable" || c === "upstream_error") return "Google no ha contestado. Pulsa Actualizar dentro de un momento.";
+  if (c === "tool_error") return "Google no me deja abrir la hoja BANDEJA VENTAS con tu cuenta. Pide que la compartan contigo desde administracion@ y vuelve a probar.";
+  return "No he podido leer la hoja. Pulsa Actualizar para reintentarlo.";
+}
+async function leerHoja(rango){
+  const r = await mcp.callTool("Google Sheets", "get_values", {spreadsheetId: BANDEJA, range: rango}, {cache: false});
+  return celdas(r);
+}
+function aFilas(v){
+  if (!v.length) return [];
+  const h = v[0];
+  return v.slice(1).map((row, i) => { const o = {_fila: i + 2}; h.forEach((k, j) => { o[k] = row[j] == null ? "" : String(row[j]); }); return o; }).filter(o => o.ID);
+}
+const escribirHoja = (rango, valores) => mcp.callTool("Google Sheets", "update_values", {spreadsheetId: BANDEJA, range: rango, values: valores});
+async function mismaFila(hoja, fila, id){
+  const v = await leerHoja(hoja + "!A" + fila);
+  return v[0] && String(v[0][0]) === id;
+}
+
+let modo = "oficina";                   // "oficina" | "pilar"
+const bandejaCache = {t: 0, prop: [], dec: [], con: [], des: []};
+
+async function cargarBandeja(forzar){
+  if (!forzar && Date.now() - bandejaCache.t < 20000) return bandejaCache;
+  const [p, d, c, x] = await Promise.all([
+    leerHoja("Propuestas!A1:N500"), leerHoja("Decisiones!A1:I300"), leerHoja("Consignas!A1:F100"), leerHoja("Descartados!A1:D40")
+  ]);
+  Object.assign(bandejaCache, {t: Date.now(), prop: aFilas(p), dec: aFilas2(d), con: aFilas2(c), des: aFilas2(x)});
+  return bandejaCache;
+}
+function aFilas2(v){            // para hojas cuya primera columna no es ID
+  if (!v.length) return [];
+  const h = v[0];
+  return v.slice(1).map((row, i) => { const o = {_fila: i + 2}; h.forEach((k, j) => { o[k] = row[j] == null ? "" : String(row[j]); }); return o; }).filter(o => Object.keys(o).some(k => k !== "_fila" && o[k]));
+}
+
+function irA(d, p){ modo = "oficina"; deptId = d; personId = p; history.replaceState(null, "", "#" + d); renderAll(); }
+
+function boton(txt, cls, fn){ const b = el("button", {type:"button", class:cls || ""}, txt); b.onclick = fn; return b; }
+
+function tarjeta(f, p, quitar){
+  const c = el("article", {class:"prop"});
+  const cab = el("div", {class:"prop-cab"});
+  const t = el("div"); t.append(el("b", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, f.Asunto || ""));
+  const ins = el("div", {class:"ins"});
+  [f.Idioma && f.Idioma.toUpperCase(), f["Fecha ceremonia"] && "Ceremonia: " + f["Fecha ceremonia"], f.Recibido].filter(Boolean).forEach(x => ins.append(el("span", {class:"ins-i"}, x)));
+  cab.append(t, ins); c.append(cab);
+  const det = el("details"); det.append(el("summary", {}, "Correo de la clienta"), el("pre", {class:"orig"}, f["Correo original"]));
+  c.append(det);
+  c.append(el("h4", {}, "Respuesta propuesta"));
+  const ta = el("textarea", {class:"borrador", rows:"9", readonly:"readonly", "aria-label":"Respuesta propuesta"}); ta.value = f["Respuesta propuesta"];
+  c.append(ta);
+  if (f.Motivo) c.append(el("p", {class:"motivo"}, "Por qué va a " + p.name.split(" ")[0] + ": " + f.Motivo));
+  const estado = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+  const zona = el("div", {class:"zona"});
+  const fila = el("div", {class:"acciones"});
+  const aceptar = async (texto) => {
+    estado.className = "estado"; estado.textContent = "Guardando…";
+    try {
+      if (!(await mismaFila("Propuestas", f._fila, f.ID))) { estado.className = "estado mal"; estado.textContent = "La hoja ha cambiado. Pulsa Actualizar y vuelve a mirarlo."; return; }
+      await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", texto]]);
+      quitar(f, "Aceptada. Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@.");
+    } catch (e){ estado.className = "estado mal"; estado.textContent = mensajeHoja(e); }
+  };
+  const bA = boton("Aceptar", "ok", () => aceptar(ta.value));
+  const bR = boton("Rechazar", "sec", () => abrirRechazo());
+  const bM = boton("Modificar", "sec", () => abrirModificar());
+  fila.append(bA, bR, bM);
+  const cerrar = () => { zona.textContent = ""; ta.readOnly = true; ta.value = f["Respuesta propuesta"]; fila.hidden = false; estado.textContent = ""; };
+  function abrirModificar(){
+    fila.hidden = true; ta.readOnly = false; ta.focus();
+    zona.textContent = "";
+    zona.append(el("p", {class:"nota"}, "Cambia lo que haga falta en el texto de arriba y guarda."),
+      boton("Guardar y aceptar", "ok", () => aceptar(ta.value)), boton("Cancelar", "sec", cerrar));
+  }
+  function abrirRechazo(){
+    fila.hidden = true; zona.textContent = "";
+    const chat = el("div", {class:"minichat"});
+    chat.append(el("p", {class:"msg ellos"}, "Vale, no la envío. ¿Qué tengo que contestar a " + (f.Clienta || "la clienta").split(" ")[0] + "?"));
+    if (!sample){ chat.append(el("p", {class:"nota"}, "El chat no está disponible en esta vista. Escribe tú la respuesta en el texto de arriba usando Modificar.")); zona.append(chat, boton("Volver", "sec", cerrar)); return; }
+    const inst = el("textarea", {rows:"3", placeholder:"Ej.: dile que sí podemos, pero que necesito la fecha del bautizo", "aria-label":"Qué hay que contestar"});
+    const gen = boton("Redactar de nuevo", "ok", async () => {
+      const v = inst.value.trim(); if (!v) return;
+      gen.disabled = true; estado.className = "estado"; estado.textContent = p.name.split(" ")[0] + " está redactando…";
+      try {
+        const pedido = p.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Tuteo salvo que ella use usted. Frases cortas, cálidas y claras. No confirmes citas, fechas, plazos ni precios que no te haya dado la dueña. Si hablas de pago, pide el número de pedido en el concepto o el justificante. Acaba con esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo, sin comillas ni explicaciones.\n\nCorreo de la clienta:\n" + f["Correo original"] + "\n\nBorrador que se ha rechazado:\n" + f["Respuesta propuesta"] + "\n\nLo que quiere la dueña que se conteste:\n" + v;
+        const r = await sample(pedido, {cache: false});
+        ta.value = (r && r.text) || ta.value; ta.readOnly = false;
+        estado.textContent = "Aquí lo tienes. Léelo, cámbialo si quieres y acéptalo.";
+        zona.textContent = ""; zona.append(boton("Aceptar este", "ok", () => aceptar(ta.value)), boton("Probar otra vez", "sec", abrirRechazo), boton("Cancelar", "sec", cerrar));
+      } catch (e){
+        estado.className = "estado mal";
+        estado.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que redacte." : "No he podido redactarlo. Inténtalo otra vez.";
+        gen.disabled = false;
+      }
+    });
+    zona.append(chat, inst, gen, boton("Cancelar", "sec", cerrar));
+    inst.focus();
+  }
+  c.append(fila, zona, estado);
+  return c;
+}
+
+async function pintarPersona(box, p){
+  box.textContent = "";
+  const cab = el("div", {class:"bandeja-cab"});
+  const t = el("div"); t.append(el("h2", {}, "Bandeja de " + p.name.split(" ")[0]), el("p", {class:"sub"}, "Los correos que le han llegado y lo que propone contestar. Nada sale sin tu botón."));
+  cab.append(t, boton("Actualizar", "sec", () => pintarPersona(box, p)), el("a", {href:BANDEJA_URL, target:"_blank", rel:"noopener", class:"enl"}, "Abrir la hoja"));
+  box.append(cab);
+  if (!mcp){ box.append(el("p", {class:"nota"}, "Desde esta vista no puedo abrir la hoja. Ábrela a mano con el enlace de arriba.")); return; }
+  const cuerpo = el("div", {class:"lista"}); box.append(cuerpo);
+  const msg = el("p", {class:"estado", role:"status"}, "Mirando la bandeja…"); cuerpo.append(msg);
+  let datos;
+  try { datos = await cargarBandeja(true); } catch (e){ msg.className = "estado mal"; msg.textContent = mensajeHoja(e); return; }
+  cuerpo.textContent = "";
+  if (p.id === "clara"){
+    const rep = datos.prop.filter(x => x.Estado === "Pendiente").length;
+    cuerpo.append(el("p", {}, "He repartido " + datos.prop.length + " correos a mi equipo (" + rep + " esperan tu OK) y he apartado " + datos.des.length + " que no eran de clientas."));
+    if (datos.des.length){
+      cuerpo.append(el("h4", {}, "Últimos que he apartado"));
+      const ul = el("ul", {class:"corta"}); datos.des.slice(-10).reverse().forEach(x => ul.append(el("li", {}, (x.De || "").replace(/<.*>/, "").trim() + " · " + (x.Asunto || "")))); cuerpo.append(ul);
+    }
+    return;
+  }
+  if (p.id === "marta"){
+    const vig = datos.con.filter(x => norm(x.Vigente) !== "no");
+    cuerpo.append(el("h4", {}, "Consignas de fechas vigentes"));
+    if (!vig.length) cuerpo.append(el("p", {class:"nota"}, "Todavía no hay ninguna consigna. Cuando una fecha se llene, te pediré aquí una decisión."));
+    else { const ul = el("ul", {class:"corta"}); vig.forEach(x => ul.append(el("li", {}, (x.Consigna || "") + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "")))); cuerpo.append(ul); }
+  }
+  const mias = datos.prop.filter(x => norm(x.Persona) === norm(p.name) && x.Estado === "Pendiente");
+  if (p.id === "marta" && !mias.length) return;
+  if (!mias.length){ cuerpo.append(el("p", {class:"vacio"}, "No hay correos esperando tu OK en la bandeja de " + p.name.split(" ")[0] + ".")); return; }
+  cuerpo.append(el("p", {class:"cuenta"}, mias.length + (mias.length === 1 ? " correo espera" : " correos esperan") + " tu OK."));
+  const aviso = el("p", {class:"estado ok", role:"status", "aria-live":"polite"});
+  cuerpo.append(aviso);
+  mias.forEach(f => {
+    const tj = tarjeta(f, p, (_, texto) => { tj.remove(); aviso.textContent = texto; bandejaCache.t = 0; });
+    cuerpo.append(tj);
+  });
+}
+
+async function pintarPilar(box){
+  box.textContent = "";
+  const cab = el("div", {class:"bandeja-cab"});
+  const t = el("div"); t.append(el("h2", {}, "Panel de Pilar"), el("p", {class:"sub"}, "Lo que está esperando tu decisión y con quién hablar de cada cosa."));
+  cab.append(t, boton("Actualizar", "sec", () => pintarPilar(box)), el("a", {href:BANDEJA_URL, target:"_blank", rel:"noopener", class:"enl"}, "Abrir la hoja"));
+  box.append(cab);
+  const cuerpo = el("div", {class:"lista"}); box.append(cuerpo);
+  if (!mcp){ cuerpo.append(el("p", {class:"nota"}, "Desde esta vista no puedo abrir la hoja. Ábrela a mano con el enlace de arriba.")); }
+  else {
+    const msg = el("p", {class:"estado", role:"status"}, "Mirando la bandeja…"); cuerpo.append(msg);
+    let datos = null;
+    try { datos = await cargarBandeja(true); msg.remove(); } catch (e){ msg.className = "estado mal"; msg.textContent = mensajeHoja(e); }
+    if (datos){
+      const dec = datos.dec.filter(x => norm(x.Estado) === "pendiente");
+      cuerpo.append(el("h3", {}, "Decisiones pendientes (" + dec.length + ")"));
+      if (!dec.length) cuerpo.append(el("p", {class:"vacio"}, "No hay nada esperando tu decisión."));
+      dec.forEach(d => {
+        const c = el("article", {class:"prop"});
+        c.append(el("b", {}, d["Qué hay que decidir"]));
+        if (d["Recomendación"]) c.append(el("p", {class:"motivo"}, "Recomienda: " + d["Recomendación"]));
+        c.append(el("p", {class:"motivo"}, "Habla con: " + (d["Departamento con quien hablar"] || d["Quién la pide"])));
+        const nota = el("input", {type:"text", placeholder:"Nota o condición (opcional)", "aria-label":"Nota"});
+        const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+        const resolver = async (v) => {
+          est.className = "estado"; est.textContent = "Guardando…";
+          try {
+            if (!(await mismaFila("Decisiones", d._fila, d.ID))) { est.className = "estado mal"; est.textContent = "La hoja ha cambiado. Pulsa Actualizar."; return; }
+            await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]);
+            c.textContent = ""; c.append(el("p", {class:"estado ok"}, v + ": " + d["Qué hay que decidir"])); bandejaCache.t = 0;
+          } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+        };
+        const fila = el("div", {class:"acciones"}); fila.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada")));
+        c.append(nota, fila, est); cuerpo.append(c);
+      });
+      const vig = datos.con.filter(x => norm(x.Vigente) !== "no");
+      if (vig.length){ cuerpo.append(el("h3", {}, "Consignas de fechas vigentes")); const ul = el("ul", {class:"corta"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna))); cuerpo.append(ul); }
+      cuerpo.append(el("h3", {}, "Correos esperando tu OK"));
+      const ventas = DEPTS.find(x => x.id === "ventas");
+      const grid = el("div", {class:"gente"});
+      ventas.people.forEach(p => {
+        const n = datos.prop.filter(x => norm(x.Persona) === norm(p.name) && x.Estado === "Pendiente").length;
+        const b = el("button", {type:"button", class:"gp"}); b.append(el("b", {}, p.name), el("small", {}, p.role), el("span", {class:"n"}, n ? n + " por revisar" : "Al día"));
+        b.onclick = () => irA("ventas", p.id); grid.append(b);
+      });
+      cuerpo.append(grid);
+    }
+  }
+  cuerpo.append(el("h3", {}, "Con quién hablar"));
+  const dl = el("dl", {class:"quien"});
+  DEPTS.forEach(d => d.people.forEach(p => { const b = boton(p.name, "enl-b", () => irA(d.id, p.id)); const dd = el("dd"); dd.append(b, " · " + p.role); dl.append(el("dt", {}, d.name), dd); }));
+  cuerpo.append(dl);
+}
+
+function renderBandeja(){
+  const box = $("#bandeja"); const main = $("#mainGrid");
+  if (modo === "pilar"){ main.hidden = true; box.hidden = false; pintarPilar(box); return; }
+  main.hidden = false;
+  if (deptId === "ventas"){ box.hidden = false; pintarPersona(box, person()); }
+  else { box.hidden = true; box.textContent = ""; }
+}
+
 /* ---------- Oficina isométrica ---------- */
-const W = 15, H = 13, S = 34, OX = H*0.866*S + 30, OY = 120;
+const W = 17, H = 13, S = 34, OX = H*0.866*S + 30, OY = 120;
 const P = (x, y, z) => [OX + (x - y) * 0.866 * S, OY + (x + y) * 0.5 * S - z * S];
 const pts = a => a.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" ");
 const poly = (a, fill, extra="") => '<polygon points="' + pts(a) + '" fill="' + fill + '" ' + extra + '/>';
@@ -427,11 +723,11 @@ const TABLE= {t:"#b98255", l:"#946540", r:"#7a5334"};
 const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16); const f = v => Math.max(0, Math.min(255, Math.round(v * k))); return "#" + [f(n>>16), f((n>>8)&255), f(n&255)].map(v => v.toString(16).padStart(2,"0")).join(""); };
 const shirt = hex => ({t: shade(hex, 1.12), l: hex, r: shade(hex, .78)});
 const COLORS = {dir:"#6b5bd6", com:"#d1584e", cont:"#1f8a68", ate:"#c9861a", comp:"#2d74bf"};
-const LOOK = {carla:["#f1c9a5","#3a2a22"], nerea:["#e8b48c","#7a3b24"], alvaro:["#d9a37a","#1f1b1a"], ivan:["#f0c8a0","#4a3426"], sofia:["#c98f66","#1b1412"], hugo:["#e9b995","#8a6a3c"]};
-const TAG = {carla:"Directora", nerea:"Comunicación", alvaro:"Director", ivan:"Contable", sofia:"Atención", hugo:"Compras"};
-const SPOT = {carla:[1.4,1.0,2.4], nerea:[6.2,1.0,2.4], alvaro:[1.2,6.0,2.2], ivan:[4.2,6.0,2.2], sofia:[8.6,6.2,2.4], hugo:[1.4,10.2,2.4]};
-const RUGS = {direccion:[0.6,0.5,4.8,3.9], comunicacion:[5.4,0.5,9.6,3.9], contabilidad:[0.6,5.2,7.2,9.4], atencion:[8.0,5.8,11.6,9.4], compras:[0.6,9.8,4.8,12.4]};
-const DCOLOR = {direccion:"dir", comunicacion:"com", contabilidad:"cont", atencion:"ate", compras:"comp"};
+const LOOK = {carla:["#f1c9a5","#3a2a22"], nerea:["#e8b48c","#7a3b24"], alvaro:["#d9a37a","#1f1b1a"], ivan:["#f0c8a0","#4a3426"], sofia:["#c98f66","#1b1412"], hugo:["#e9b995","#8a6a3c"], clara:["#f0c8a0","#2b2018"], marta:["#e3b08a","#5a2e1c"], lucia:["#d49b72","#201a18"], paula:["#f1cfae","#8a5a2c"], diego:["#cf9a70","#2a2220"]};
+const TAG = {carla:"Directora", nerea:"Comunicación", alvaro:"Director", ivan:"Contable", sofia:"Pedidos", hugo:"Compras", clara:"Triaje", marta:"Capacidad", lucia:"Citas", paula:"Seguimiento", diego:"Incidencias"};
+const SPOT = {carla:[1.4,1.0,2.4], nerea:[6.2,1.0,2.4], alvaro:[1.2,6.0,2.2], ivan:[4.2,6.0,2.2], clara:[8.2,6.0,2.2], marta:[11.0,6.0,2.2], lucia:[13.8,6.0,2.2], sofia:[8.2,9.8,2.2], paula:[11.0,9.8,2.2], diego:[13.8,9.8,2.2], hugo:[1.4,10.2,2.4]};
+const RUGS = {direccion:[0.6,0.5,4.8,3.9], comunicacion:[5.4,0.5,9.6,3.9], contabilidad:[0.6,5.2,7.2,9.4], ventas:[7.8,5.5,16.4,12.5], compras:[0.6,9.8,4.8,12.4]};
+const DCOLOR = {direccion:"dir", comunicacion:"com", contabilidad:"cont", ventas:"ate", compras:"comp"};
 
 function plant(x, y){
   const [fx, fy] = P(x + .3, y + .3, 1.0);
@@ -440,6 +736,7 @@ function plant(x, y){
     + '<ellipse cx="' + (fx-5).toFixed(1) + '" cy="' + (fy-9).toFixed(1) + '" rx="9" ry="8" fill="#58b077"/>';
 }
 
+let TAGS = [];
 function workstation(id, person, color){
   const [dx, dy, w] = SPOT[id]; const cx = dx + w / 2; const sk = LOOK[id][0], hr = LOOK[id][1];
   const sh = shirt(color);
@@ -458,23 +755,25 @@ function workstation(id, person, color){
   const tw = Math.round(label.length * 6.6 + 18);
   const ty = hy - 44;
   const sel = person.id === personId;
-  return '<g class="char' + (sel ? " sel" : "") + '" data-p="' + id + '" tabindex="0" role="button" aria-label="Hablar con ' + person.name + ', ' + person.role + '" style="--tc:' + color + '">'
+  const g2 = '<g class="char' + (sel ? " sel" : "") + '" data-p="' + id + '" tabindex="0" role="button" aria-label="Hablar con ' + person.name + ', ' + person.role + '" style="--tc:' + color + '">'
     + g
     + (sel ? '<ellipse cx="' + P(cx, dy + 1.5, 0)[0].toFixed(1) + '" cy="' + (P(cx, dy + 1.5, 0)[1] + 8).toFixed(1) + '" rx="42" ry="13" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-dasharray="5 4"/>' : '')
-    + '<g class="tag"><rect class="tagbox" x="' + (hx - tw / 2).toFixed(1) + '" y="' + ty.toFixed(1) + '" width="' + tw + '" height="24" rx="12"/>'
-    + '<text class="tagtxt" x="' + hx.toFixed(1) + '" y="' + (ty + 16).toFixed(1) + '" text-anchor="middle">' + label + '</text></g></g>';
+    + '</g>';
+  TAGS.push('<g class="char tagg' + (sel ? " sel" : "") + '" data-p="' + id + '" style="--tc:' + color + '"><g class="tag"><rect class="tagbox" x="' + (hx - tw / 2).toFixed(1) + '" y="' + ty.toFixed(1) + '" width="' + tw + '" height="24" rx="12"/>'
+    + '<text class="tagtxt" x="' + hx.toFixed(1) + '" y="' + (ty + 16).toFixed(1) + '" text-anchor="middle">' + label + '</text></g></g>');
+  return g2;
 }
 
 function renderScene(){
   const people = {}; DEPTS.forEach(d => d.people.forEach(p => people[p.id] = {p, d}));
-  let svg = '<svg viewBox="0 0 880 640" role="group" aria-label="Oficina isométrica con el equipo de La Nonna">';
+  let svg = '<svg viewBox="0 0 960 640" role="group" aria-label="Oficina isométrica con el equipo de La Nonna">';
   // suelo y paredes
   svg += poly([P(0,H,0),P(W,H,0),P(W,H,-.5),P(0,H,-.5)], "#c9b592") + poly([P(W,0,0),P(W,H,0),P(W,H,-.5),P(W,0,-.5)], "#b4a07c")
        + poly([P(0,0,0),P(W,0,0),P(W,H,0),P(0,H,0)], "#ecdcc0")
        + poly([P(0,0,0),P(W,0,0),P(W,0,3.4),P(0,0,3.4)], "#ebe4d8") + poly([P(0,0,0),P(0,H,0),P(0,H,3.4),P(0,0,3.4)], "#d9cfbd")
        + poly([P(0,0,0),P(W,0,0),P(W,0,.25),P(0,0,.25)], "#b9a98f") + poly([P(0,0,0),P(0,H,0),P(0,H,.25),P(0,0,.25)], "#a99978");
   // ventanas (pared del fondo derecho) y pizarra
-  [[2.0,3.6],[5.6,7.2],[9.2,10.8]].forEach(w => { svg += poly([P(w[0],0,1.2),P(w[1],0,1.2),P(w[1],0,2.9),P(w[0],0,2.9)], "#bfe3f7", 'stroke="#f6f3ec" stroke-width="3"'); });
+  [[2.0,3.6],[5.6,7.2],[9.2,10.8],[14.6,16.2]].forEach(w => { svg += poly([P(w[0],0,1.2),P(w[1],0,1.2),P(w[1],0,2.9),P(w[0],0,2.9)], "#bfe3f7", 'stroke="#f6f3ec" stroke-width="3"'); });
   svg += poly([P(11.6,0,1.1),P(14.0,0,1.1),P(14.0,0,2.7),P(11.6,0,2.7)], "#fbfbfd", 'stroke="#b9a98f" stroke-width="3"');
   // alfombras por departamento
   Object.keys(RUGS).forEach(id => {
@@ -484,28 +783,30 @@ function renderScene(){
   // sala de reuniones
   const rr = [10.2,0.5,14.4,5.4];
   svg += poly([P(rr[0],rr[1],.01),P(rr[2],rr[1],.01),P(rr[2],rr[3],.01),P(rr[0],rr[3],.01)], "#8f98b3", 'fill-opacity=".16" stroke="#8f98b3" stroke-opacity=".5" stroke-width="1.2"');
-  const items = [];
+  const items = []; TAGS = [];
   items.push({k: 12.6 + 3.2, svg: box(11.3,1.8,.68,2.8,1.5,.1,TABLE) + box(11.6,2.0,0,.12,.12,.68,LEG) + box(13.6,2.0,0,.12,.12,.68,LEG) + box(11.6,2.9,0,.12,.12,.68,LEG) + box(13.6,2.9,0,.12,.12,.68,LEG)});
   [[11.5,1.2],[12.6,1.2],[13.4,1.2],[11.5,3.5],[12.6,3.5],[13.4,3.5]].forEach(c => items.push({k: c[0]+c[1]+.3, svg: box(c[0]-.25,c[1]-.25,.4,.55,.55,.1,CHAIR) + box(c[0]-.05,c[1]-.05,0,.1,.1,.4,LEG)}));
   const [lx, ly] = P(12.4, 4.9, 0);
   items.push({k: 99, svg: '<text class="zlabel" x="' + lx.toFixed(0) + '" y="' + ly.toFixed(0) + '" text-anchor="middle">REUNIONES</text>'});
-  [[5.1,4.0],[0.5,12.4],[14.2,6.4],[8.2,11.9],[7.3,4.6]].forEach(c => items.push({k: c[0]+c[1], svg: plant(c[0], c[1])}));
+  [[5.1,4.0],[0.5,12.4],[16.4,12.6],[7.1,12.2],[7.3,4.6]].forEach(c => items.push({k: c[0]+c[1], svg: plant(c[0], c[1])}));
   // glass
   items.push({k: 5.1 + 2, svg: box(5.0,.6,0,.05,3.2,1.5,{t:"rgba(180,215,235,.55)",l:"rgba(160,200,225,.45)",r:"rgba(140,185,215,.45)"})});
   Object.keys(SPOT).forEach(id => { const o = people[id]; items.push({k: SPOT[id][0] + SPOT[id][2] / 2 + SPOT[id][1] + 1, svg: workstation(id, o.p, COLORS[o.d.c])}); });
   items.sort((a, b) => a.k - b.k).forEach(i => svg += i.svg);
+  TAGS.forEach(t => svg += t);
   svg += '</svg>';
   const sc = $("#scene"); sc.innerHTML = svg + '<p class="scene-cap">Haz clic en una persona para ver su trabajo y hablar con ella.</p>';
   sc.querySelectorAll(".char").forEach(g => {
-    const go = () => { const o = people[g.dataset.p]; deptId = o.d.id; personId = o.p.id; history.replaceState(null, "", "#" + deptId); renderAll(); };
+    const go = () => { const o = people[g.dataset.p]; modo = "oficina"; deptId = o.d.id; personId = o.p.id; history.replaceState(null, "", "#" + deptId); renderAll(); };
     g.addEventListener("click", go);
     g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); } });
   });
 }
 
-function renderAll(){ if (!personId || !dept().people.some(p => p.id === personId)) personId = dept().people[0].id; renderScene(); renderFloor(); renderTeam(); renderChat(); }
-window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
+function renderAll(){ if (modo === "pilar"){ renderScene(); renderFloor(); renderBandeja(); return; } if (!personId || !dept().people.some(p => p.id === personId)) personId = dept().people[0].id; renderScene(); renderFloor(); renderTeam(); renderChat(); renderBandeja(); }
+window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if (h === "pilar" && modo !== "pilar"){ modo = "pilar"; renderAll(); return; } if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
+if (empiezaPilar) modo = "pilar";
 renderAll();
-(async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample) renderChat(); })();
-(async () => { try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; } if (mcp && deptId === "contabilidad") renderTeam(); })();
+(async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample){ if (modo !== "pilar") renderChat(); } })();
+(async () => { try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; } if (mcp){ if (modo === "pilar" || deptId === "ventas") renderBandeja(); else if (deptId === "contabilidad") renderTeam(); } })();
 </script>
