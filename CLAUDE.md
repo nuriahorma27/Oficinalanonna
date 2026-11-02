@@ -17,7 +17,7 @@ coordinados por la agente `coordinadora`.
 |---|---|
 | `coordinadora` | Dirección: reparte el trabajo entre departamentos |
 | `comunicacion` | Redes sociales, newsletter, textos, imagen de marca |
-| `contabilidad` | Facturas, gastos, señales/pagos, IVA, resúmenes |
+| `contabilidad` | Gastos (Gmail → Drive → Excel trimestral) e ingresos (pedidos WordPress completados → Excel) |
 | `atencion-cliente` | Consultas, citas de medidas y pruebas, seguimiento de pedidos, reseñas |
 | `compras-operaciones` | Telas, proveedores, taller/modistas, plazos de producción |
 
