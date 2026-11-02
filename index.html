@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina virtual · La Nonna</title>
+<style>
+:root{--bg:#faf5ee;--ink:#3b2f2a;--muted:#8a7a70;--card:#fffdf9;--line:#e8dccd;--accent:#b5654a}
+@media (prefers-color-scheme:dark){:root{--bg:#1f1a17;--ink:#f1e8de;--muted:#a89a8e;--card:#2a231f;--line:#3d332d;--accent:#e0937a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,'Times New Roman',serif}
+header{padding:28px 16px 8px;text-align:center}
+h1{margin:0;font-size:2rem;letter-spacing:.02em}
+header p{margin:4px 0 0;color:var(--muted)}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.office{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.room{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px;text-align:left;cursor:pointer;color:inherit;font:inherit;transition:.15s}
+.room:hover,.room[aria-pressed=true]{border-color:var(--c);transform:translateY(-2px)}
+.room .emoji{font-size:2.4rem;display:block}
+.room h2{margin:6px 0 2px;font-size:1.15rem;color:var(--c)}
+.room small{color:var(--muted)}
+.dir{grid-column:1/-1;display:flex;gap:16px;align-items:center}
+.dir .emoji{font-size:2.4rem}
+.panel{margin-top:20px;background:var(--card);border:2px solid var(--c,var(--line));border-radius:14px;padding:22px}
+.panel h3{margin:0 0 4px;color:var(--c)}
+.panel h4{margin:18px 0 6px}
+.panel ul{margin:0;padding-left:20px}
+.ex{display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0}
+.ex span{flex:1}
+button.copy{background:var(--c);color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:.85rem}
+code{background:var(--bg);padding:2px 6px;border-radius:6px}
+footer{text-align:center;color:var(--muted);padding:24px 16px;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧵 Oficina virtual · La Nonna</h1>
+  <p>Arras, bautizo y comunión a medida · Elige un departamento</p>
+</header>
+<main>
+  <div class="office" id="office" role="group" aria-label="Departamentos"></div>
+  <section class="panel" id="panel" aria-live="polite"></section>
+</main>
+<footer>Usa estos agentes desde Claude Code en este repositorio: <code>@comunicacion</code>, <code>@contabilidad</code>… o pide a <code>@coordinadora</code> que reparta el trabajo.</footer>
+<script>
+const DEPTS=[
+{id:"coordinadora",emoji:"👩‍💼",name:"Dirección",sub:"Coordinadora",color:"#7a5c8a",dir:true,
+ desc:"Recibe cualquier petición, decide qué departamentos intervienen y te devuelve un resumen con pendientes y decisiones.",
+ tasks:["Repartir trabajo entre departamentos","Resumen semanal de pedidos y alertas","Priorizar por fecha de ceremonia"],
+ ex:["Ha entrado un pedido de comunión para el 18 de mayo, ¿qué hay que hacer?","Dame el resumen de la semana con lo urgente"]},
+{id:"comunicacion",emoji:"📣",name:"Comunicación",sub:"Redes, newsletter, textos",color:"#c0507a",
+ desc:"Da voz a la marca: cercana, cálida y artesanal.",
+ tasks:["Calendario editorial mensual","Posts y reels (ideas, textos, hashtags)","Newsletter y campañas de temporada","Descripciones de producto y web"],
+ ex:["Calendario de Instagram para noviembre con foco en comuniones 2027","Escribe 3 versiones de un post sobre una prueba de traje de arras","Newsletter para abrir reservas de citas de comunión"]},
+{id:"contabilidad",emoji:"🧾",name:"Contabilidad",sub:"Facturas, cobros, gastos",color:"#3f8a6a",
+ desc:"Ordena el dinero de cada pedido a medida. Todo se valida con la gestoría.",
+ tasks:["Facturas y presupuestos (borrador)","Señales y pagos pendientes por pedido","Clasificar gastos","Resumen mensual e IVA trimestral"],
+ ex:["Prepara una factura: vestido de comunión 380 € + IVA, señal de 100 €","¿Qué cobros pendientes tengo este mes?","Clasifica estos gastos de octubre"]},
+{id:"atencion-cliente",emoji:"💬",name:"Atención al cliente",sub:"Consultas, citas, seguimiento",color:"#d08a2e",
+ desc:"Acompaña a las familias desde la primera consulta hasta la entrega.",
+ tasks:["Respuestas a WhatsApp, email y redes","Citas de medidas y pruebas","Seguimiento de cada pedido","Reseñas y reclamaciones"],
+ ex:["Responde a una clienta que quiere vestido de comunión para dentro de 5 semanas","Planifica las citas de medidas y pruebas para una ceremonia el 25 de abril","Pide una reseña a una clienta que ya recogió su pedido"]},
+{id:"compras-operaciones",emoji:"✂️",name:"Compras y operaciones",sub:"Telas, proveedores, taller",color:"#3f78a8",
+ desc:"Que la tela llegue y el traje esté listo antes de la ceremonia.",
+ tasks:["Planificar producción hacia atrás desde la fecha","Pedidos a proveedores (borrador)","Carga del taller y alertas ⚠️","Stock y previsión de temporada"],
+ ex:["Calendario de producción para 6 comuniones en mayo","Lista de telas y complementos para un traje de arras","Qué pedidos tienen el plazo en riesgo"]}
+];
+const office=document.getElementById('office'),panel=document.getElementById('panel');
+function show(d){
+  document.querySelectorAll('.room').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===d.id));
+  panel.style.setProperty('--c',d.color);
+  panel.innerHTML=`<h3>${d.emoji} ${d.name}</h3><p>${d.desc}</p>
+  <p>Agente: <code>@${d.id}</code></p>
+  <h4>Qué hace</h4><ul>${d.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
+  <h4>Ejemplos de petición</h4>
+  ${d.ex.map(e=>`<div class="ex"><span>${e}</span><button class="copy" data-t="@${d.id} ${e.replace(/"/g,'&quot;')}">Copiar</button></div>`).join('')}`;
+  panel.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{
+    try{await navigator.clipboard.writeText(b.dataset.t);b.textContent='¡Copiado!'}catch{b.textContent='Selecciona y copia'}
+    setTimeout(()=>b.textContent='Copiar',1500)});
+}
+DEPTS.forEach(d=>{
+  const b=document.createElement('button');
+  b.className='room'+(d.dir?' dir':'');b.dataset.id=d.id;b.style.setProperty('--c',d.color);b.setAttribute('aria-pressed','false');
+  b.innerHTML=`<span class="emoji">${d.emoji}</span><div><h2>${d.name}</h2><small>${d.sub}</small></div>`;
+  b.onclick=()=>show(d);office.appendChild(b);
+});
+show(DEPTS[0]);
+</script>
+</body>
+</html>
