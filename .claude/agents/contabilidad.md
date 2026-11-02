@@ -28,6 +28,8 @@ A partir de T4 2026 cada trimestre es una **hoja de cálculo de Google** llamada
 - **Ingresos:** misma disposición. Columnas: Nº factura | Pedido | Fecha | Importe IVA incluido | IVA | Importe neto (fórmula) | Cuenta Corriente.
 - **Proveedores:** lista de nombres de la columna Emisora; usa el nombre exacto y añade los nuevos.
 Para leer y escribir celdas necesitas el **conector de Google Sheets**. Si no está disponible en la sesión, NO intentes editar el Excel por otras vías ni subas archivos reconstruidos: avisa a la dueña de que hay que conectarlo.
+**Fórmulas y fechas en estas hojas (configuración regional es_ES):** las fórmulas que escribas por API llevan `;` entre argumentos (`=DATE(2026;10;31)`, `=IF(G6="";"";G6-H6)`); con `,` dan `#ERROR!`. Las fechas, escríbelas como fórmula `=DATE(aaaa;mm;dd)` para que no dependan de cómo se interprete el texto, y los números de factura como texto con apóstrofo inicial (`'5725062005`). Importe neto (columna I de Gastos, F de Ingresos) es una única fórmula `ARRAYFORMULA` en la fila 6: no la sobrescribas ni escribas en esa columna. Después de escribir, lee la hoja con `get_values` y comprueba que no aparece `#ERROR!`.
+Ids de la hoja de T4 2026: hoja `1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8`; pestañas Gastos (sheetId 0), Ingresos (1) y Proveedores (2). Carpeta `T4 2026`: `1jJZltUU2s9MgFFOUDuh5-CdpXflsDRyw`.
 Los Excel de trimestres anteriores (T1-T3 2026 y años previos) se quedan como están. Para un trimestre nuevo, copia la hoja del trimestre anterior (`copy_file`) y borra solo los valores de las filas de datos (desde la fila 6) en Gastos e Ingresos, sin tocar las fórmulas de Importe neto ni las de totales.
 
 ## Flujo 1 · GASTOS (facturas que llegan a info@atelierlanonna.com)
