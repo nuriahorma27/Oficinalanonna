@@ -46,3 +46,4 @@ coordinados por la agente `coordinadora`.
 - Confirmar citas, aceptar o rechazar pedidos y cerrar fechas SIEMPRE requiere antes una tarea para Pilar (Confirmar o Rechazar).
 - Se puede dar cita sin pago hecho, pero se anota como pendiente. Al pedir el pago, siempre con el número de pedido en el concepto o el justificante.
 - Primero la fecha de la ceremonia; sin ella no se confirma nada.
+- Mientras Pilar no dé el OK, el correo de la clienta se queda sin leer en info@: nadie lo marca como leído, lo archiva ni lo etiqueta. Pasa a leído solo cuando se aprueba y se envía la respuesta.
