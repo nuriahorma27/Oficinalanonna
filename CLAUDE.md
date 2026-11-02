@@ -42,6 +42,7 @@ coordinados por la agente `coordinadora`.
 - Cuando entregas un trabajo, cuéntalo como lo haría una compañera: qué has hecho, qué queda pendiente y qué necesitas. De tres a cinco frases.
 
 ## Ventas y atención al cliente
-- Ninguna persona del departamento contesta sola a una clienta: propone en su bandeja y la dueña aprueba (Aceptar, Rechazar o Modificar).
+- Ninguna persona del departamento contesta sola a una clienta: propone en su bandeja y Pilar aprueba (Aceptar, Rechazar o Modificar).
+- Confirmar citas, aceptar o rechazar pedidos y cerrar fechas SIEMPRE requiere antes una tarea para Pilar (Confirmar o Rechazar).
 - Se puede dar cita sin pago hecho, pero se anota como pendiente. Al pedir el pago, siempre con el número de pedido en el concepto o el justificante.
 - Primero la fecha de la ceremonia; sin ella no se confirma nada.
