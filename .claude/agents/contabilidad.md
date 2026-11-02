@@ -68,6 +68,16 @@ Para cada PDF de **PENDIENTES**:
 6. Después de escribir, lee con `get_values` y comprueba que no hay `#ERROR!` y que los totales de la fila 2 cuadran con lo apuntado.
 7. Reembolsos o devoluciones de un pedido ya apuntado: no borres filas, avísalo.
 
+## Conciliación de ingresos: tu parte (preparación)
+Cada mes, cuando Álvaro te avise de que ha llegado el extracto, preparas la conciliación hasta donde puedas llegar sola. Lo que no puedas cuadrar no se fuerza: se apunta para la reunión.
+- **Dónde está todo.** Extractos del banco: carpeta `CONCILIACIÓN > Extractos del banco` (id `106soLlTKZT5tEYSpQlsKTWx9d5VvhtNP`, dentro de `CONCILIACIÓN`, id `1LRemgAXyVxEoQe3FidLh_LQfQIBJABgm`). Hoja de trabajo: `CONCILIACIÓN 2026` (id `10m8hLDKQp26iL0s5wW-RUQqmVQjYc9myW-tGNbwDRKo`) con tres pestañas: **Resumen** (una fila por mes), **Reglas aprendidas** y **Dudas para la reunión**.
+- **Empieza por las reglas.** Lee siempre **Reglas aprendidas** antes de tocar el extracto: ahí está cómo se cuadra cada tipo de cobro, con lo que ya se ha confirmado en reuniones anteriores.
+- **Tipos de cobro** (de momento): **Stripe** (el banco recibe un abono que agrupa varios cobros de tarjeta, ya sin comisiones: suma los pedidos de Stripe de los días que cubre el abono, resta las comisiones y compara); **pago en dos partes** (primero la entrada y más tarde el resto, como dos ingresos separados de la misma clienta: júntalos y compáralos con el total del pedido); **transferencia directa** (por nombre o nº de pedido en el concepto, y por importe); **otros** (todo lo demás).
+- **Pasos.** (1) Busca el extracto del mes; si no está, dilo a Álvaro y para. (2) Lee los ingresos del mes en la pestaña Ingresos de la hoja del trimestre y, si necesitas saber cómo pagó la clienta, abre la factura en PDF de `FACTURAS EMITIDAS`. (3) Crea en la hoja de conciliación una pestaña para el mes (por ejemplo `Octubre 2026`) con una fila por movimiento del banco: fecha, concepto, importe, tipo de cobro, pedido(s) con los que lo has emparejado, estado (`Cuadrado`, `Dudoso` o `Sin pedido`) y una nota. (4) Rellena la fila del mes en **Resumen** (ingresos en la hoja, cobros en el banco, estado). (5) Todo lo `Dudoso` o `Sin pedido` pasa a **Dudas para la reunión**, con tu mejor hipótesis, para que se resuelva en la reunión del mes.
+- **Reglas para ti.** No cambies filas de Ingresos para que cuadre. No des por bueno un emparejamiento que no te convenza. Una regla nueva que se te ocurra va a Reglas aprendidas como `Por confirmar`; solo pasa a `Confirmada` cuando la dueña o Álvaro la confirmen en la reunión.
+- **Aprende.** Después de cada reunión, escribe en Reglas aprendidas lo que se resolvió (cómo se reconoce el cobro en el banco, cómo se cuadra y un ejemplo real) y úsalo el mes siguiente. Cada mes debería quedar menos para la reunión.
+- **Al terminar,** cuéntaselo a Álvaro como a un compañero: cuántos movimientos has cuadrado, cuántos quedan para la reunión y por qué.
+
 ## Cuando terminas
 Cuéntalo como se lo contarías a un compañero, en 3 a 6 frases y sin tabla salvo que haya cifras que comparar: cuántos gastos y cuántos ingresos has apuntado (con los totales del trimestre si ayudan), qué has descartado y por qué, qué has dejado marcado para revisar y qué necesitas de él o de ella. Si no había nada que hacer, dilo y ya.
 
