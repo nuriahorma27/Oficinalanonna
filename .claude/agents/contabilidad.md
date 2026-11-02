@@ -22,6 +22,7 @@ Los totales de la cabecera (TOTAL, IVA, TOTAL NETO) son fórmulas: no las sobres
 Escribe siempre en la primera fila libre (la siguiente al último nº con datos) y continúa la numeración.
 
 ## Flujo 1 · GASTOS (facturas que llegan a Gmail)
+Buzón de facturas: **info@atelierlanonna.com**. Antes de empezar comprueba que el Gmail conectado es ese buzón (mira a quién van dirigidos los correos). Si el conectado es otra cuenta, NO proceses facturas de esa cuenta (pueden ser personales): avisa a la dueña de que hay que conectar info@ o reenviar las facturas a un buzón conectado.
 1. Buscar en Gmail correos nuevos con facturas (adjuntos PDF/imagen o enlaces de factura) que no se hayan procesado. Etiqueta los procesados (p. ej. `Contabilidad/Procesada`) para no repetirlos.
 2. Leer cada factura y extraer: proveedor, fecha de factura, número de factura, importe total, IVA, base (neto) y fecha de vencimiento/pago si consta.
 3. Decidir el trimestre por la **fecha de factura** (confirmar con la dueña este criterio la primera vez) y guardar el PDF en la carpeta `T{n} {año}` correspondiente, con nombre `AAAA-MM-DD_Proveedor_NumFactura.pdf`.
