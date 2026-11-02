@@ -167,6 +167,59 @@ form.send button:disabled{opacity:.5;cursor:default}
 .enl-b{font:inherit;font-size:14px;font-weight:600;background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;cursor:pointer}
 @media (max-width:900px){.floor{grid-template-columns:repeat(2,minmax(0,1fr))}.gente{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.gente{grid-template-columns:1fr}.quien{grid-template-columns:1fr}}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:6px 0 12px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column}
+.kpi b{font-family:var(--font-display);font-weight:400;font-size:1.7rem;line-height:1}
+.kpi span{color:var(--muted);font-size:12.5px}
+.kpi.ambar{border-color:var(--ate)}.kpi.rojo b{color:var(--com)}.kpi.verde b{color:var(--cont)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.tab{font:inherit;font-size:14px;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:600;border-bottom-color:var(--ate)}
+.duo{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:14px;align-items:start}
+.correos{display:flex;flex-direction:column;gap:6px}
+.corr{font:inherit;color:inherit;text-align:left;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.corr b{font-weight:600;font-size:14px}.corr small{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere}
+.corr .mini{font-size:12px;color:var(--muted)}
+.corr.u3{border-left-color:var(--com)}.corr.u2{border-left-color:var(--ate)}.corr.u1{border-left-color:var(--cont)}
+.corr[aria-pressed="true"]{background:var(--soft);box-shadow:0 0 0 2px var(--ink)}
+.ficha{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:6px;min-width:0}
+.ficha-cab{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+#bandeja .ficha h3{margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:none;letter-spacing:0;color:var(--ink)}
+.ficha small{color:var(--muted);font-size:13px;display:block;overflow-wrap:anywhere}
+.asunto{margin:2px 0 0;font-weight:600;font-size:14px}
+.chips-f{display:flex;gap:6px;flex-wrap:wrap;align-items:start}
+.chp{font-family:var(--font-mono);font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:var(--surface)}
+.chp.u3{border-color:var(--com);color:var(--com)}.chp.u2{border-color:var(--ate);color:var(--ate)}.chp.u1,.chp.okc{border-color:var(--cont);color:var(--cont)}
+.resumen{margin:0}
+.datos{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:6px 0;font-size:14px}
+.datos dt{color:var(--muted);font-size:12.5px;padding-top:2px}.datos dd{margin:0}.datos dd.aviso{color:var(--com);font-weight:600}
+.avisos{margin:0;padding:10px 12px 10px 28px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ate);border-radius:8px;font-size:13.5px}
+.avisos li{margin:3px 0}
+.hist{margin:0;padding-left:18px;font-size:13.5px}.hist li{margin:2px 0}
+.aviso-b{margin:0;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ate);border-radius:8px;font-size:14px}
+.barras{display:flex;flex-direction:column;gap:6px}
+.barra{display:grid;grid-template-columns:150px 1fr 30px;gap:8px;align-items:center;font-size:13.5px}
+.barra i{display:block;height:10px;background:var(--ate);border-radius:5px;min-width:3px}.barra i.ruido{background:var(--muted)}
+.barra em{font-style:normal;color:var(--muted)}
+.semanas{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px}
+.sem{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);display:flex;flex-direction:column}
+.sem small{color:var(--muted);font-size:11.5px}.sem b{font-family:var(--font-display);font-weight:400;font-size:1.5rem;line-height:1.1}.sem span{font-size:11.5px;color:var(--muted)}
+.sem.casi{border-color:var(--ate);background:var(--soft)}.sem.llena{border-color:var(--com);background:var(--soft)}.sem.llena b{color:var(--com)}
+.scroll-x{overflow-x:auto}
+.tabla{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+.tabla th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tabla td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}.tabla td.mal{color:var(--com);font-weight:600}
+.ajustes .aj{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0}
+.ajustes label{flex:1 1 260px;font-size:14px}.ajustes input{font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0;flex:0 1 260px}
+.ajustes button,.ficha button.sec{font:inherit;font-size:14px;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.ficha button{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.ficha button.ok{background:var(--cont);border-color:var(--cont);color:#fff}
+.ficha button:disabled{opacity:.5;cursor:default}
+.ficha textarea,.ficha input[type=text]{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical}
+.ficha .chips button{font-weight:400;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px}
+.ficha details{font-size:14px}.ficha summary{cursor:pointer;color:var(--muted)}
+@media (max-width:760px){.duo{grid-template-columns:1fr}.barra{grid-template-columns:110px 1fr 28px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -177,7 +230,6 @@ form.send button:disabled{opacity:.5;cursor:default}
       <p>Arras, bautizo y comunión a medida. Elige un departamento, mira quién trabaja en él y habla con cada persona.</p>
     </div>
     <nav class="links" aria-label="Accesos directos">
-      <a href="https://docs.google.com/spreadsheets/d/1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ/edit" target="_blank" rel="noopener">Bandeja de ventas</a>
       <a href="https://docs.google.com/spreadsheets/d/1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8/edit" target="_blank" rel="noopener">Hoja T4 2026</a>
       <a href="https://drive.google.com/drive/folders/1FtBib-KoabcZjQtU-z31vhQgJgVrli5W" target="_blank" rel="noopener">Facturas pendientes</a>
       <a href="https://drive.google.com/drive/folders/1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg" target="_blank" rel="noopener">Emitidas pendientes</a>
@@ -488,21 +540,21 @@ function bloqueExtracto(){
   return box;
 }
 
-/* ---------- Bandeja de Ventas (hoja BANDEJA VENTAS, via mcp) ---------- */
+/* ---------- Paneles de Ventas (datos de la hoja BANDEJA VENTAS, leídos por detrás con mcp) ---------- */
 const BANDEJA = "1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ";
-const BANDEJA_URL = "https://docs.google.com/spreadsheets/d/" + BANDEJA + "/edit";
 const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 const celdas = r => { const p = r && r.payload; return (p && (p.values || (p.valueRange && p.valueRange.values))) || []; };
 const FIRMA = "A T E L I E R   L A   N O N N A\nwww.atelierlanonna.com\ninfo@atelierlanonna.com\n669 49 68 31";
+const HOY = new Date(); HOY.setHours(0, 0, 0, 0);
 
 function mensajeHoja(e){
   const c = e && e.code;
-  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "Permite que esta página use tus hojas de Google cuando te lo pida y vuelve a intentarlo.";
+  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "Permite que esta página use tus hojas de Google cuando te lo pida y pulsa Actualizar.";
   if (c === "server_not_connected" || c === "selection_required") return "Google Sheets no está conectado en tu cuenta de Claude. Conéctalo en Ajustes → Conectores.";
   if (c === "needs_reauth") return "La conexión con Google Sheets ha caducado. Vuelve a conectarla en Ajustes → Conectores.";
   if (c === "server_unavailable" || c === "upstream_error") return "Google no ha contestado. Pulsa Actualizar dentro de un momento.";
-  if (c === "tool_error") return "Google no me deja abrir la hoja BANDEJA VENTAS con tu cuenta. Pide que la compartan contigo desde administracion@ y vuelve a probar.";
-  return "No he podido leer la hoja. Pulsa Actualizar para reintentarlo.";
+  if (c === "tool_error") return "Google no me deja abrir los datos de Ventas con tu cuenta. Avísame y lo arreglo.";
+  return "No he podido leer los datos. Pulsa Actualizar para reintentarlo.";
 }
 async function leerHoja(rango){
   const r = await mcp.callTool("Google Sheets", "get_values", {spreadsheetId: BANDEJA, range: rango}, {cache: false});
@@ -511,188 +563,359 @@ async function leerHoja(rango){
 function aFilas(v){
   if (!v.length) return [];
   const h = v[0];
-  return v.slice(1).map((row, i) => { const o = {_fila: i + 2}; h.forEach((k, j) => { o[k] = row[j] == null ? "" : String(row[j]); }); return o; }).filter(o => o.ID);
+  return v.slice(1).map((row, i) => { const o = {_fila: i + 2}; h.forEach((k, j) => { o[k] = row[j] == null ? "" : String(row[j]); }); return o; })
+    .filter(o => Object.keys(o).some(k => k !== "_fila" && o[k]));
 }
 const escribirHoja = (rango, valores) => mcp.callTool("Google Sheets", "update_values", {spreadsheetId: BANDEJA, range: rango, values: valores});
-async function mismaFila(hoja, fila, id){
-  const v = await leerHoja(hoja + "!A" + fila);
-  return v[0] && String(v[0][0]) === id;
-}
+async function mismaFila(hoja, fila, id){ const v = await leerHoja(hoja + "!A" + fila); return !!(v[0] && String(v[0][0]) === id); }
 
-let modo = "oficina";                   // "oficina" | "pilar"
-const bandejaCache = {t: 0, prop: [], dec: [], con: [], des: []};
+let modo = "oficina";                    // "oficina" | "pilar"
+const vista = {tab: {}, sel: null};      // pestaña activa por persona y correo abierto
+const D = {t: 0, prop: [], dec: [], con: [], des: [], ped: [], aj: {}};
 
-async function cargarBandeja(forzar){
-  if (!forzar && Date.now() - bandejaCache.t < 20000) return bandejaCache;
-  const [p, d, c, x] = await Promise.all([
-    leerHoja("Propuestas!A1:N500"), leerHoja("Decisiones!A1:I300"), leerHoja("Consignas!A1:F100"), leerHoja("Descartados!A1:D40")
+async function cargarDatos(forzar){
+  if (!forzar && Date.now() - D.t < 15000) return D;
+  const [p, d, c, x, pe, aj] = await Promise.all([
+    leerHoja("Propuestas!A1:W500"), leerHoja("Decisiones!A1:I300"), leerHoja("Consignas!A1:F100"),
+    leerHoja("Descartados!A1:D300"), leerHoja("Pedidos activos!A1:L300"), leerHoja("Ajustes!A1:C20")
   ]);
-  Object.assign(bandejaCache, {t: Date.now(), prop: aFilas(p), dec: aFilas2(d), con: aFilas2(c), des: aFilas2(x)});
-  return bandejaCache;
-}
-function aFilas2(v){            // para hojas cuya primera columna no es ID
-  if (!v.length) return [];
-  const h = v[0];
-  return v.slice(1).map((row, i) => { const o = {_fila: i + 2}; h.forEach((k, j) => { o[k] = row[j] == null ? "" : String(row[j]); }); return o; }).filter(o => Object.keys(o).some(k => k !== "_fila" && o[k]));
+  D.prop = aFilas(p).filter(o => o.ID); D.dec = aFilas(d); D.con = aFilas(c); D.des = aFilas(x); D.ped = aFilas(pe);
+  D.aj = {}; aFilas(aj).forEach(r => { D.aj[r.Clave] = r.Valor; });
+  D.t = Date.now(); return D;
 }
 
-function irA(d, p){ modo = "oficina"; deptId = d; personId = p; history.replaceState(null, "", "#" + d); renderAll(); }
+/* utilidades */
+function parseFecha(s){
+  s = String(s || "").trim(); let m;
+  if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})/))) return new Date(+m[1], +m[2] - 1, +m[3]);
+  if ((m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/))) return new Date(+(m[3].length === 2 ? "20" + m[3] : m[3]), +m[2] - 1, +m[1]);
+  return null;
+}
+const dias = f => f ? Math.round((f - HOY) / 864e5) : null;
+const fmt = f => f ? f.toLocaleDateString("es-ES", {day:"numeric", month:"short", year:"numeric"}) : "";
+const nivel = u => { const n = norm(u); return n.startsWith("alta") ? 3 : n.startsWith("media") ? 2 : n.startsWith("baja") ? 1 : 0; };
+const nombreNivel = n => ["Sin valorar", "Baja", "Media", "Alta"][n];
+const esPendiente = f => f.Estado === "Pendiente";
+const num = v => { const n = parseInt(v, 10); return isNaN(n) ? null : n; };
+function lunes(f){ const d = new Date(f); d.setHours(0,0,0,0); const k = (d.getDay() + 6) % 7; d.setDate(d.getDate() - k); return d; }
 
-function boton(txt, cls, fn){ const b = el("button", {type:"button", class:cls || ""}, txt); b.onclick = fn; return b; }
+function boton(txt, cls, fn){ const b = el("button", {type:"button", class:cls || ""}, txt); if (fn) b.onclick = fn; return b; }
+function chip(txt, cls){ return el("span", {class:"chp" + (cls ? " " + cls : "")}, txt); }
+function kpi(n, txt, cls){ const k = el("div", {class:"kpi" + (cls ? " " + cls : "")}); k.append(el("b", {}, String(n)), el("span", {}, txt)); return k; }
+function irA(d, p, id){ modo = "oficina"; deptId = d; personId = p; if (id) vista.sel = id; history.replaceState(null, "", "#" + d); renderAll(); }
+function cabecera(box, titulo, sub, recargar){
+  const cab = el("div", {class:"bandeja-cab"});
+  const t = el("div"); t.append(el("h2", {}, titulo), el("p", {class:"sub"}, sub));
+  cab.append(t, boton("Actualizar", "sec", recargar)); box.append(cab);
+}
+function mensajeCarga(box){ const m = el("p", {class:"estado", role:"status"}, "Mirando los datos…"); box.append(m); return m; }
+function sinAcceso(box){ box.append(el("p", {class:"nota"}, "Desde esta vista no puedo leer los datos de Ventas. Ábrela desde claude.ai con tu cuenta.")); }
 
-function tarjeta(f, p, quitar){
-  const c = el("article", {class:"prop"});
-  const cab = el("div", {class:"prop-cab"});
-  const t = el("div"); t.append(el("b", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, f.Asunto || ""));
-  const ins = el("div", {class:"ins"});
-  [f.Idioma && f.Idioma.toUpperCase(), f["Fecha ceremonia"] && "Ceremonia: " + f["Fecha ceremonia"], f.Recibido].filter(Boolean).forEach(x => ins.append(el("span", {class:"ins-i"}, x)));
-  cab.append(t, ins); c.append(cab);
-  const det = el("details"); det.append(el("summary", {}, "Correo de la clienta"), el("pre", {class:"orig"}, f["Correo original"]));
+/* ---------- Ficha completa de un correo, con sus botones ---------- */
+function ficha(f, p, datos, alCambiar){
+  const c = el("article", {class:"ficha"});
+  const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc);
+  const cab = el("div", {class:"ficha-cab"});
+  const t = el("div"); t.append(el("h3", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, (f["Email clienta"] || "") + (f.Idioma ? " · " + f.Idioma.toUpperCase() : "")), el("p", {class:"asunto"}, f.Asunto || ""));
+  const ch = el("div", {class:"chips-f"});
+  const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u));
+  if (f.Estado && f.Estado !== "Pendiente") ch.append(chip(f.Estado, "okc"));
+  cab.append(t, ch); c.append(cab);
+  if (f.Resumen){ c.append(el("h4", {}, "Qué quiere y en qué punto está"), el("p", {class:"resumen"}, f.Resumen)); }
+  // datos
+  const g = el("dl", {class:"datos"});
+  const par = (k, v, cls) => { const a = el("dt", {}, k), b = el("dd", {class: cls || ""}); if (v instanceof Node) b.append(v); else b.textContent = v || "—"; g.append(a, b); };
+  par("Ceremonia", fc ? fmt(fc) + (dd != null ? (dd >= 0 ? " · faltan " + dd + " días" : " · ya pasó") : "") : (f["Fecha ceremonia"] || "Sin fecha"), fc ? "" : "aviso");
+  par("Prenda", f.Prenda); par("Pago", f.Pago); par("Nº de pedido", f.Pedido || "Sin número");
+  par("Recibido", f.Recibido); par("Lo trata", f.Persona);
+  c.append(g);
+  // avisos automáticos
+  const av = [];
+  if (!fc) av.push("No consta la fecha de la ceremonia: no se puede confirmar nada hasta saberla.");
+  if (fc && dd != null && dd >= 0 && dd <= 45 && fc.getFullYear() === 2026) av.push("La ceremonia es en menos de 6 semanas y el taller cierra en noviembre hasta el 5 de diciembre: consulta antes con Marta.");
+  if (norm(f.Pago) === "sin pedido" || norm(f.Pago) === "pendiente") av.push("Pago por resolver: pídelo con el número de pedido en el concepto o el justificante.");
+  if (f.Falta) av.push("Falta: " + f.Falta);
+  if (f.Alerta) av.push("Ojo: " + f.Alerta);
+  const vig = datos.con.filter(x => norm(x.Vigente) !== "no" && x.Consigna);
+  vig.forEach(x => av.push("Consigna vigente: " + x.Consigna + (x["Hasta (fecha ceremonia)"] ? " (hasta " + x["Hasta (fecha ceremonia)"] + ")" : "")));
+  if (av.length){ const ul = el("ul", {class:"avisos"}); av.forEach(a => ul.append(el("li", {}, a))); c.append(el("h4", {}, "Qué tener en cuenta"), ul); }
+  // historial con la clienta
+  const ant = datos.prop.filter(x => x.ID !== f.ID && x["Email clienta"] && norm(x["Email clienta"]) === norm(f["Email clienta"]));
+  if (ant.length){
+    c.append(el("h4", {}, "Otros correos de esta clienta"));
+    const ul = el("ul", {class:"hist"}); ant.slice(-5).forEach(x => ul.append(el("li", {}, (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || ""))));
+    c.append(ul);
+  }
+  const det = el("details"); det.append(el("summary", {}, "Leer el correo de la clienta"), el("pre", {class:"orig"}, f["Correo original"] || ""));
   c.append(det);
-  c.append(el("h4", {}, "Respuesta propuesta"));
-  const ta = el("textarea", {class:"borrador", rows:"9", readonly:"readonly", "aria-label":"Respuesta propuesta"}); ta.value = f["Respuesta propuesta"];
+  // respuesta y acciones
+  c.append(el("h4", {}, "Respuesta propuesta por " + p.name.split(" ")[0]));
+  const ta = el("textarea", {class:"borrador", rows:"11", readonly:"readonly", "aria-label":"Respuesta propuesta"}); ta.value = f["Respuesta final"] || f["Respuesta propuesta"] || "";
   c.append(ta);
-  if (f.Motivo) c.append(el("p", {class:"motivo"}, "Por qué va a " + p.name.split(" ")[0] + ": " + f.Motivo));
+  if (f.Motivo) c.append(el("p", {class:"motivo"}, "Por qué le toca a " + p.name.split(" ")[0] + ": " + f.Motivo));
   const estado = el("p", {class:"estado", role:"status", "aria-live":"polite"});
-  const zona = el("div", {class:"zona"});
-  const fila = el("div", {class:"acciones"});
-  const aceptar = async (texto) => {
+  if (!esPendiente(f)){ c.append(el("p", {class:"motivo"}, "Ya está " + (f.Estado || "").toLowerCase() + ". Queda lista para enviar cuando el envío esté activado; mientras tanto el correo sigue sin leer en info@."), estado); return c; }
+  const zona = el("div", {class:"zona"}); const fila = el("div", {class:"acciones"});
+  const aceptar = async texto => {
     estado.className = "estado"; estado.textContent = "Guardando…";
     try {
-      if (!(await mismaFila("Propuestas", f._fila, f.ID))) { estado.className = "estado mal"; estado.textContent = "La hoja ha cambiado. Pulsa Actualizar y vuelve a mirarlo."; return; }
+      if (!(await mismaFila("Propuestas", f._fila, f.ID))){ estado.className = "estado mal"; estado.textContent = "Los datos han cambiado. Pulsa Actualizar y vuelve a mirarlo."; return; }
       await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", texto]]);
-      quitar(f, "Aceptada. Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@.");
+      D.t = 0; alCambiar("Aceptada la respuesta para " + (f.Clienta || "la clienta") + ". Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@.");
     } catch (e){ estado.className = "estado mal"; estado.textContent = mensajeHoja(e); }
   };
-  const bA = boton("Aceptar", "ok", () => aceptar(ta.value));
-  const bR = boton("Rechazar", "sec", () => abrirRechazo());
-  const bM = boton("Modificar", "sec", () => abrirModificar());
-  fila.append(bA, bR, bM);
-  const cerrar = () => { zona.textContent = ""; ta.readOnly = true; ta.value = f["Respuesta propuesta"]; fila.hidden = false; estado.textContent = ""; };
+  fila.append(boton("Aceptar", "ok", () => aceptar(ta.value)), boton("Rechazar", "sec", () => abrirRechazo()), boton("Modificar", "sec", () => abrirModificar()));
+  const cerrar = () => { zona.textContent = ""; ta.readOnly = true; ta.value = f["Respuesta propuesta"] || ""; fila.hidden = false; estado.textContent = ""; };
   function abrirModificar(){
-    fila.hidden = true; ta.readOnly = false; ta.focus();
-    zona.textContent = "";
-    zona.append(el("p", {class:"nota"}, "Cambia lo que haga falta en el texto de arriba y guarda."),
-      boton("Guardar y aceptar", "ok", () => aceptar(ta.value)), boton("Cancelar", "sec", cerrar));
+    fila.hidden = true; ta.readOnly = false; ta.focus(); zona.textContent = "";
+    zona.append(el("p", {class:"nota"}, "Cambia lo que haga falta en el texto de arriba y guarda."), boton("Guardar y aceptar", "ok", () => aceptar(ta.value)), boton("Cancelar", "sec", cerrar));
   }
-  function abrirRechazo(){
+  function abrirRechazo(previa){
     fila.hidden = true; zona.textContent = "";
-    const chat = el("div", {class:"minichat"});
-    chat.append(el("p", {class:"msg ellos"}, "Vale, no la envío. ¿Qué tengo que contestar a " + (f.Clienta || "la clienta").split(" ")[0] + "?"));
-    if (!sample){ chat.append(el("p", {class:"nota"}, "El chat no está disponible en esta vista. Escribe tú la respuesta en el texto de arriba usando Modificar.")); zona.append(chat, boton("Volver", "sec", cerrar)); return; }
-    const inst = el("textarea", {rows:"3", placeholder:"Ej.: dile que sí podemos, pero que necesito la fecha del bautizo", "aria-label":"Qué hay que contestar"});
+    zona.append(el("p", {class:"msg ellos"}, "Vale, no la envío. ¿Qué tengo que contestar a " + (f.Clienta || "la clienta").split(" ")[0] + "?"));
+    if (!sample){ zona.append(el("p", {class:"nota"}, "El chat no está disponible en esta vista. Usa Modificar y escribe tú la respuesta."), boton("Volver", "sec", cerrar)); return; }
+    if (f.Opciones){ const o = el("div", {class:"chips"}); f.Opciones.split("|").map(x => x.trim()).filter(Boolean).forEach(x => o.append(boton(x, "", () => { inst.value = x; inst.focus(); }))); zona.append(el("p", {class:"nota"}, "Ideas de " + p.name.split(" ")[0] + ":"), o); }
+    const inst = el("textarea", {rows:"3", placeholder:"Ej.: dile que sí podemos, pero que necesito la fecha del bautizo", "aria-label":"Qué hay que contestar"}); if (previa) inst.value = previa;
     const gen = boton("Redactar de nuevo", "ok", async () => {
       const v = inst.value.trim(); if (!v) return;
       gen.disabled = true; estado.className = "estado"; estado.textContent = p.name.split(" ")[0] + " está redactando…";
       try {
-        const pedido = p.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Tuteo salvo que ella use usted. Frases cortas, cálidas y claras. No confirmes citas, fechas, plazos ni precios que no te haya dado la dueña. Si hablas de pago, pide el número de pedido en el concepto o el justificante. Acaba con esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo, sin comillas ni explicaciones.\n\nCorreo de la clienta:\n" + f["Correo original"] + "\n\nBorrador que se ha rechazado:\n" + f["Respuesta propuesta"] + "\n\nLo que quiere la dueña que se conteste:\n" + v;
+        const pedido = p.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Tuteo salvo que ella use usted. Frases cortas, cálidas y claras. No confirmes citas, fechas, plazos ni precios que no te haya dado Pilar. Si hablas de pago, pide el número de pedido en el concepto o el justificante. Acaba con esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo, sin comillas ni explicaciones.\n\nCorreo de la clienta:\n" + (f["Correo original"] || "") + "\n\nBorrador que se ha rechazado:\n" + (f["Respuesta propuesta"] || "") + "\n\nLo que quiere Pilar que se conteste:\n" + v;
         const r = await sample(pedido, {cache: false});
-        ta.value = (r && r.text) || ta.value; ta.readOnly = false;
-        estado.textContent = "Aquí lo tienes. Léelo, cámbialo si quieres y acéptalo.";
-        zona.textContent = ""; zona.append(boton("Aceptar este", "ok", () => aceptar(ta.value)), boton("Probar otra vez", "sec", abrirRechazo), boton("Cancelar", "sec", cerrar));
-      } catch (e){
-        estado.className = "estado mal";
-        estado.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que redacte." : "No he podido redactarlo. Inténtalo otra vez.";
-        gen.disabled = false;
-      }
+        ta.value = (r && r.text) || ta.value; ta.readOnly = false; estado.textContent = "Aquí lo tienes. Léelo, cámbialo si quieres y acéptalo.";
+        zona.textContent = ""; zona.append(boton("Aceptar este", "ok", () => aceptar(ta.value)), boton("Probar otra vez", "sec", () => abrirRechazo(v)), boton("Cancelar", "sec", cerrar));
+      } catch (e){ estado.className = "estado mal"; estado.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que redacte." : "No he podido redactarlo. Inténtalo otra vez."; gen.disabled = false; }
     });
-    zona.append(chat, inst, gen, boton("Cancelar", "sec", cerrar));
-    inst.focus();
+    zona.append(inst, gen, boton("Cancelar", "sec", cerrar)); inst.focus();
   }
   c.append(fila, zona, estado);
   return c;
 }
 
-async function pintarPersona(box, p){
-  box.textContent = "";
-  const cab = el("div", {class:"bandeja-cab"});
-  const t = el("div"); t.append(el("h2", {}, "Bandeja de " + p.name.split(" ")[0]), el("p", {class:"sub"}, "Los correos que le han llegado y lo que propone contestar. Nada sale sin tu botón."));
-  cab.append(t, boton("Actualizar", "sec", () => pintarPersona(box, p)), el("a", {href:BANDEJA_URL, target:"_blank", rel:"noopener", class:"enl"}, "Abrir la hoja"));
-  box.append(cab);
-  if (!mcp){ box.append(el("p", {class:"nota"}, "Desde esta vista no puedo abrir la hoja. Ábrela a mano con el enlace de arriba.")); return; }
-  const cuerpo = el("div", {class:"lista"}); box.append(cuerpo);
-  const msg = el("p", {class:"estado", role:"status"}, "Mirando la bandeja…"); cuerpo.append(msg);
-  let datos;
-  try { datos = await cargarBandeja(true); } catch (e){ msg.className = "estado mal"; msg.textContent = mensajeHoja(e); return; }
-  cuerpo.textContent = "";
-  if (p.id === "clara"){
-    const rep = datos.prop.filter(x => x.Estado === "Pendiente").length;
-    cuerpo.append(el("p", {}, "He repartido " + datos.prop.length + " correos a mi equipo (" + rep + " esperan tu OK) y he apartado " + datos.des.length + " que no eran de clientas."));
-    if (datos.des.length){
-      cuerpo.append(el("h4", {}, "Últimos que he apartado"));
-      const ul = el("ul", {class:"corta"}); datos.des.slice(-10).reverse().forEach(x => ul.append(el("li", {}, (x.De || "").replace(/<.*>/, "").trim() + " · " + (x.Asunto || "")))); cuerpo.append(ul);
-    }
-    return;
-  }
-  if (p.id === "marta"){
-    const vig = datos.con.filter(x => norm(x.Vigente) !== "no");
-    cuerpo.append(el("h4", {}, "Consignas de fechas vigentes"));
-    if (!vig.length) cuerpo.append(el("p", {class:"nota"}, "Todavía no hay ninguna consigna. Cuando una fecha se llene, te pediré aquí una decisión."));
-    else { const ul = el("ul", {class:"corta"}); vig.forEach(x => ul.append(el("li", {}, (x.Consigna || "") + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "")))); cuerpo.append(ul); }
-  }
-  const mias = datos.prop.filter(x => norm(x.Persona) === norm(p.name) && x.Estado === "Pendiente");
-  if (p.id === "marta" && !mias.length) return;
-  if (!mias.length){ cuerpo.append(el("p", {class:"vacio"}, "No hay correos esperando tu OK en la bandeja de " + p.name.split(" ")[0] + ".")); return; }
-  cuerpo.append(el("p", {class:"cuenta"}, mias.length + (mias.length === 1 ? " correo espera" : " correos esperan") + " tu OK."));
+/* ---------- Lista de correos + ficha (pestañas "Por aprobar" y "Hechas") ---------- */
+function bandejaLista(box, p, filas, hechas, recargar){
   const aviso = el("p", {class:"estado ok", role:"status", "aria-live":"polite"});
-  cuerpo.append(aviso);
-  mias.forEach(f => {
-    const tj = tarjeta(f, p, (_, texto) => { tj.remove(); aviso.textContent = texto; bandejaCache.t = 0; });
-    cuerpo.append(tj);
+  if (!filas.length){ box.append(el("p", {class:"vacio"}, hechas ? "Todavía no hay nada aceptado." : "No hay correos esperando tu OK en la bandeja de " + p.name.split(" ")[0] + "."), aviso); return; }
+  filas = filas.slice().sort((a, b) => nivel(b.Urgencia) - nivel(a.Urgencia) || String(b.Recibido).localeCompare(String(a.Recibido)));
+  if (!filas.some(x => x.ID === vista.sel)) vista.sel = filas[0].ID;
+  const grid = el("div", {class:"duo"}); const lista = el("div", {class:"correos", role:"list"}); const det = el("div", {class:"detalle"});
+  const pintar = () => {
+    lista.textContent = ""; det.textContent = "";
+    filas.forEach(f => {
+      const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc); const u = nivel(f.Urgencia);
+      const b = el("button", {type:"button", class:"corr u" + u, role:"listitem", "aria-pressed": String(f.ID === vista.sel)});
+      b.append(el("b", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, f.Asunto || ""),
+        el("span", {class:"mini"}, (u ? nombreNivel(u) : "Sin valorar") + (fc && dd != null ? " · " + (dd >= 0 ? dd + " días" : "pasada") : " · sin fecha")));
+      b.onclick = () => { vista.sel = f.ID; pintar(); }; lista.append(b);
+    });
+    const f = filas.find(x => x.ID === vista.sel);
+    det.append(ficha(f, p, D, txt => { aviso.textContent = txt; recargar(); }));
+  };
+  grid.append(lista, det); box.append(aviso, grid); pintar();
+}
+
+/* ---------- Pestañas propias de cada persona ---------- */
+function tabReparto(box, p){
+  const rep = {}; D.prop.forEach(f => { rep[f.Persona] = (rep[f.Persona] || 0) + 1; });
+  const max = Math.max(1, ...Object.values(rep), D.des.length);
+  const barras = el("div", {class:"barras"});
+  const linea = (n, v, cls) => { const r = el("div", {class:"barra"}); const b = el("i", {class:cls || ""}); b.style.width = Math.round(v / max * 100) + "%"; r.append(el("span", {}, n), b, el("em", {}, String(v))); barras.append(r); };
+  Object.keys(rep).forEach(n => linea(n, rep[n])); linea("Apartados como ruido", D.des.length, "ruido");
+  box.append(el("h4", {}, "A quién he repartido los correos"), barras);
+  box.append(el("h4", {}, "Qué he apartado y por qué no es de clientas"));
+  if (!D.des.length) box.append(el("p", {class:"vacio"}, "Todavía no he apartado ninguno."));
+  else { const ul = el("ul", {class:"hist"}); D.des.slice(-15).reverse().forEach(x => ul.append(el("li", {}, (x.Fecha || "") + " · " + (x.De || "").replace(/<.*>/, "").trim() + " · " + (x.Asunto || "")))); box.append(ul); }
+  box.append(el("p", {class:"nota"}, "Cada hora miro el correo del último día. No marco nada como leído, no archivo y no etiqueto."));
+}
+
+function tabCapacidad(box, p, recargar){
+  const lim = num(D.aj.pedidos_por_semana);
+  const contados = {}; const vistos = new Set();
+  const añadir = (clienta, f) => { if (!f) return; const k = norm(clienta) + "|" + f.toISOString().slice(0, 10); if (vistos.has(k)) return; vistos.add(k); const w = lunes(f).toISOString().slice(0, 10); contados[w] = (contados[w] || 0) + 1; };
+  D.prop.filter(f => f.Estado !== "Rechazada" && ["Sofia Lara", "Paula Navarro", "Lucia Ortega"].includes(f.Persona.normalize("NFD").replace(/[̀-ͯ]/g, ""))).forEach(f => añadir(f.Clienta, parseFecha(f["Fecha ISO"])));
+  D.ped.forEach(f => añadir(f.Clienta, parseFecha(f["Fecha ceremonia"])));
+  box.append(el("h4", {}, "Ceremonias por semana (las próximas 20)"));
+  if (lim == null) box.append(el("p", {class:"aviso-b"}, "Todavía no sé cuántos pedidos aguanta el taller por semana. Pilar, dímelo abajo y empiezo a avisarte cuando una semana se llene. No voy a inventarlo."));
+  const gr = el("div", {class:"semanas"}); const ini = lunes(HOY);
+  for (let i = 0; i < 20; i++){
+    const w = new Date(ini); w.setDate(w.getDate() + i * 7); const k = w.toISOString().slice(0, 10); const n = contados[k] || 0;
+    const cls = lim == null ? "" : n >= lim ? "llena" : n >= Math.ceil(lim * 0.8) && n > 0 ? "casi" : "";
+    const c = el("div", {class:"sem " + cls}); c.append(el("small", {}, "Sem. " + w.toLocaleDateString("es-ES", {day:"numeric", month:"short"})), el("b", {}, String(n)), el("span", {}, lim != null ? "de " + lim : "pedidos")); gr.append(c);
+  }
+  box.append(gr);
+  const sinF = D.prop.filter(f => esPendiente(f) && !parseFecha(f["Fecha ISO"]) && !["ruido"].includes(norm(f.Persona))).length;
+  box.append(el("p", {class:"nota"}, "Cuento cada clienta una vez por fecha de ceremonia. Hay " + sinF + " correos por aprobar sin fecha de ceremonia: no cuentan hasta saberla."));
+  const vig = D.con.filter(x => norm(x.Vigente) !== "no" && x.Consigna);
+  box.append(el("h4", {}, "Consignas vigentes"));
+  if (!vig.length) box.append(el("p", {class:"vacio"}, "No hay ninguna. Cuando una semana se llene, Pilar decidirá aquí si se cierran pedidos o se aceptan."));
+  else { const ul = el("ul", {class:"hist"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "") + (x["Decidida por"] ? " · " + x["Decidida por"] : "")))); box.append(ul); }
+  const decs = D.dec.filter(x => norm(x["Quién la pide"]) === norm(p.name));
+  if (decs.length){ box.append(el("h4", {}, "Decisiones que he pedido a Pilar")); const ul = el("ul", {class:"hist"}); decs.forEach(x => ul.append(el("li", {}, (x.Estado || "") + " · " + x["Qué hay que decidir"] + (x["Decisión de Pilar"] ? " → " + x["Decisión de Pilar"] : "")))); box.append(ul); }
+}
+
+function tabPedidos(box, p){
+  const dm = num(D.aj.dias_pedir_medidas), de = num(D.aj.dias_entrega_antes);
+  if (dm == null) box.append(el("p", {class:"aviso-b"}, "Pilar, dime cuántos días antes de la ceremonia se piden las medidas y cuántos antes debe estar entregado, y calculo las fechas de cada pedido. No voy a suponerlo."));
+  box.append(el("h4", {}, "Pedidos en marcha"));
+  if (!D.ped.length){ box.append(el("p", {class:"vacio"}, "Todavía no hay pedidos en marcha. Cuando Sofía prepare uno y lo apuntes desde su pestaña “Fichas de pedido”, aparecerá aquí.")); return; }
+  const t = el("table", {class:"tabla"}); const cab = el("tr"); ["Pedido", "Clienta", "Prenda", "Ceremonia", "Pago", "Pedir medidas", "Taller", "Entrega", "Última novedad"].forEach(h => cab.append(el("th", {}, h))); t.append(cab);
+  D.ped.slice().sort((a, b) => (parseFecha(a["Fecha ceremonia"]) || 9e15) - (parseFecha(b["Fecha ceremonia"]) || 9e15)).forEach(r => {
+    const fc = parseFecha(r["Fecha ceremonia"]); const tr = el("tr");
+    const med = fc && dm != null ? new Date(fc.getTime() - dm * 864e5) : null; const hechas = /ok|hech|recib/.test(norm(r.Medidas));
+    const cm = el("td", {}, med ? fmt(med) : "—"); if (med && !hechas && med <= HOY) cm.className = "mal";
+    const ent = fc && de != null ? new Date(fc.getTime() - de * 864e5) : null;
+    tr.append(el("td", {}, r["Nº pedido"]), el("td", {}, r.Clienta), el("td", {}, r.Prenda), el("td", {}, fc ? fmt(fc) + " (" + dias(fc) + " d)" : r["Fecha ceremonia"]), el("td", {}, r.Pago), cm, el("td", {class: r.Taller ? "" : "mal"}, r.Taller || "Sin asignar"), el("td", {}, r["Fecha entrega"] || (ent ? "antes del " + fmt(ent) : "—")), el("td", {}, r["Última novedad"]));
+    t.append(tr);
+  });
+  const w = el("div", {class:"scroll-x"}); w.append(t); box.append(w);
+  const sin = D.ped.filter(r => !r.Taller).length;
+  if (sin) box.append(el("p", {class:"aviso-b"}, sin + (sin === 1 ? " pedido todavía no tiene" : " pedidos todavía no tienen") + " hueco en el taller. Ninguno se puede quedar sin hacer: habla con Compras y operaciones."));
+}
+
+function tabFichas(box, p, recargar){
+  box.append(el("h4", {}, "Fichas de pedido listas para crear en WordPress"));
+  const acept = D.prop.filter(f => f.Estado === "Aceptada" && norm(f.Persona) === norm(p.name));
+  if (!acept.length){ box.append(el("p", {class:"vacio"}, "Cuando aceptes una respuesta mía de una clienta que confirma el pedido, aquí te dejo la ficha con todos los datos para crearlo y apuntarlo en el calendario.")); return; }
+  acept.forEach(f => {
+    const c = el("article", {class:"prop"});
+    const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]);
+    const txt = ["Clienta: " + (f.Clienta || ""), "Correo: " + (f["Email clienta"] || ""), "Prenda: " + (f.Prenda || ""), "Fecha de la ceremonia (poner en observaciones): " + (fc ? fmt(fc) : f["Fecha ceremonia"] || "pendiente"), "Pago: " + (f.Pago || ""), "Falta: " + (f.Falta || "nada"), "Resumen: " + (f.Resumen || "")].join("\n");
+    c.append(el("b", {}, f.Clienta || f["Email clienta"]), el("pre", {class:"orig"}, txt));
+    const ped = el("input", {type:"text", placeholder:"Nº de pedido en WordPress", "aria-label":"Número de pedido"}); const est = el("p", {class:"estado", role:"status"});
+    const fila = el("div", {class:"acciones"});
+    fila.append(boton("Copiar ficha", "sec", async () => { try { await navigator.clipboard.writeText(txt); est.className = "estado ok"; est.textContent = "Copiada."; } catch (e){ est.className = "estado mal"; est.textContent = "No he podido copiarla. Selecciona el texto y cópialo."; } }),
+      boton("Apuntar en pedidos en marcha", "ok", async () => {
+        if (!ped.value.trim()){ est.className = "estado mal"; est.textContent = "Escribe primero el número de pedido."; return; }
+        est.className = "estado"; est.textContent = "Guardando…";
+        try { const n = D.ped.length + 2; await escribirHoja("Pedidos activos!A" + n + ":L" + n, [[ped.value.trim(), f.Clienta || "", f.Prenda || "", f["Fecha ISO"] || f["Fecha ceremonia"] || "", f.Pago || "", "", "", "", "", f.Resumen || "", "Paula Navarro", ""]]); D.t = 0; est.className = "estado ok"; est.textContent = "Apuntado. Ya lo ve Paula."; }
+        catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+      }));
+    c.append(ped, fila, est); box.append(c);
   });
 }
 
+function tabCitas(box, p){
+  box.append(el("h4", {}, "Citas y solicitudes"));
+  const fs = D.prop.filter(f => norm(f.Persona) === norm(p.name));
+  if (!fs.length){ box.append(el("p", {class:"vacio"}, "Todavía no ha entrado ninguna solicitud de cita.")); return; }
+  const t = el("table", {class:"tabla"}); const cab = el("tr"); ["Clienta", "Ceremonia", "Pago", "Estado", "Derivar a"].forEach(h => cab.append(el("th", {}, h))); t.append(cab);
+  fs.forEach(f => { const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const tr = el("tr");
+    tr.append(el("td", {}, f.Clienta), el("td", {class: fc ? "" : "mal"}, fc ? fmt(fc) : "Sin fecha"), el("td", {}, f.Pago || "—"), el("td", {}, f.Estado), el("td", {}, /medidas|prueba/.test(norm(f.Resumen)) ? "Paula (medidas o prueba)" : /queja|problema|error/.test(norm(f.Resumen)) ? "Diego (incidencia)" : "Sofía (primera consulta)")); t.append(tr); });
+  const w = el("div", {class:"scroll-x"}); w.append(t); box.append(w);
+  box.append(el("p", {class:"nota"}, "Se puede dar cita sin pago hecho; lo dejo anotado como pendiente. Pidas lo que pidas, primero la fecha de la ceremonia."));
+}
+
+function tabCasos(box, p){
+  box.append(el("h4", {}, "Casos con sus opciones"));
+  const fs = D.prop.filter(f => norm(f.Persona) === norm(p.name));
+  if (!fs.length){ box.append(el("p", {class:"vacio"}, "No hay incidencias abiertas.")); return; }
+  fs.forEach(f => { const c = el("article", {class:"prop"}); c.append(el("b", {}, (f.Clienta || "") + " · " + (f.Asunto || "")), el("p", {class:"resumen"}, f.Resumen || ""));
+    if (f.Opciones){ const ul = el("ul", {class:"avisos"}); f.Opciones.split("|").map(x => x.trim()).filter(Boolean).forEach(x => ul.append(el("li", {}, x))); c.append(el("h4", {}, "Alternativas"), ul); }
+    c.append(el("p", {class:"motivo"}, "Estado: " + f.Estado)); box.append(c); });
+}
+
+/* ---------- Espacio de trabajo de cada persona ---------- */
+async function pintarPersona(box, p, recarga){
+  box.textContent = "";
+  cabecera(box, p.name + " · " + p.role, p.tasks.join(" · "), () => pintarPersona(box, p, true));
+  if (!mcp){ sinAcceso(box); return; }
+  const m = mensajeCarga(box);
+  try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); return; }
+  m.remove();
+  const mias = D.prop.filter(f => norm(f.Persona) === norm(p.name));
+  const pend = mias.filter(esPendiente), hechas = mias.filter(f => !esPendiente(f));
+  const k = el("div", {class:"kpis"});
+  k.append(kpi(pend.length, "esperan tu OK", pend.length ? "ambar" : ""), kpi(pend.filter(f => nivel(f.Urgencia) === 3).length, "urgentes", "rojo"), kpi(pend.filter(f => !parseFecha(f["Fecha ISO"]) && !f["Fecha ceremonia"]).length, "sin fecha de ceremonia"), kpi(hechas.length, "ya aceptadas", "verde"));
+  box.append(k);
+  const tabs = [["pend", "Por aprobar (" + pend.length + ")"], ["hechas", "Aceptadas (" + hechas.length + ")"]];
+  const extra = {clara:["rep", "Reparto y descartados"], marta:["cap", "Capacidad por semana"], paula:["ped", "Pedidos en marcha"], sofia:["fic", "Fichas de pedido"], lucia:["cit", "Citas"], diego:["cas", "Casos y opciones"]}[p.id];
+  if (extra) tabs.push(extra);
+  if (!vista.tab[p.id] || !tabs.some(t => t[0] === vista.tab[p.id])) vista.tab[p.id] = (p.id === "clara" || p.id === "marta") ? extra[0] : "pend";
+  const barra = el("div", {class:"tabs", role:"tablist"});
+  tabs.forEach(([id, txt]) => { const b = el("button", {type:"button", role:"tab", class:"tab", "aria-selected": String(vista.tab[p.id] === id)}, txt); b.onclick = () => { vista.tab[p.id] = id; pintarPersona(box, p); }; barra.append(b); });
+  box.append(barra);
+  const cuerpo = el("div", {class:"tabcuerpo", role:"tabpanel"}); box.append(cuerpo);
+  const t = vista.tab[p.id]; const recargar = () => pintarPersona(box, p);
+  if (t === "pend") bandejaLista(cuerpo, p, pend, false, recargar);
+  else if (t === "hechas") bandejaLista(cuerpo, p, hechas, true, recargar);
+  else if (t === "rep") tabReparto(cuerpo, p); else if (t === "cap") tabCapacidad(cuerpo, p, recargar);
+  else if (t === "ped") tabPedidos(cuerpo, p); else if (t === "fic") tabFichas(cuerpo, p, recargar);
+  else if (t === "cit") tabCitas(cuerpo, p); else if (t === "cas") tabCasos(cuerpo, p);
+}
+
+/* ---------- Panel de Pilar ---------- */
+const TEMAS = [["Quiere cita, videollamada o ir al showroom", "lucia"], ["Primera consulta, presupuesto o pedido nuevo", "sofia"], ["Pedido en marcha: medidas, pago, envío", "paula"], ["Algo ha salido mal: talla, retraso, queja", "diego"], ["¿Llegamos a esta fecha? ¿Cerramos pedidos?", "marta"], ["¿Qué ha pasado con un correo? ¿Quién lo ha repartido?", "clara"]];
+
 async function pintarPilar(box){
   box.textContent = "";
-  const cab = el("div", {class:"bandeja-cab"});
-  const t = el("div"); t.append(el("h2", {}, "Panel de Pilar"), el("p", {class:"sub"}, "Lo que está esperando tu decisión y con quién hablar de cada cosa."));
-  cab.append(t, boton("Actualizar", "sec", () => pintarPilar(box)), el("a", {href:BANDEJA_URL, target:"_blank", rel:"noopener", class:"enl"}, "Abrir la hoja"));
-  box.append(cab);
-  const cuerpo = el("div", {class:"lista"}); box.append(cuerpo);
-  if (!mcp){ cuerpo.append(el("p", {class:"nota"}, "Desde esta vista no puedo abrir la hoja. Ábrela a mano con el enlace de arriba.")); }
-  else {
-    const msg = el("p", {class:"estado", role:"status"}, "Mirando la bandeja…"); cuerpo.append(msg);
-    let datos = null;
-    try { datos = await cargarBandeja(true); msg.remove(); } catch (e){ msg.className = "estado mal"; msg.textContent = mensajeHoja(e); }
-    if (datos){
-      const dec = datos.dec.filter(x => norm(x.Estado) === "pendiente");
-      cuerpo.append(el("h3", {}, "Decisiones pendientes (" + dec.length + ")"));
-      if (!dec.length) cuerpo.append(el("p", {class:"vacio"}, "No hay nada esperando tu decisión."));
-      dec.forEach(d => {
-        const c = el("article", {class:"prop"});
-        c.append(el("b", {}, d["Qué hay que decidir"]));
-        if (d["Recomendación"]) c.append(el("p", {class:"motivo"}, "Recomienda: " + d["Recomendación"]));
-        c.append(el("p", {class:"motivo"}, "Habla con: " + (d["Departamento con quien hablar"] || d["Quién la pide"])));
-        const nota = el("input", {type:"text", placeholder:"Nota o condición (opcional)", "aria-label":"Nota"});
-        const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
-        const resolver = async (v) => {
-          est.className = "estado"; est.textContent = "Guardando…";
-          try {
-            if (!(await mismaFila("Decisiones", d._fila, d.ID))) { est.className = "estado mal"; est.textContent = "La hoja ha cambiado. Pulsa Actualizar."; return; }
-            await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]);
-            c.textContent = ""; c.append(el("p", {class:"estado ok"}, v + ": " + d["Qué hay que decidir"])); bandejaCache.t = 0;
-          } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
-        };
-        const fila = el("div", {class:"acciones"}); fila.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada")));
-        c.append(nota, fila, est); cuerpo.append(c);
-      });
-      const vig = datos.con.filter(x => norm(x.Vigente) !== "no");
-      if (vig.length){ cuerpo.append(el("h3", {}, "Consignas de fechas vigentes")); const ul = el("ul", {class:"corta"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna))); cuerpo.append(ul); }
-      cuerpo.append(el("h3", {}, "Correos esperando tu OK"));
-      const ventas = DEPTS.find(x => x.id === "ventas");
-      const grid = el("div", {class:"gente"});
-      ventas.people.forEach(p => {
-        const n = datos.prop.filter(x => norm(x.Persona) === norm(p.name) && x.Estado === "Pendiente").length;
-        const b = el("button", {type:"button", class:"gp"}); b.append(el("b", {}, p.name), el("small", {}, p.role), el("span", {class:"n"}, n ? n + " por revisar" : "Al día"));
-        b.onclick = () => irA("ventas", p.id); grid.append(b);
-      });
-      cuerpo.append(grid);
-    }
-  }
-  cuerpo.append(el("h3", {}, "Con quién hablar"));
+  cabecera(box, "Panel de Pilar", "Todo lo que espera tu decisión, lo más urgente primero y con quién hablar de cada cosa.", () => pintarPilar(box));
+  if (!mcp){ sinAcceso(box); box.append(...pilarFijo()); return; }
+  const m = mensajeCarga(box);
+  try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); box.append(...pilarFijo()); return; }
+  m.remove();
+  const ventas = DEPTS.find(x => x.id === "ventas");
+  const pend = D.prop.filter(esPendiente); const dec = D.dec.filter(x => norm(x.Estado) === "pendiente");
+  const k = el("div", {class:"kpis"});
+  k.append(kpi(dec.length, "decisiones tuyas", dec.length ? "ambar" : ""), kpi(pend.length, "correos por aprobar", pend.length ? "ambar" : ""), kpi(pend.filter(f => nivel(f.Urgencia) === 3).length, "urgentes", "rojo"), kpi(pend.filter(f => !parseFecha(f["Fecha ISO"]) && !f["Fecha ceremonia"]).length, "sin fecha de ceremonia"), kpi(D.prop.filter(f => f.Estado === "Aceptada").length, "aceptadas", "verde"));
+  box.append(k);
+  const sec = t => box.append(el("h3", {}, t));
+  // lo urgente
+  sec("Lo primero que mirar");
+  const top = pend.slice().sort((a, b) => nivel(b.Urgencia) - nivel(a.Urgencia) || ((parseFecha(a["Fecha ISO"]) || 9e15) - (parseFecha(b["Fecha ISO"]) || 9e15))).slice(0, 6);
+  if (!top.length) box.append(el("p", {class:"vacio"}, "No hay correos esperando tu OK."));
+  else { const ul = el("div", {class:"correos"}); top.forEach(f => { const pe = ventas.people.find(x => norm(x.name) === norm(f.Persona)); const u = nivel(f.Urgencia);
+    const b = el("button", {type:"button", class:"corr u" + u}); b.append(el("b", {}, (f.Clienta || f["Email clienta"] || "") + " · " + f.Persona), el("small", {}, f.Resumen || f.Asunto || ""), el("span", {class:"mini"}, (u ? nombreNivel(u) : "Sin valorar") + (f.Falta ? " · falta: " + f.Falta : "")));
+    b.onclick = () => { if (pe){ vista.tab[pe.id] = "pend"; irA("ventas", pe.id, f.ID); } }; ul.append(b); }); box.append(ul); }
+  // decisiones
+  sec("Decisiones pendientes (" + dec.length + ")");
+  if (!dec.length) box.append(el("p", {class:"vacio"}, "No hay nada esperando tu decisión."));
+  dec.forEach(d => {
+    const c = el("article", {class:"prop"}); c.append(el("b", {}, d["Qué hay que decidir"]));
+    if (d["Recomendación"]) c.append(el("p", {class:"motivo"}, "Recomienda: " + d["Recomendación"]));
+    c.append(el("p", {class:"motivo"}, "Lo pide: " + (d["Quién la pide"] || "") + " · Habla con: " + (d["Departamento con quien hablar"] || "")));
+    const nota = el("input", {type:"text", placeholder:"Nota o condición (opcional)", "aria-label":"Nota"}); const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+    const resolver = async v => { est.className = "estado"; est.textContent = "Guardando…";
+      try { if (!(await mismaFila("Decisiones", d._fila, d.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
+        await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]); D.t = 0; c.textContent = ""; c.append(el("p", {class:"estado ok"}, v + ": " + d["Qué hay que decidir"])); }
+      catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); } };
+    const fila = el("div", {class:"acciones"}); fila.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada")));
+    c.append(nota, fila, est); box.append(c);
+  });
+  // ajustes que decide Pilar
+  sec("Lo que necesito que decidas para trabajar");
+  const form = el("div", {class:"ajustes"});
+  [["pedidos_por_semana", "Pedidos por semana que aguanta el taller", 2], ["dias_pedir_medidas", "Días antes de la ceremonia para pedir las medidas", 3], ["dias_entrega_antes", "Días antes de la ceremonia en que debe estar entregado", 4]].forEach(([clave, txt, fila]) => {
+    const l = el("label", {}, txt); const i = el("input", {type:"number", min:"0", value: D.aj[clave] || "", "aria-label": txt}); const e = el("span", {class:"estado"});
+    const g = boton("Guardar", "sec", async () => { e.className = "estado"; e.textContent = "Guardando…"; try { await escribirHoja("Ajustes!B" + fila, [[i.value]]); D.aj[clave] = i.value; e.className = "estado ok"; e.textContent = "Guardado."; } catch (x){ e.className = "estado mal"; e.textContent = mensajeHoja(x); } });
+    const w = el("div", {class:"aj"}); w.append(l, i, g, e); form.append(w);
+  });
+  box.append(form);
+  // consignas
+  sec("Fechas cerradas o con condiciones");
+  const vig = D.con.filter(x => norm(x.Vigente) !== "no" && x.Consigna);
+  if (!vig.length) box.append(el("p", {class:"vacio"}, "No hay ninguna consigna."));
+  else { const ul = el("ul", {class:"hist"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "")))); box.append(ul); }
+  const nc = el("div", {class:"ajustes"}); const t1 = el("input", {type:"text", placeholder:"Ej.: no se aceptan pedidos para ceremonias antes del 20 de diciembre", "aria-label":"Nueva consigna"}); const t2 = el("input", {type:"text", placeholder:"Hasta qué fecha de ceremonia (opcional)", "aria-label":"Hasta"}); const e2 = el("span", {class:"estado"});
+  const g2 = boton("Añadir consigna", "sec", async () => { if (!t1.value.trim()){ e2.className = "estado mal"; e2.textContent = "Escribe primero la consigna."; return; } e2.className = "estado"; e2.textContent = "Guardando…";
+    try { const n = D.con.length + 2; await escribirHoja("Consignas!A" + n + ":F" + n, [[new Date().toISOString().slice(0, 10), t2.value, t1.value, "Pilar", new Date().toISOString().slice(0, 10), "sí"]]); D.t = 0; pintarPilar(box); } catch (x){ e2.className = "estado mal"; e2.textContent = mensajeHoja(x); } });
+  const w2 = el("div", {class:"aj"}); w2.append(t1, t2, g2, e2); nc.append(w2); box.append(nc);
+  // por persona
+  sec("Correos por persona");
+  const grid = el("div", {class:"gente"});
+  ventas.people.forEach(p => { const mias = D.prop.filter(x => norm(x.Persona) === norm(p.name) && esPendiente(x)); const urg = mias.filter(x => nivel(x.Urgencia) === 3).length;
+    const b = el("button", {type:"button", class:"gp"}); b.append(el("b", {}, p.name), el("small", {}, p.role), el("span", {class:"n"}, mias.length ? mias.length + " por revisar" + (urg ? " · " + urg + " urgentes" : "") : "Al día"));
+    b.onclick = () => irA("ventas", p.id); grid.append(b); });
+  box.append(grid);
+  box.append(...pilarFijo());
+}
+
+function pilarFijo(){
+  const out = [el("h3", {}, "Con quién hablar")];
+  const ventas = DEPTS.find(x => x.id === "ventas");
   const dl = el("dl", {class:"quien"});
-  DEPTS.forEach(d => d.people.forEach(p => { const b = boton(p.name, "enl-b", () => irA(d.id, p.id)); const dd = el("dd"); dd.append(b, " · " + p.role); dl.append(el("dt", {}, d.name), dd); }));
-  cuerpo.append(dl);
+  TEMAS.forEach(([tema, id]) => { const p = ventas.people.find(x => x.id === id); const dd = el("dd"); dd.append(boton(p.name, "enl-b", () => irA("ventas", p.id)), " · " + p.role); dl.append(el("dt", {}, tema), dd); });
+  DEPTS.filter(d => d.id !== "ventas").forEach(d => d.people.forEach(p => { const dd = el("dd"); dd.append(boton(p.name, "enl-b", () => irA(d.id, p.id)), " · " + p.role); dl.append(el("dt", {}, d.name), dd); }));
+  out.push(dl); return out;
 }
 
 function renderBandeja(){
