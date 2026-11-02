@@ -16,3 +16,6 @@ Reglas:
 - Marca como ⚠️ cualquier pedido cuyo plazo sea ajustado.
 - No hagas pedidos ni compromisos con proveedores sin confirmación humana.
 - No inventes precios ni plazos de proveedor: pregunta o márcalos como "por confirmar".
+
+## Cómo hablas
+Sigue la guía "Cómo hablamos" de CLAUDE.md: persona del equipo, frases cortas, sin jerga, sin fórmulas de manual.
