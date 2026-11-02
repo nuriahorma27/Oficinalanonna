@@ -47,12 +47,26 @@ Para cada archivo de **Facturas pendientes**:
 7. Facturas en moneda extranjera, sin IVA o con retención: añadir pero marcar para revisión de la gestoría.
 8. La carpeta Facturas pendientes debe quedar vacía al terminar, salvo los descartados o dudosos.
 
-## Flujo 2 · INGRESOS (pedidos de WordPress)
-1. Consultar en atelierlanonna.com los pedidos cuyo estado haya pasado a **Completado** y que todavía no estén en el Excel (comparar por nº de pedido).
-2. Por cada uno, añadir una fila en INGRESOS: nº de pedido, fecha (fecha en que se completó), importe total con IVA, IVA e importe neto, y nº de factura si existe.
-3. El trimestre se decide por esa fecha.
-4. Nunca añadir pedidos que no estén en "Completado" (ni pendientes, ni en proceso, ni cancelados). Si un pedido completado se reembolsa después, avisarlo en lugar de borrar filas.
-5. Si las herramientas de WordPress conectadas no dejan leer pedidos (WooCommerce), dilo claramente y pide a la dueña otra vía (exportación CSV, plugin o webhook) en vez de adivinar.
+## Flujo 2 · INGRESOS (pedidos completados de WooCommerce)
+Un flujo de n8n ("Contabilidad - Pedidos completados a Drive") mira cada mañana (7:45) los pedidos de atelierlanonna.com que han pasado a **Completado** y deja su factura en PDF en la carpeta de Drive **FACTURAS EMITIDAS > PENDIENTES** (id `1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg`; `FACTURAS EMITIDAS` es `1xkTiMUgOarK462JTpNumLOqCvTS0OAXS`, dentro de `CONTABILIDAD Nonna`). Tú no lees WooCommerce: trabajas desde esa carpeta.
+
+El nombre de cada archivo trae los datos: `AAAA-MM-DD_pedido-NNNN_factura-MMMM_TOTALEUR.pdf` (fecha de completado, nº de pedido, nº de factura del plugin, total con IVA). Un `.txt` llamado `…_SIN-FACTURA_…` significa que el pedido no tiene factura: no lo apuntes, avísalo en el informe.
+
+Para cada PDF de **PENDIENTES**:
+1. Lee el nombre y el PDF. Comprueba que el total del PDF coincide con el del nombre. Si no coincide, no lo apuntes y márcalo para revisión.
+2. **Trimestre por la fecha de completado** (la del nombre). Mueve el PDF a `FACTURAS EMITIDAS > {año} > T{n}` (crea el año y el trimestre si faltan, con el mismo formato que en FACTURAS RECIBIDAS: `2026`, `T4`; antes de crear, busca por nombre en el padre). Conserva el nombre del archivo.
+3. Apunta una fila en la pestaña **Ingresos** de la hoja de ese trimestre, en la primera fila libre desde la fila 6 (T4 2026: hoja `1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8`, Ingresos es sheetId 1). Columnas:
+   - A Nº factura: el nº de factura del plugin (texto con apóstrofo).
+   - B Pedido: el nº de pedido (texto con apóstrofo).
+   - C Fecha: la de completado, como `=DATE(aaaa;mm;dd)`.
+   - D Importe IVA incluido: el total, como número.
+   - E IVA: fórmula `=ROUND(D{fila}*21/121;2)`, **IVA del 21 % incluido en el total** (confirmado por la dueña). Si el PDF desglosa otro IVA, usa el del PDF y avísalo.
+   - F Importe neto: ya es una fórmula en la fila 6 (`ARRAYFORMULA`): NO escribas en la columna F.
+   - G Cuenta Corriente: déjala vacía.
+4. **Duplicados:** antes de añadir, busca el nº de pedido en la columna B de Ingresos. Si ya está, no lo añadas y avisa; mueve el PDF igualmente solo si no está ya en su carpeta.
+5. Si el trimestre es de un .xlsx antiguo (T1-T3 2026 y anteriores), no escribas: deja el PDF en PENDIENTES y avisa con los datos que habrías apuntado.
+6. Después de escribir, lee con `get_values` y comprueba que no hay `#ERROR!` y que los totales de la fila 2 cuadran con lo apuntado.
+7. Reembolsos o devoluciones de un pedido ya apuntado: no borres filas, avísalo.
 
 ## Informe tras cada ejecución
 Devuelve una tabla corta: qué facturas se añadieron (proveedor, nº, importe), qué ingresos se añadieron (pedido, importe), duplicados detectados, y **pendientes de revisión**. Incluye los totales del trimestre (gastos, ingresos, IVA soportado vs repercutido).
