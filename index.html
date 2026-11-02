@@ -124,7 +124,7 @@ form.send button:disabled{opacity:.5;cursor:default}
   .org-row::before,.org-row>.person::before{display:none}
 }
 
-.floor{grid-template-columns:repeat(6,minmax(0,1fr))}
+.floor{grid-template-columns:repeat(5,minmax(0,1fr))}
 #bandeja{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
 #bandeja[hidden],.main[hidden]{display:none}
 .bandeja-cab{display:flex;flex-wrap:wrap;gap:10px;align-items:start;justify-content:space-between;margin-bottom:8px}
@@ -220,6 +220,22 @@ form.send button:disabled{opacity:.5;cursor:default}
 .ficha .chips button{font-weight:400;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px}
 .ficha details{font-size:14px}.ficha summary{cursor:pointer;color:var(--muted)}
 @media (max-width:760px){.duo{grid-template-columns:1fr}.barra{grid-template-columns:110px 1fr 28px}}
+
+.modos{display:flex;gap:8px;flex-wrap:wrap}
+.modos button{font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 18px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.modos button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.badge{font-family:var(--font-mono);font-size:12px;background:var(--com);color:#fff;border-radius:999px;padding:1px 8px}
+.badge[hidden]{display:none}
+#trabajo{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+#trabajo[hidden]{display:none}
+#trabajo .lista h3,#trabajo h3.grp{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px;font-weight:600}
+#trabajo .bandeja-cab button,#bandeja .bandeja-cab button{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+#trabajo .estado{margin:0;min-height:1.2em;color:var(--muted);font-size:13.5px}#trabajo .estado.ok{color:var(--cont)}#trabajo .estado.mal{color:var(--com)}
+#trabajo .ficha h3{font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:none;letter-spacing:0;color:var(--ink);margin:0}
+.trad{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.trad-txt{flex:1 1 100%;margin:0;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ate);border-radius:8px;white-space:pre-wrap;font-size:14px}
+.trad-txt[hidden]{display:none}
+.ficha details.ficha{padding:10px 12px}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -235,6 +251,13 @@ form.send button:disabled{opacity:.5;cursor:default}
       <a href="https://drive.google.com/drive/folders/1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg" target="_blank" rel="noopener">Emitidas pendientes</a>
     </nav>
   </header>
+
+  <nav class="modos" aria-label="Vista">
+    <button type="button" id="navOficina" aria-pressed="true">La oficina</button>
+    <button type="button" id="navPanel" aria-pressed="false">Mi panel de trabajo <span id="navBadge" class="badge" hidden></span></button>
+  </nav>
+
+  <section id="trabajo" aria-live="polite" hidden></section>
 
   <div class="floor" id="floor" role="group" aria-label="Departamentos"></div>
 
@@ -338,7 +361,7 @@ const $ = (s, el=document) => el.querySelector(s);
 const chats = {};           // personId -> [{role, content}]
 let sample = null;
 let deptId = (location.hash || "").replace("#","");
-const empiezaPilar = deptId === "pilar";
+const empiezaPanel = deptId === "panel" || deptId === "pilar";
 if (!DEPTS.some(d => d.id === deptId)) deptId = "contabilidad";
 let personId = null;
 let busy = false;
@@ -358,15 +381,11 @@ function el(tag, attrs={}, text){
 function renderFloor(){
   const f = $("#floor"); f.textContent = "";
   DEPTS.forEach(d => {
-    const b = el("button", {class:"room", type:"button", "aria-pressed": String(modo === "oficina" && d.id === deptId), style:"--c:var(--"+d.c+")"});
+    const b = el("button", {class:"room", type:"button", "aria-pressed": String(d.id === deptId), style:"--c:var(--"+d.c+")"});
     b.append(el("b", {}, d.name), el("span", {}, d.sub));
     b.onclick = () => { modo = "oficina"; deptId = d.id; personId = d.people[0].id; history.replaceState(null, "", "#"+d.id); renderAll(); };
     f.append(b);
   });
-  const bp = el("button", {class:"room", type:"button", "aria-pressed": String(modo === "pilar"), style:"--c:var(--dir)"});
-  bp.append(el("b", {}, "Panel de Pilar"), el("span", {}, "Decisiones y tareas"));
-  bp.onclick = () => { modo = "pilar"; history.replaceState(null, "", "#pilar"); renderAll(); };
-  f.append(bp);
 }
 
 function personCard(p, c){
@@ -611,6 +630,30 @@ function cabecera(box, titulo, sub, recargar){
 function mensajeCarga(box){ const m = el("p", {class:"estado", role:"status"}, "Mirando los datos…"); box.append(m); return m; }
 function sinAcceso(box){ box.append(el("p", {class:"nota"}, "Desde esta vista no puedo leer los datos de Ventas. Ábrela desde claude.ai con tu cuenta.")); }
 
+
+const trad = new Map();
+async function traducir(texto){
+  if (trad.has(texto)) return trad.get(texto);
+  const r = await sample("Traduce al español de España este correo, de forma fiel y natural, sin añadir nada ni explicar. Devuelve SOLO la traducción.\n\n" + texto, {cache: true});
+  const t = (r && r.text) || ""; trad.set(texto, t); return t;
+}
+function bloqueTraduccion(f, ta, c){
+  const esEs = !f.Idioma || ["es", "espanol", "spanish"].includes(norm(f.Idioma));
+  if (esEs) return;
+  const caja = el("div", {class:"trad"});
+  const salida = el("p", {class:"trad-txt", hidden:"hidden"});
+  const est = el("span", {class:"estado"});
+  const b = boton("Ver traducción al español", "sec", async () => {
+    if (!sample){ est.className = "estado mal"; est.textContent = "La traducción no está disponible en esta vista."; return; }
+    b.disabled = true; est.className = "estado"; est.textContent = "Traduciendo…";
+    try { const t = await traducir(ta.value); salida.textContent = t; salida.hidden = false; est.textContent = ""; }
+    catch (e){ est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para traducir." : "No he podido traducirlo. Inténtalo otra vez."; }
+    b.disabled = false;
+  });
+  caja.append(chip("Se contesta en " + (norm(f.Idioma) === "en" ? "inglés" : norm(f.Idioma) === "fr" ? "francés" : f.Idioma), "u2"), b, est, salida);
+  c.append(caja);
+}
+
 /* ---------- Ficha completa de un correo, con sus botones ---------- */
 function ficha(f, p, datos, alCambiar){
   const c = el("article", {class:"ficha"});
@@ -646,12 +689,18 @@ function ficha(f, p, datos, alCambiar){
     const ul = el("ul", {class:"hist"}); ant.slice(-5).forEach(x => ul.append(el("li", {}, (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || ""))));
     c.append(ul);
   }
-  const det = el("details"); det.append(el("summary", {}, "Leer el correo de la clienta"), el("pre", {class:"orig"}, f["Correo original"] || ""));
+  const det = el("details"); const pre = el("pre", {class:"orig"}, f["Correo original"] || "");
+  det.append(el("summary", {}, "Leer el correo de la clienta"), pre);
+  if (f.Idioma && !["es", "espanol", "spanish"].includes(norm(f.Idioma)) && sample){
+    const bt = boton("Traducir el correo de la clienta", "sec", async () => { bt.disabled = true; try { pre.textContent = (f["Correo original"] || "") + "\n\n— Traducción —\n" + await traducir(f["Correo original"] || ""); } catch (e){ bt.disabled = false; } });
+    det.append(bt);
+  }
   c.append(det);
   // respuesta y acciones
   c.append(el("h4", {}, "Respuesta propuesta por " + p.name.split(" ")[0]));
   const ta = el("textarea", {class:"borrador", rows:"11", readonly:"readonly", "aria-label":"Respuesta propuesta"}); ta.value = f["Respuesta final"] || f["Respuesta propuesta"] || "";
   c.append(ta);
+  bloqueTraduccion(f, ta, c);
   if (f.Motivo) c.append(el("p", {class:"motivo"}, "Por qué le toca a " + p.name.split(" ")[0] + ": " + f.Motivo));
   const estado = el("p", {class:"estado", role:"status", "aria-live":"polite"});
   if (!esPendiente(f)){ c.append(el("p", {class:"motivo"}, "Ya está " + (f.Estado || "").toLowerCase() + ". Queda lista para enviar cuando el envío esté activado; mientras tanto el correo sigue sin leer en info@."), estado); return c; }
@@ -680,7 +729,7 @@ function ficha(f, p, datos, alCambiar){
       const v = inst.value.trim(); if (!v) return;
       gen.disabled = true; estado.className = "estado"; estado.textContent = p.name.split(" ")[0] + " está redactando…";
       try {
-        const pedido = p.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Tuteo salvo que ella use usted. Escribe como Pilar en un correo normal, no como una empresa: cercano, corto, de tú, respondiendo justo a lo que pregunta y sin frases de formulario ("no dudes en", "quedamos a tu disposición", "gracias por contactar"). Cierra con "Un saludo". No digas nunca que algo "se puede estudiar" para un producto de la web: los precios están en la web de La Nonna y no se inventan. Las medidas se toman por videollamada: la clienta necesita un metro de costura y al niño o niña delante, y se le envía un documento con cómo medirles. Si no hay fecha máxima para encargar, se dice que se recomienda hacerlo cuanto antes porque la agenda se va llenando y se rechazan pedidos. No confirmes citas, fechas ni plazos que no te haya dado Pilar. Si hablas de pago, pide el número de pedido en el concepto o el justificante. Acaba con esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo, sin comillas ni explicaciones.\n\nCorreo de la clienta:\n" + (f["Correo original"] || "") + "\n\nBorrador que se ha rechazado:\n" + (f["Respuesta propuesta"] || "") + "\n\nLo que quiere Pilar que se conteste:\n" + v;
+        const pedido = p.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Tuteo salvo que ella use usted. Escribe como Pilar en un correo normal, no como una empresa: cercano, corto, de tú, respondiendo justo a lo que pregunta y sin frases de formulario (\"no dudes en\", \"quedamos a tu disposición\", \"gracias por contactar\"). Cierra con \"Un saludo\". No digas nunca que algo \"se puede estudiar\" para un producto de la web: los precios están en la web de La Nonna y no se inventan. Las medidas se toman por videollamada: la clienta necesita un metro de costura y al niño o niña delante, y se le envía un documento con cómo medirles. Si no hay fecha máxima para encargar, se dice que se recomienda hacerlo cuanto antes porque la agenda se va llenando y se rechazan pedidos. No confirmes citas, fechas ni plazos que no te haya dado Pilar. Si hablas de pago, pide el número de pedido en el concepto o el justificante. Acaba con esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo, sin comillas ni explicaciones.\n\nCorreo de la clienta:\n" + (f["Correo original"] || "") + "\n\nBorrador que se ha rechazado:\n" + (f["Respuesta propuesta"] || "") + "\n\nLo que quiere Pilar que se conteste:\n" + v;
         const r = await sample(pedido, {cache: false});
         ta.value = (r && r.text) || ta.value; ta.readOnly = false; estado.textContent = "Aquí lo tienes. Léelo, cámbialo si quieres y acéptalo.";
         zona.textContent = ""; zona.append(boton("Aceptar este", "ok", () => aceptar(ta.value)), boton("Probar otra vez", "sec", () => abrirRechazo(v)), boton("Cancelar", "sec", cerrar));
@@ -843,70 +892,145 @@ async function pintarPersona(box, p, recarga){
   else if (t === "cit") tabCitas(cuerpo, p); else if (t === "cas") tabCasos(cuerpo, p);
 }
 
-/* ---------- Panel de Pilar ---------- */
+/* ---------- Mi panel de trabajo (las tareas de Pilar) ---------- */
 const TEMAS = [["Quiere cita, videollamada o ir al showroom", "lucia"], ["Primera consulta, presupuesto o pedido nuevo", "sofia"], ["Pedido en marcha: medidas, pago, envío", "paula"], ["Algo ha salido mal: talla, retraso, queja", "diego"], ["¿Llegamos a esta fecha? ¿Cerramos pedidos?", "marta"], ["¿Qué ha pasado con un correo? ¿Quién lo ha repartido?", "clara"]];
+const trabajo = {tab: "tareas", sel: null};
+const ventasGente = () => DEPTS.find(x => x.id === "ventas").people;
+const personaDe = nombre => ventasGente().find(x => norm(x.name) === norm(nombre)) || ventasGente()[0];
 
-async function pintarPilar(box){
+function tareasDe(){
+  const dudas = D.dec.filter(x => norm(x.Tipo) === "duda" && norm(x.Estado) === "pendiente");
+  const conDuda = new Set(dudas.map(x => x["ID propuesta"]).filter(Boolean));
+  const envios = D.prop.filter(f => esPendiente(f) && !conDuda.has(f.ID)).sort((a, b) => nivel(b.Urgencia) - nivel(a.Urgencia) || String(a.Recibido).localeCompare(String(b.Recibido)));
+  const decs = D.dec.filter(x => norm(x.Tipo) !== "duda" && norm(x.Estado) === "pendiente");
+  return {dudas, envios, decs};
+}
+async function contarTareas(){
+  try { await cargarDatos(false); const t = tareasDe(); const n = t.dudas.length + t.envios.length + t.decs.length; const b = $("#navBadge"); if (b){ b.textContent = n ? String(n) : ""; b.hidden = !n; } } catch (e){}
+}
+
+function detalleDuda(d, recargar){
+  const c = el("article", {class:"ficha"});
+  const quien = personaDe(d["Quién la pide"]);
+  const f = D.prop.find(x => x.ID === d["ID propuesta"]);
+  c.append(el("h3", {}, "Duda de " + quien.name), el("p", {class:"resumen"}, d["Qué hay que decidir"]));
+  if (d["Recomendación"]) c.append(el("h4", {}, quien.name.split(" ")[0] + " propone"), el("p", {class:"resumen"}, d["Recomendación"]));
+  if (f){
+    c.append(el("h4", {}, "El correo de la clienta"));
+    if (f.Resumen) c.append(el("p", {class:"resumen"}, f.Resumen));
+    const det = el("details"); det.append(el("summary", {}, "Leer el correo de " + (f.Clienta || "la clienta")), el("pre", {class:"orig"}, f["Correo original"] || "")); c.append(det);
+    if (f["Respuesta propuesta"]){ const d2 = el("details"); d2.append(el("summary", {}, "Borrador provisional de " + quien.name.split(" ")[0]), el("pre", {class:"orig"}, f["Respuesta propuesta"])); c.append(d2); }
+  }
+  c.append(el("h4", {}, "Tu respuesta a " + quien.name.split(" ")[0]));
+  const ta = el("textarea", {rows:"4", placeholder:"Ej.: dile que el precio es el de la web, que el cambio de largo lo miramos y que necesito la fecha del bautizo", "aria-label":"Tu respuesta"});
+  const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+  const ir = boton("Responder", "ok", async () => {
+    const v = ta.value.trim(); if (!v){ est.className = "estado mal"; est.textContent = "Escribe primero tu respuesta."; return; }
+    ir.disabled = true; est.className = "estado"; est.textContent = "Guardando…";
+    try {
+      if (!(await mismaFila("Decisiones", d._fila, d.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; ir.disabled = false; return; }
+      await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [["Respondida", v]]);
+      let nota = "Respondida. ";
+      if (f && sample){
+        est.textContent = quien.name.split(" ")[0] + " está redactando con tu respuesta…";
+        const pedido = quien.persona + "\n\n" + FACTS + "\n\nVas a redactar la respuesta a un correo de una clienta. Idioma de la clienta (" + (f.Idioma || "el del correo") + "). Escribe como Pilar en un correo normal: cercano, corto, de tú, respondiendo justo a lo que pregunta, sin frases de formulario. Cierra con \"Un saludo\" y esta firma, tal cual:\n" + FIRMA + "\n\nDevuelve SOLO el texto del correo.\n\nCorreo de la clienta:\n" + (f["Correo original"] || "") + "\n\nBorrador provisional:\n" + (f["Respuesta propuesta"] || "") + "\n\nTu duda era:\n" + d["Qué hay que decidir"] + "\n\nLo que ha contestado Pilar:\n" + v + "\n\nCatálogo no disponible aquí: no inventes ningún precio que Pilar no te haya dado.";
+        const r = await sample(pedido, {cache: false});
+        const nuevo = (r && r.text) || "";
+        if (nuevo){ await escribirHoja("Propuestas!H" + f._fila, [[nuevo]]); nota += "He pedido a " + quien.name.split(" ")[0] + " que lo redacte con tu respuesta: lo tienes ya en Envíos por aprobar."; trabajo.sel = {tipo: "envio", id: f.ID}; }
+      } else nota += "Guardada. Queda pendiente que " + quien.name.split(" ")[0] + " rehaga el borrador.";
+      D.t = 0; trabajo.nota = nota; recargar();
+    } catch (e){ est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que redacte." : mensajeHoja(e); ir.disabled = false; }
+  });
+  c.append(ta, el("div", {class:"acciones"}, ""), est); c.querySelector(".acciones").append(ir);
+  return c;
+}
+
+function detalleDecision(d, recargar){
+  const c = el("article", {class:"ficha"});
+  c.append(el("h3", {}, "Decisión pendiente"), el("p", {class:"resumen"}, d["Qué hay que decidir"]));
+  if (d["Recomendación"]) c.append(el("h4", {}, "Recomienda"), el("p", {class:"resumen"}, d["Recomendación"]));
+  c.append(el("p", {class:"motivo"}, "Lo pide: " + (d["Quién la pide"] || "") + " · Habla con: " + (d["Departamento con quien hablar"] || "")));
+  const nota = el("input", {type:"text", placeholder:"Nota o condición (opcional)", "aria-label":"Nota"}); const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+  const resolver = async v => { est.className = "estado"; est.textContent = "Guardando…";
+    try { if (!(await mismaFila("Decisiones", d._fila, d.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
+      await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]); D.t = 0; trabajo.nota = v + ": " + d["Qué hay que decidir"]; recargar(); }
+    catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); } };
+  const fila = el("div", {class:"acciones"}); fila.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada")));
+  c.append(nota, fila, est); return c;
+}
+
+function listaTareas(t, recargar){
+  const col = el("div", {class:"correos"});
+  const grupo = (titulo, items, tipo, pintaItem) => {
+    col.append(el("h3", {class:"grp"}, titulo + " (" + items.length + ")"));
+    if (!items.length) col.append(el("p", {class:"vacio"}, "Nada por aquí."));
+    items.forEach(x => { const id = x.ID; const b = el("button", {type:"button", class:"corr", "aria-pressed": String(trabajo.sel && trabajo.sel.tipo === tipo && trabajo.sel.id === id)}); pintaItem(b, x); b.onclick = () => { trabajo.sel = {tipo, id}; recargar(true); }; col.append(b); });
+  };
+  grupo("Dudas de mis empleadas", t.dudas, "duda", (b, d) => { b.className = "corr u2"; b.append(el("b", {}, d["Quién la pide"]), el("small", {}, d["Qué hay que decidir"]), el("span", {class:"mini"}, "Espera tu respuesta")); });
+  grupo("Envíos por aprobar", t.envios, "envio", (b, f) => { const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc); const u = nivel(f.Urgencia); b.className = "corr u" + u;
+    b.append(el("b", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, f.Asunto || ""), el("span", {class:"mini"}, f.Persona + " · " + (u ? nombreNivel(u) : "Sin valorar") + (fc && dd != null ? " · " + (dd >= 0 ? dd + " días" : "pasada") : " · sin fecha") + (f.Idioma && norm(f.Idioma) !== "es" ? " · " + f.Idioma.toUpperCase() : ""))); });
+  grupo("Decisiones", t.decs, "dec", (b, d) => { b.className = "corr u2"; b.append(el("b", {}, d["Quién la pide"]), el("small", {}, d["Qué hay que decidir"]), el("span", {class:"mini"}, "Confirmar o rechazar")); });
+  return col;
+}
+
+async function pintarTrabajo(box){
   box.textContent = "";
-  cabecera(box, "Panel de Pilar", "Todo lo que espera tu decisión, lo más urgente primero y con quién hablar de cada cosa.", () => pintarPilar(box));
+  cabecera(box, "Mi panel de trabajo", "Lo que me toca a mí: responder a las dudas de las chicas y aprobar los envíos.", () => { D.t = 0; pintarTrabajo(box); });
   if (!mcp){ sinAcceso(box); box.append(...pilarFijo()); return; }
   const m = mensajeCarga(box);
-  try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); box.append(...pilarFijo()); return; }
+  try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); return; }
   m.remove();
-  const ventas = DEPTS.find(x => x.id === "ventas");
-  const pend = D.prop.filter(esPendiente); const dec = D.dec.filter(x => norm(x.Estado) === "pendiente");
+  const t = tareasDe(); contarTareas();
   const k = el("div", {class:"kpis"});
-  k.append(kpi(dec.length, "decisiones tuyas", dec.length ? "ambar" : ""), kpi(pend.length, "correos por aprobar", pend.length ? "ambar" : ""), kpi(pend.filter(f => nivel(f.Urgencia) === 3).length, "urgentes", "rojo"), kpi(pend.filter(f => !parseFecha(f["Fecha ISO"]) && !f["Fecha ceremonia"]).length, "sin fecha de ceremonia"), kpi(D.prop.filter(f => f.Estado === "Aceptada").length, "aceptadas", "verde"));
+  k.append(kpi(t.dudas.length, "dudas por responder", t.dudas.length ? "ambar" : ""), kpi(t.envios.length, "envíos por aprobar", t.envios.length ? "ambar" : ""), kpi(t.envios.filter(f => nivel(f.Urgencia) === 3).length, "urgentes", "rojo"), kpi(t.decs.length, "decisiones"), kpi(D.prop.filter(f => f.Estado === "Aceptada").length, "aprobados", "verde"));
   box.append(k);
-  const sec = t => box.append(el("h3", {}, t));
-  // lo urgente
-  sec("Lo primero que mirar");
-  const top = pend.slice().sort((a, b) => nivel(b.Urgencia) - nivel(a.Urgencia) || ((parseFecha(a["Fecha ISO"]) || 9e15) - (parseFecha(b["Fecha ISO"]) || 9e15))).slice(0, 6);
-  if (!top.length) box.append(el("p", {class:"vacio"}, "No hay correos esperando tu OK."));
-  else { const ul = el("div", {class:"correos"}); top.forEach(f => { const pe = ventas.people.find(x => norm(x.name) === norm(f.Persona)); const u = nivel(f.Urgencia);
-    const b = el("button", {type:"button", class:"corr u" + u}); b.append(el("b", {}, (f.Clienta || f["Email clienta"] || "") + " · " + f.Persona), el("small", {}, f.Resumen || f.Asunto || ""), el("span", {class:"mini"}, (u ? nombreNivel(u) : "Sin valorar") + (f.Falta ? " · falta: " + f.Falta : "")));
-    b.onclick = () => { if (pe){ vista.tab[pe.id] = "pend"; irA("ventas", pe.id, f.ID); } }; ul.append(b); }); box.append(ul); }
-  // decisiones
-  sec("Decisiones pendientes (" + dec.length + ")");
-  if (!dec.length) box.append(el("p", {class:"vacio"}, "No hay nada esperando tu decisión."));
-  dec.forEach(d => {
-    const c = el("article", {class:"prop"}); c.append(el("b", {}, d["Qué hay que decidir"]));
-    if (d["Recomendación"]) c.append(el("p", {class:"motivo"}, "Recomienda: " + d["Recomendación"]));
-    c.append(el("p", {class:"motivo"}, "Lo pide: " + (d["Quién la pide"] || "") + " · Habla con: " + (d["Departamento con quien hablar"] || "")));
-    const nota = el("input", {type:"text", placeholder:"Nota o condición (opcional)", "aria-label":"Nota"}); const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
-    const resolver = async v => { est.className = "estado"; est.textContent = "Guardando…";
-      try { if (!(await mismaFila("Decisiones", d._fila, d.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
-        await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]); D.t = 0; c.textContent = ""; c.append(el("p", {class:"estado ok"}, v + ": " + d["Qué hay que decidir"])); }
-      catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); } };
-    const fila = el("div", {class:"acciones"}); fila.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada")));
-    c.append(nota, fila, est); box.append(c);
-  });
-  // ajustes que decide Pilar
-  sec("Lo que necesito que decidas para trabajar");
+  const tabs = [["tareas", "Mis tareas (" + (t.dudas.length + t.envios.length + t.decs.length) + ")"], ["ajustes", "Fechas y ajustes"], ["hecho", "Hecho"], ["quien", "Con quién hablar"]];
+  const barra = el("div", {class:"tabs", role:"tablist"});
+  tabs.forEach(([id, txt]) => { const b = el("button", {type:"button", role:"tab", class:"tab", "aria-selected": String(trabajo.tab === id)}, txt); b.onclick = () => { trabajo.tab = id; pintarTrabajo(box); }; barra.append(b); });
+  box.append(barra);
+  const cuerpo = el("div", {class:"tabcuerpo", role:"tabpanel"}); box.append(cuerpo);
+  if (trabajo.tab === "tareas"){
+    const aviso = el("p", {class:"estado ok", role:"status", "aria-live":"polite"}, trabajo.nota || ""); trabajo.nota = ""; cuerpo.append(aviso);
+    const todas = [].concat(t.dudas.map(x => ({tipo: "duda", id: x.ID})), t.envios.map(x => ({tipo: "envio", id: x.ID})), t.decs.map(x => ({tipo: "dec", id: x.ID})));
+    if (!todas.length){ cuerpo.append(el("p", {class:"vacio"}, "No te queda nada pendiente. Cuando entre un correo o una duda, aparecerá aquí.")); return; }
+    if (!trabajo.sel || !todas.some(x => x.tipo === trabajo.sel.tipo && x.id === trabajo.sel.id)) trabajo.sel = todas[0];
+    const recargar = () => pintarTrabajo(box);
+    const duo = el("div", {class:"duo"}); const det = el("div", {class:"detalle"});
+    duo.append(listaTareas(t, recargar), det); cuerpo.append(duo);
+    const s = trabajo.sel;
+    if (s.tipo === "duda") det.append(detalleDuda(t.dudas.find(x => x.ID === s.id), recargar));
+    else if (s.tipo === "dec") det.append(detalleDecision(t.decs.find(x => x.ID === s.id), recargar));
+    else { const f = t.envios.find(x => x.ID === s.id); det.append(ficha(f, personaDe(f.Persona), D, txt => { trabajo.nota = txt; trabajo.sel = null; recargar(); })); }
+  } else if (trabajo.tab === "ajustes") pintarAjustes(cuerpo, box);
+  else if (trabajo.tab === "hecho"){
+    const hs = D.prop.filter(f => f.Estado === "Aceptada").slice(-15).reverse();
+    cuerpo.append(el("h4", {}, "Envíos que has aprobado"));
+    if (!hs.length) cuerpo.append(el("p", {class:"vacio"}, "Todavía no has aprobado ninguno."));
+    hs.forEach(f => { const dt = el("details", {class:"ficha"}); dt.append(el("summary", {}, (f.Clienta || f["Email clienta"] || "") + " · " + (f.Asunto || "") + " · " + f.Persona), el("pre", {class:"orig"}, f["Respuesta final"] || f["Respuesta propuesta"] || "")); cuerpo.append(dt); });
+    cuerpo.append(el("p", {class:"nota"}, "Quedan listos para enviar; el envío todavía no está activado y el correo sigue sin leer en info@."));
+    const rs = D.dec.filter(x => norm(x.Estado) !== "pendiente").slice(-10).reverse();
+    if (rs.length){ cuerpo.append(el("h4", {}, "Dudas y decisiones resueltas")); const ul = el("ul", {class:"hist"}); rs.forEach(x => ul.append(el("li", {}, x.Estado + " · " + x["Qué hay que decidir"] + (x["Decisión de Pilar"] ? " → " + x["Decisión de Pilar"] : "")))); cuerpo.append(ul); }
+  } else cuerpo.append(...pilarFijo().slice(1));
+}
+
+function pintarAjustes(cuerpo, box){
+  cuerpo.append(el("h4", {}, "Lo que necesito que decidas para trabajar"));
   const form = el("div", {class:"ajustes"});
   [["pedidos_por_semana", "Pedidos por semana que aguanta el taller", 2], ["dias_pedir_medidas", "Días antes de la ceremonia para pedir las medidas", 3], ["dias_entrega_antes", "Días antes de la ceremonia en que debe estar entregado", 4]].forEach(([clave, txt, fila]) => {
     const l = el("label", {}, txt); const i = el("input", {type:"number", min:"0", value: D.aj[clave] || "", "aria-label": txt}); const e = el("span", {class:"estado"});
     const g = boton("Guardar", "sec", async () => { e.className = "estado"; e.textContent = "Guardando…"; try { await escribirHoja("Ajustes!B" + fila, [[i.value]]); D.aj[clave] = i.value; e.className = "estado ok"; e.textContent = "Guardado."; } catch (x){ e.className = "estado mal"; e.textContent = mensajeHoja(x); } });
     const w = el("div", {class:"aj"}); w.append(l, i, g, e); form.append(w);
   });
-  box.append(form);
-  // consignas
-  sec("Fechas cerradas o con condiciones");
+  cuerpo.append(form, el("h4", {}, "Fechas cerradas o con condiciones"));
   const vig = D.con.filter(x => norm(x.Vigente) !== "no" && x.Consigna);
-  if (!vig.length) box.append(el("p", {class:"vacio"}, "No hay ninguna consigna."));
-  else { const ul = el("ul", {class:"hist"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "")))); box.append(ul); }
+  if (!vig.length) cuerpo.append(el("p", {class:"vacio"}, "No hay ninguna consigna."));
+  else { const ul = el("ul", {class:"hist"}); vig.forEach(x => ul.append(el("li", {}, x.Consigna + (x["Hasta (fecha ceremonia)"] ? " · hasta " + x["Hasta (fecha ceremonia)"] : "")))); cuerpo.append(ul); }
   const nc = el("div", {class:"ajustes"}); const t1 = el("input", {type:"text", placeholder:"Ej.: no se aceptan pedidos para ceremonias antes del 20 de diciembre", "aria-label":"Nueva consigna"}); const t2 = el("input", {type:"text", placeholder:"Hasta qué fecha de ceremonia (opcional)", "aria-label":"Hasta"}); const e2 = el("span", {class:"estado"});
   const g2 = boton("Añadir consigna", "sec", async () => { if (!t1.value.trim()){ e2.className = "estado mal"; e2.textContent = "Escribe primero la consigna."; return; } e2.className = "estado"; e2.textContent = "Guardando…";
-    try { const n = D.con.length + 2; await escribirHoja("Consignas!A" + n + ":F" + n, [[new Date().toISOString().slice(0, 10), t2.value, t1.value, "Pilar", new Date().toISOString().slice(0, 10), "sí"]]); D.t = 0; pintarPilar(box); } catch (x){ e2.className = "estado mal"; e2.textContent = mensajeHoja(x); } });
-  const w2 = el("div", {class:"aj"}); w2.append(t1, t2, g2, e2); nc.append(w2); box.append(nc);
-  // por persona
-  sec("Correos por persona");
-  const grid = el("div", {class:"gente"});
-  ventas.people.forEach(p => { const mias = D.prop.filter(x => norm(x.Persona) === norm(p.name) && esPendiente(x)); const urg = mias.filter(x => nivel(x.Urgencia) === 3).length;
-    const b = el("button", {type:"button", class:"gp"}); b.append(el("b", {}, p.name), el("small", {}, p.role), el("span", {class:"n"}, mias.length ? mias.length + " por revisar" + (urg ? " · " + urg + " urgentes" : "") : "Al día"));
-    b.onclick = () => irA("ventas", p.id); grid.append(b); });
-  box.append(grid);
-  box.append(...pilarFijo());
+    try { const n = D.con.length + 2; const hoy = new Date().toISOString().slice(0, 10); await escribirHoja("Consignas!A" + n + ":F" + n, [[hoy, t2.value, t1.value, "Pilar", hoy, "sí"]]); D.t = 0; pintarTrabajo(box); } catch (x){ e2.className = "estado mal"; e2.textContent = mensajeHoja(x); } });
+  const w2 = el("div", {class:"aj"}); w2.append(t1, t2, g2, e2); nc.append(w2); cuerpo.append(nc);
+  cuerpo.append(el("h4", {}, "Ceremonias por semana"));
+  const marta = ventasGente().find(x => x.id === "marta"); tabCapacidad(cuerpo, marta, () => {});
 }
 
 function pilarFijo(){
@@ -919,11 +1043,17 @@ function pilarFijo(){
 }
 
 function renderBandeja(){
-  const box = $("#bandeja"); const main = $("#mainGrid");
-  if (modo === "pilar"){ main.hidden = true; box.hidden = false; pintarPilar(box); return; }
-  main.hidden = false;
-  if (deptId === "ventas"){ box.hidden = false; pintarPersona(box, person()); }
+  const box = $("#bandeja");
+  if (modo === "oficina" && deptId === "ventas"){ box.hidden = false; pintarPersona(box, person()); }
   else { box.hidden = true; box.textContent = ""; }
+}
+function renderTrabajo(){
+  const box = $("#trabajo");
+  if (modo === "panel"){ box.hidden = false; pintarTrabajo(box); } else { box.hidden = true; box.textContent = ""; }
+}
+function renderNav(){
+  $("#navOficina").setAttribute("aria-pressed", String(modo === "oficina")); $("#navPanel").setAttribute("aria-pressed", String(modo === "panel"));
+  ["#floor", "#scene", "#mainGrid"].forEach(q => { $(q).hidden = modo === "panel"; });
 }
 
 /* ---------- Oficina isométrica ---------- */
@@ -1026,10 +1156,12 @@ function renderScene(){
   });
 }
 
-function renderAll(){ if (modo === "pilar"){ renderScene(); renderFloor(); renderBandeja(); return; } if (!personId || !dept().people.some(p => p.id === personId)) personId = dept().people[0].id; renderScene(); renderFloor(); renderTeam(); renderChat(); renderBandeja(); }
-window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if (h === "pilar" && modo !== "pilar"){ modo = "pilar"; renderAll(); return; } if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
-if (empiezaPilar) modo = "pilar";
+function renderAll(){ renderNav(); if (modo === "panel"){ renderTrabajo(); renderBandeja(); return; } if (!personId || !dept().people.some(p => p.id === personId)) personId = dept().people[0].id; renderScene(); renderFloor(); renderTeam(); renderChat(); renderBandeja(); renderTrabajo(); }
+window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if ((h === "panel" || h === "pilar") && modo !== "panel"){ modo = "panel"; renderAll(); return; } if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
+$("#navOficina").onclick = () => { modo = "oficina"; history.replaceState(null, "", "#" + deptId); renderAll(); };
+$("#navPanel").onclick = () => { modo = "panel"; history.replaceState(null, "", "#panel"); renderAll(); };
+if (empiezaPanel) modo = "panel";
 renderAll();
-(async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample){ if (modo !== "pilar") renderChat(); } })();
-(async () => { try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; } if (mcp){ if (modo === "pilar" || deptId === "ventas") renderBandeja(); else if (deptId === "contabilidad") renderTeam(); } })();
+(async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample){ if (modo !== "panel") renderChat(); } })();
+(async () => { try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; } if (mcp){ contarTareas(); if (modo === "panel") renderTrabajo(); else if (deptId === "ventas") renderBandeja(); else if (deptId === "contabilidad") renderTeam(); } })();
 </script>
