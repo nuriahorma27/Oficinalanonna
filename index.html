@@ -100,6 +100,20 @@ form.send button:disabled{opacity:.5;cursor:default}
 .scene .zlabel{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;fill:#7b6a55}
 .scene-cap{margin:6px 8px 6px;color:var(--muted);font-size:13px}
 @media (max-width:700px){ .scene .char:not(.sel) .tag{display:none} }
+
+.extracto{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.extracto h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.extracto p{margin:0;font-size:14px}
+.extracto .fila{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.extracto select,.extracto input[type=file]{font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0;max-width:100%}
+.extracto button{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.extracto button.sec{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
+.extracto button:disabled{opacity:.5;cursor:default}
+.extracto .estado{min-height:1.4em;color:var(--muted);font-size:13.5px}
+.extracto .estado.ok{color:var(--cont)}
+.extracto .estado.mal{color:var(--com)}
+.extracto ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink)}
+.extracto a{color:var(--ink)}
 @media (max-width:900px){
   .floor{grid-template-columns:repeat(2,minmax(0,1fr))}
   .main{grid-template-columns:minmax(0,1fr)}
@@ -140,7 +154,7 @@ const FACTS = [
   "La Nonna es una tienda de ropa a medida para arras, bautizo y comunión (atelierlanonna.com). Hablas en español, con tono cercano, claro y cálido, tuteando.",
   "Cómo funciona hoy la contabilidad: cada mañana a las 7:30 un flujo guarda en Drive (carpeta Facturas pendientes) los PDF que llegan por correo; a las 7:45 otro flujo guarda las facturas de los pedidos completados de WooCommerce (FACTURAS EMITIDAS > PENDIENTES).",
   "Iván, el contable, clasifica esos archivos y los apunta en la hoja de Google del trimestre (pestañas Ingresos y Gastos). IVA de las ventas: 21 % incluido en el total. Los gastos van al trimestre de su fecha de factura y los ingresos al de la fecha de completado.",
-  "Cada mes, el día 2, Álvaro pide por correo a info@ el extracto de ingresos del banco; Iván empareja cada cobro con su pedido (Stripe, transferencias, pagos en dos partes) y lo que no cuadra va a una reunión mensual de una hora. Dato a 2 de noviembre de 2026: T4 2026 tiene 36 ingresos apuntados por 11.074,45 € (IVA 1.921,99 €, neto 9.152,46 €) y una factura de gasto (Google, 32,40 €).",
+  "Cada mes Álvaro pide por correo a info@ el extracto de ingresos del banco; Iván empareja cada cobro con su pedido (Stripe, transferencias, pagos en dos partes) y lo que no cuadra va a una reunión mensual de una hora, el primer martes del mes (a partir del día 4). A la reunión asiste Juan como interlocutor: lo que él decide es lo que se hace. Dato a 2 de noviembre de 2026: T4 2026 tiene 36 ingresos apuntados por 11.074,45 € (IVA 1.921,99 €, neto 9.152,46 €) y una factura de gasto (Google, 32,40 €).",
   "Límites de este chat: no tienes acceso a Drive, hojas ni correo desde aquí. Si te piden cifras exactas o que hagas el trabajo en los archivos, di que lo miren en la hoja o que te llamen como agente en Claude Code. Nunca inventes cifras ni datos fiscales.",
   "Cómo hablas: como una persona real de la oficina que escribe por chat. Frases cortas, tuteando y en primera persona. Contesta primero a lo que te preguntan, en una o dos frases, y añade algo más solo si hace falta (menos de 80 palabras salvo que te pidan más). Sin listas, títulos ni negritas salvo que haya cifras que comparar. Sin aperturas ni cierres de manual (nada de 'Claro', 'Por supuesto', 'Espero haberte ayudado'), sin emojis y sin jerga técnica. Si algo no cuadra o no lo sabes, dilo tal cual y pregunta una sola cosa."
 ].join("\n");
@@ -175,7 +189,7 @@ const DEPTS = [
         persona:"Eres Iván Soler, contable de La Nonna. Respondes ante Álvaro Mena. Haces todo el trabajo: lees las facturas de proveedores de la carpeta Facturas pendientes (descartas albaranes, packing lists y avisos del banco), las apuntas en Gastos con el trimestre de su fecha de factura, y apuntas en Ingresos los pedidos completados (IVA 21 % incluido) con el trimestre de su fecha de completado. Archivas cada PDF en su año y trimestre. Marcas lo dudoso, como una factura de la UE con IVA 0, un duplicado o un importe que no cuadra.",
         prompts:["¿Qué has apuntado esta semana?","¿Qué haces con un albarán?"] }
     ],
-    rhythm:[["Cada día","A las 7:30 y a las 7:45 llegan las facturas del día; Iván las apunta y las archiva"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","El día 2 Álvaro pide el extracto del banco; Iván lo cuadra con los pedidos y en la reunión de una hora se resuelven las dudas"]] },
+    rhythm:[["Cada día","A las 7:30 y a las 7:45 llegan las facturas del día; Iván las apunta y las archiva"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","Álvaro pide el extracto del banco; Iván lo cuadra con los pedidos. En la reunión, de una hora (se alarga si hace falta), Juan resuelve las dudas y sus decisiones mandan"]] },
   { id:"atencion", name:"Atención al cliente", sub:"Consultas, citas, seguimiento", c:"ate",
     blurb:"Acompaña a las familias desde la primera consulta hasta la entrega.",
     people:[{ id:"sofia", name:"Sofía Lara", role:"Atención al cliente y reservas", agent:"atencion-cliente",
@@ -245,6 +259,7 @@ function renderTeam(){
       const r = el("div", {class:"rhythm"}); r.append(el("h3", {}, "Ritmo del equipo"));
       const dl = el("dl"); d.rhythm.forEach(([a,b]) => dl.append(el("dt", {}, a), el("dd", {}, b))); r.append(dl); t.append(r);
     }
+    if (d.id === "contabilidad") t.append(bloqueExtracto());
   } else {
     const s = el("div", {class:"stack"}); d.people.forEach(p => s.append(personCard(p, d.c))); t.append(s);
   }
@@ -302,6 +317,95 @@ async function send(text){
   }
 }
 
+
+/* ---------- Subida del extracto del banco (Drive del viewer, via mcp) ---------- */
+const EXTRACTOS_FOLDER = "106soLlTKZT5tEYSpQlsKTWx9d5VvhtNP";
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const MIMES = {".csv":"text/csv", ".pdf":"application/pdf", ".xlsx":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xls":"application/vnd.ms-excel", ".txt":"text/plain", ".ofx":"application/x-ofx"};
+let mcp = null;
+
+function mesesDisponibles(){
+  const out = []; const hoy = new Date();
+  for (let i = 1; i <= 4; i++){ const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+    out.push({v: d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"), t: MESES[d.getMonth()] + " " + d.getFullYear()}); }
+  return out;
+}
+const aBase64 = f => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = () => ko(r.error); r.readAsDataURL(f); });
+
+function mensajeError(e){
+  const c = e && e.code;
+  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "No has permitido que esta página use tu Google Drive. Vuelve a pulsar el botón y acepta el permiso.";
+  if (c === "server_not_connected" || c === "selection_required") return "Google Drive no está conectado en tu cuenta de Claude. Conéctalo en Ajustes → Conectores.";
+  if (c === "needs_reauth") return "La conexión con Google Drive ha caducado. Vuelve a conectarla en Ajustes → Conectores.";
+  if (c === "blocked_by_policy") return "Tu organización no permite subir archivos a Drive desde aquí. Súbelo a mano a la carpeta.";
+  if (c === "server_unavailable" || c === "upstream_error") return "Drive no ha contestado. Comprueba la carpeta antes de volver a intentarlo, por si el archivo ya se ha subido.";
+  return "Drive no ha aceptado el archivo. Prueba a subirlo a mano a la carpeta.";
+}
+
+async function listarExtractos(ul, estado){
+  try{
+    const r = await mcp.callTool("Google Drive", "search_files", {query: "parentId = '" + EXTRACTOS_FOLDER + "'", excludeContentSnippets: true, pageSize: 30}, {cache: false});
+    const files = ((r.payload && r.payload.files) || []).slice().sort((a, b) => String(b.createdTime).localeCompare(String(a.createdTime))).slice(0, 8);
+    ul.textContent = "";
+    if (!files.length){ estado.textContent = "La carpeta está vacía."; return; }
+    estado.textContent = "";
+    files.forEach(f => { const li = el("li"); const d = new Date(f.createdTime); li.textContent = f.title + (isNaN(d) ? "" : " · " + d.toLocaleDateString("es-ES")); ul.append(li); });
+  } catch (e){ estado.className = "estado mal"; estado.textContent = mensajeError(e); }
+}
+
+function bloqueExtracto(){
+  const box = el("section", {class:"extracto", "aria-label":"Extracto del banco"});
+  box.append(el("h3", {}, "Extracto del banco"));
+  const nota = el("p", {}, "Sube aquí el extracto de ingresos del mes. Se guarda en Drive, en CONCILIACIÓN > Extractos del banco, y de ahí lo coge Iván.");
+  box.append(nota);
+  const enlace = el("a", {href:"https://drive.google.com/drive/folders/" + EXTRACTOS_FOLDER, target:"_blank", rel:"noopener"}, "Abrir la carpeta en Drive");
+  if (!mcp){
+    const p = el("p", {}); p.append("Desde esta vista no puedo subirlo por ti. Súbelo a mano: "); p.append(enlace); p.append(".");
+    box.append(p); return box;
+  }
+  const fila = el("div", {class:"fila"});
+  const sel = el("select", {id:"mesExtracto", "aria-label":"Mes del extracto"});
+  mesesDisponibles().forEach(m => sel.append(el("option", {value:m.v}, m.t)));
+  const file = el("input", {type:"file", id:"archivoExtracto", accept:".csv,.xlsx,.xls,.pdf,.ofx,.txt", "aria-label":"Archivo del extracto"});
+  const subir = el("button", {type:"button", id:"subirExtracto"}, "Subir extracto");
+  fila.append(sel, file, subir); box.append(fila);
+  const estado = el("p", {class:"estado", id:"estadoExtracto", role:"status", "aria-live":"polite"});
+  const ul = el("ul", {id:"listaExtractos"});
+  const ver = el("button", {type:"button", class:"sec"}, "Ver los ya subidos");
+  const f2 = el("div", {class:"fila"}); f2.append(ver, enlace);
+  box.append(estado, f2, ul);
+  ver.onclick = () => { estado.className = "estado"; estado.textContent = "Mirando la carpeta…"; listarExtractos(ul, estado); };
+  subir.onclick = async () => {
+    const f = file.files && file.files[0];
+    if (!f){ estado.className = "estado mal"; estado.textContent = "Elige primero el archivo del extracto."; return; }
+    subir.disabled = true; estado.className = "estado"; estado.textContent = "Subiendo…";
+    const ext = (f.name.match(/\.[A-Za-z0-9]+$/) || [""])[0].toLowerCase();
+    const seguro = f.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+    const tipo = f.type || MIMES[ext] || "application/octet-stream";
+    const base = {title: sel.value + "_extracto-ingresos_" + seguro, parentId: EXTRACTOS_FOLDER, contentMimeType: tipo, disableConversionToGoogleType: true};
+    try{
+      let lt = null; try { lt = await mcp.listTools(); } catch (e) { lt = null; }
+      let usado = "inline";
+      let input = Object.assign({}, base);
+      if (lt && lt.fileArgs){ input.base64Content = {$file: {data: f, name: seguro, type: tipo}}; usado = "file"; }
+      else if (f.size <= 700000){ input.base64Content = await aBase64(f); }
+      else { throw {code: "demasiado_grande"}; }
+      let r;
+      try { r = await mcp.callTool("Google Drive", "create_file", input); }
+      catch (e){
+        if (usado === "file" && e && e.code === "bad_request" && f.size <= 700000){ input = Object.assign({}, base, {base64Content: await aBase64(f)}); r = await mcp.callTool("Google Drive", "create_file", input); }
+        else throw e;
+      }
+      estado.className = "estado ok"; estado.textContent = "Subido: " + base.title + ". Ya se lo puede mirar Iván.";
+      file.value = "";
+      listarExtractos(ul, el("p"));
+    } catch (e){
+      estado.className = "estado mal";
+      estado.textContent = e && e.code === "demasiado_grande" ? "El archivo es muy grande para subirlo desde aquí. Súbelo a mano a la carpeta de Drive." : mensajeError(e);
+    } finally { subir.disabled = false; }
+  };
+  return box;
+}
 
 /* ---------- Oficina isométrica ---------- */
 const W = 15, H = 13, S = 34, OX = H*0.866*S + 30, OY = 120;
@@ -403,4 +507,5 @@ function renderAll(){ if (!personId || !dept().people.some(p => p.id === personI
 window.addEventListener("hashchange", () => { const h = location.hash.replace("#",""); if (DEPTS.some(d => d.id === h) && h !== deptId){ deptId = h; personId = null; renderAll(); } });
 renderAll();
 (async () => { try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; } if (sample) renderChat(); })();
+(async () => { try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; } if (mcp && deptId === "contabilidad") renderTeam(); })();
 </script>

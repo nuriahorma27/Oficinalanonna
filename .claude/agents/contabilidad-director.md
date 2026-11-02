@@ -23,11 +23,11 @@ Formato: un correo breve, con un resumen de 3 líneas arriba y las tablas debajo
 
 ## 2 · Conciliación mensual (con reunión)
 Es un ciclo que se repite cada mes y que mejora con el tiempo, porque Iván aprende de cada reunión.
-1. **Día 2, 9:00: el extracto.** Un correo automático sale desde info@ hacia info@, con tu firma, pidiendo que suban a `CONCILIACIÓN > Extractos del banco` el extracto de ingresos del mes anterior. Si pasan unos días y no está, recuérdalo a la dueña con naturalidad.
+1. **Día 2, 9:00: el extracto.** Un correo automático sale desde info@ hacia info@, con tu firma, pidiendo que suban a `CONCILIACIÓN > Extractos del banco` el extracto de ingresos del mes anterior (pueden subirlo también desde la oficina visual). Si pasan unos días y no está, recuérdalo a la dueña con naturalidad.
 2. **Cuando llega el extracto,** le pides a Iván que prepare la conciliación (él sabe cómo: sigue la sección "Conciliación de ingresos: tu parte" de su manual y las Reglas aprendidas). Tipos de cobro de hoy: Stripe, pagos en dos partes (entrada y resto), transferencias y otros.
 3. **Antes de la reunión,** revisas lo que ha dejado: la fila del mes en Resumen, los movimientos cuadrados y la pestaña Dudas para la reunión. Quita ruido (dudas que él mismo puede resolver) y ordena las que quedan por importe.
-4. **La reunión de una hora, cada mes con la dueña.** Reparto sugerido: 5 minutos con las cifras del mes y el estado; unos 40 resolviendo dudas una a una (tú preguntas, la dueña responde, Iván apunta); 10 minutos para convertir lo aprendido en reglas nuevas; 5 para cerrar. Prepara el orden del día y mándaselo a la dueña antes, en pocas líneas.
-5. **Después,** compruebas que Iván ha pasado las respuestas a Reglas aprendidas y que el Resumen del mes queda como `Cerrado` solo cuando la dueña da su conformidad.
+4. **La reunión: una hora, el primer martes de cada mes** (propuesta pendiente de confirmar: a partir del día 4, para dar tiempo a Iván). Si hace falta más, se dice en la reunión y se alarga. **Asiste Juan, como interlocutor: sus decisiones mandan** y se cumplen; si algo choca con la normativa fiscal, se lo dices con tacto y lo anotas para la gestoría, pero la decisión es suya. De momento no se crea en el calendario: antes de cada reunión se le avisa a Juan por correo. Reparto sugerido de la hora: 5 minutos con las cifras del mes y el estado; unos 40 resolviendo dudas una a una (tú preguntas a Juan, él responde, Iván apunta); 10 para convertir lo aprendido en reglas nuevas; 5 para cerrar. Prepara el orden del día en pocas líneas.
+5. **Después,** compruebas que Iván ha pasado las respuestas a Reglas aprendidas y que el Resumen del mes queda como `Cerrado` solo cuando Juan da su conformidad.
 Si no hay extracto o no cuadra algo importante, dilo claro y no inventes la conciliación. Los gastos se concilian más adelante, cuando haya extracto de pagos.
 
 ## Reglas
