@@ -250,6 +250,53 @@ form.send button:disabled{opacity:.5;cursor:default}
 .burbuja .orig{max-height:220px}
 .burbuja details{font-size:13.5px}.burbuja summary{cursor:pointer;color:var(--muted)}
 .burbuja.yo .txt-b{color:var(--bg)}
+
+.chatapp{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;height:min(76vh,780px);min-height:480px;background:var(--bg)}
+.c-lista{display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid var(--line);background:var(--surface)}
+.c-item{font:inherit;color:inherit;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;min-width:0}
+.c-item:hover{background:var(--bg)}.c-item.sel{background:var(--soft)}
+.c-txt{min-width:0;display:flex;flex-direction:column;gap:2px;flex:1}
+.c-l1{display:flex;gap:6px;align-items:center;justify-content:space-between}
+.c-l1 b{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-txt small{color:var(--muted);font-size:12.5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ate);color:var(--on-accent);display:grid;place-items:center;font-weight:700;font-size:14px}
+.av.sm{width:30px;height:30px;font-size:11.5px}
+.ventana{display:flex;flex-direction:column;min-width:0;min-height:0}
+.v-cab{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
+.v-cab>div:nth-child(2){flex:1 1 180px}.v-cab b{display:block;font-weight:600}.v-cab small{color:var(--muted);font-size:13px}
+.flujo{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msgrow{display:flex;gap:8px;align-items:flex-end;max-width:100%}
+.msgrow.yo{justify-content:flex-end}
+.bub{max-width:min(86%,640px);padding:9px 13px;border-radius:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.bub.ellas{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub.yo{background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.bub.yo .txt-b{color:var(--bg)}
+.hora{font-size:11px;opacity:.55;align-self:flex-end}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag-d{font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px}.tag-d em{font-style:normal;color:var(--muted)}
+.correo-card{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
+.correo-card small{color:var(--muted);font-size:12px}
+.bub details{font-size:13.5px}.bub summary{cursor:pointer;color:var(--muted)}
+.escribiendo{flex-direction:row;gap:4px;padding:12px 14px}
+.pto{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.5;animation:pto 1s infinite ease-in-out}
+.pto:nth-child(2){animation-delay:.15s}.pto:nth-child(3){animation-delay:.3s}
+@keyframes pto{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-4px);opacity:.9}}
+@media (prefers-reduced-motion:reduce){.pto{animation:none}}
+.v-pie{border-top:1px solid var(--line);background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.rapidas{display:flex;flex-wrap:wrap;gap:6px}
+.rapidas button{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.rapidas button:hover{border-color:var(--ink)}
+.compositor{display:flex;gap:8px;align-items:flex-end}
+.compositor textarea,.v-pie>textarea{flex:1;min-width:0;font:inherit;font-size:14.5px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:10px 14px;resize:none;max-height:140px;field-sizing:content}
+.compositor .env{font:inherit;font-weight:600;font-size:14px;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
+.compositor .env:disabled,.compositor textarea:disabled{opacity:.5}
+.chatapp .acciones button{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.chatapp .acciones button.sec{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500}
+.chatapp .acciones button.ok{background:var(--cont);border-color:var(--cont);color:#fff}
+.chatapp .borr textarea{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical}
+.chatapp .trad button{font:inherit;font-size:13px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.chatapp .estado{margin:0;min-height:1.2em;color:var(--muted);font-size:13.5px}.chatapp .estado.mal{color:var(--com)}
+@media (max-width:820px){.chatapp{grid-template-columns:1fr;height:auto}.c-lista{max-height:220px;border-right:0;border-bottom:1px solid var(--line)}.ventana{height:min(72vh,640px)}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -941,101 +988,163 @@ function botonTraducir(getTexto){
   caja.append(b, est, salida); return caja;
 }
 
+
+const horaAhora = () => new Date().toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"});
+const horaDe = x => { const m = String(x || "").match(/(\d{1,2}:\d{2})/); return m ? m[1] : ""; };
+
 function convInicial(f, p, duda){
-  const nombre = p.name.split(" ")[0]; const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc);
+  const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc); const h = horaDe(f.Recibido);
   const datos = [];
-  if (f.Prenda) datos.push("Prenda: " + f.Prenda);
-  datos.push("Ceremonia: " + (fc ? fmt(fc) + (dd != null && dd >= 0 ? " (faltan " + dd + " días)" : "") : "sin fecha todavía"));
-  if (f.Pago) datos.push("Pago: " + f.Pago);
-  if (f.Pedido) datos.push("Pedido: " + f.Pedido);
-  if (f.Falta) datos.push("Falta: " + f.Falta);
-  if (f.Alerta) datos.push("Ojo: " + f.Alerta);
-  const m = [{de: "ellas", contexto: true, texto: "Pilar, te cuento este correo de " + (f.Clienta || "una clienta") + (f.Asunto ? " (" + f.Asunto + ")" : "") + ".\n\n" + (f.Resumen || "") + "\n\n" + datos.join("\n")}];
-  if (duda) m.push({de: "ellas", texto: "Tengo una duda: " + duda["Qué hay que decidir"] + (duda["Recomendación"] ? "\n\nYo haría esto: " + duda["Recomendación"] : "") + "\n\nDime cómo lo hago y te rehago el borrador."});
-  m.push({de: "ellas", texto: duda ? "Mientras tanto, este es el borrador provisional:" : "Esto es lo que propongo contestar:", borrador: f["Respuesta propuesta"] || ""});
+  if (f.Prenda) datos.push(["Prenda", f.Prenda]);
+  datos.push(["Ceremonia", fc ? fmt(fc) + (dd != null && dd >= 0 ? " · faltan " + dd + " días" : "") : "sin fecha todavía"]);
+  if (f.Pago) datos.push(["Pago", f.Pago]);
+  if (f.Pedido) datos.push(["Pedido", f.Pedido]);
+  if (f.Falta) datos.push(["Falta", f.Falta]);
+  const m = [];
+  m.push({de: "ellas", t: h, texto: "Pilar, ha entrado un correo de " + (f.Clienta || "una clienta") + (f.Asunto ? " (" + f.Asunto + ")" : "") + "."});
+  if (f.Resumen) m.push({de: "ellas", texto: f.Resumen});
+  m.push({de: "ellas", datos});
+  if (f.Alerta) m.push({de: "ellas", texto: "Ojo: " + f.Alerta});
+  m.push({de: "ellas", texto: "Esto es lo que nos ha escrito:", correo: true});
+  if (duda){ m.push({de: "ellas", texto: "Tengo una duda: " + duda["Qué hay que decidir"]}); if (duda["Recomendación"]) m.push({de: "ellas", texto: "Yo haría esto: " + duda["Recomendación"] + "\n\n¿Cómo lo hago?"}); }
+  m.push({de: "ellas", texto: duda ? "Mientras tanto, te dejo un borrador provisional:" : "Y esto es lo que propongo contestarle:", borrador: f["Respuesta propuesta"] || ""});
   return m;
 }
 
-function chatTarea(f, p, duda, recargar){
-  const nombre = p.name.split(" ")[0];
+function pintaCorreoCard(f){
+  const c = el("div", {class:"correo-card"});
+  c.append(el("small", {}, (f.Clienta || "") + (f["Email clienta"] ? " · " + f["Email clienta"] : "")), el("pre", {class:"borr-txt"}, f["Correo original"] || ""));
+  if (f.Hilo){ const d = el("details"); d.append(el("summary", {}, "Ver lo que se habló antes en el hilo"), el("pre", {class:"orig"}, f.Hilo)); c.append(d); }
+  const hist = D.prop.filter(x => x.ID !== f.ID && x["Email clienta"] && norm(x["Email clienta"]) === norm(f["Email clienta"]));
+  if (hist.length){ const d3 = el("details"); d3.append(el("summary", {}, "Otros correos suyos (" + hist.length + ")"), el("pre", {class:"orig"}, hist.slice(-5).map(x => (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || "")).join("\n"))); c.append(d3); }
+  return c;
+}
+
+const RAPIDAS = ["Más corto", "Más cercano", "Pídele primero la fecha de la ceremonia", "Dale el precio de la web"];
+
+/* Ventana de chat: sirve para envíos, dudas y decisiones */
+function ventanaChat(it, recargar){
+  if (!it.f && it.tipo !== "dec") return detalleDuda(it.d, recargar);
+  const p = personaDe(it.quien); const nombre = p.name.split(" ")[0]; const f = it.f; const duda = it.tipo === "duda" ? it.d : null;
+  const w = el("section", {class:"ventana", "aria-label":"Chat con " + p.name});
+  const cab = el("header", {class:"v-cab"}); const t = el("div"); t.append(el("b", {}, p.name), el("small", {}, p.role + (it.titulo ? " · " + it.titulo : "")));
+  const ch = el("div", {class:"chips-f"}); if (f){ const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u)); if (!esEspañol(f)) ch.append(chip("Se contesta en " + (norm(f.Idioma) === "en" ? "inglés" : norm(f.Idioma) === "fr" ? "francés" : f.Idioma), "u2")); }
+  cab.append(el("div", {class:"av ate"}, initials(p.name)), t, ch); w.append(cab);
+  const flujo = el("div", {class:"flujo", role:"log", "aria-live":"polite"}); w.append(flujo);
+  const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+
+  /* ---- decisión: mensaje con botones ---- */
+  if (it.tipo === "dec"){
+    const d = it.d;
+    const pie = el("footer", {class:"v-pie"}); const nota = el("textarea", {rows:"2", placeholder:"Una nota o condición (opcional)…", "aria-label":"Nota"});
+    const resolver = async v => { est.className = "estado"; est.textContent = "Guardando…";
+      try { if (!(await mismaFila("Decisiones", d._fila, d.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
+        await escribirHoja("Decisiones!G" + d._fila + ":H" + d._fila, [[v, nota.value]]); D.t = 0; trabajo.nota = v + ": " + d["Qué hay que decidir"]; trabajo.sel = null; recargar(); }
+      catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); } };
+    const fila = el("div", {class:"msgrow"}); fila.append(el("div", {class:"av ate sm"}, initials(p.name)));
+    const b = el("div", {class:"bub ellas"}); b.append(el("p", {class:"txt-b"}, "Necesito que decidas esto: " + d["Qué hay que decidir"]));
+    if (d["Recomendación"]) b.append(el("p", {class:"txt-b"}, "Yo recomendaría: " + d["Recomendación"]));
+    const acc = el("div", {class:"acciones"}); acc.append(boton("Confirmar", "ok", () => resolver("Confirmada")), boton("Rechazar", "sec", () => resolver("Rechazada"))); b.append(acc);
+    fila.append(b); flujo.append(fila);
+    pie.append(nota, est); w.append(pie); return w;
+  }
+
   let conv = convs.get(f.ID);
   if (!conv){ try { conv = f["Conversación"] ? JSON.parse(f["Conversación"]) : null; } catch (e){ conv = null; } if (!conv || !conv.length) conv = convInicial(f, p, duda); convs.set(f.ID, conv); }
-  const c = el("article", {class:"ficha chat-t"});
-  const cab = el("div", {class:"ficha-cab"}); const t = el("div");
-  t.append(el("h3", {}, "Hablando con " + p.name), el("small", {}, p.role + " · " + (f.Clienta || f["Email clienta"] || "")));
-  const ch = el("div", {class:"chips-f"}); const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u)); if (!esEspañol(f)) ch.append(chip("Se contesta en " + (norm(f.Idioma) === "en" ? "inglés" : norm(f.Idioma) === "fr" ? "francés" : f.Idioma), "u2"));
-  cab.append(t, ch); c.append(cab);
-  const log = el("div", {class:"conv", role:"log", "aria-live":"polite"}); c.append(log);
-  const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
   const ultimoBorrador = () => { for (let i = conv.length - 1; i >= 0; i--) if (conv[i].borrador != null) return i; return -1; };
-  let editando = false;
+  let editando = false; let escribiendo = false;
 
-  const pintar = () => {
-    log.textContent = ""; const ib = ultimoBorrador();
-    conv.forEach((m, i) => {
-      const w = el("div", {class:"burbuja " + (m.de === "pilar" ? "yo" : "ellas")});
-      w.append(el("small", {class:"quien-b"}, m.de === "pilar" ? "Tú" : nombre));
-      if (m.texto) w.append(el("p", {class:"txt-b"}, m.texto));
-      if (m.contexto){
-        if (f.Hilo){ const d = el("details"); d.append(el("summary", {}, "Ver el hilo de correos"), el("pre", {class:"orig"}, f.Hilo)); w.append(d); }
-        const d2 = el("details"); d2.append(el("summary", {}, "Leer el último correo de " + (f.Clienta || "la clienta")), el("pre", {class:"orig"}, f["Correo original"] || "")); w.append(d2);
-        const hist = D.prop.filter(x => x.ID !== f.ID && x["Email clienta"] && norm(x["Email clienta"]) === norm(f["Email clienta"]));
-        if (hist.length){ const d3 = el("details"); d3.append(el("summary", {}, "Otros correos suyos (" + hist.length + ")"), el("pre", {class:"orig"}, hist.slice(-5).map(x => (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || "")).join("\n"))); w.append(d3); }
-      }
-      if (m.borrador != null){
-        const b = el("div", {class:"borr" + (i === ib ? " actual" : "")});
-        if (i === ib && editando){ const ta = el("textarea", {rows:"10", "aria-label":"Editar el borrador"}); ta.value = m.borrador; b.append(ta);
-          b.append(boton("Guardar cambios", "ok", async () => { m.borrador = ta.value; editando = false; await guardar(true); pintar(); }), boton("Cancelar", "sec", () => { editando = false; pintar(); })); }
-        else { b.append(el("pre", {class:"borr-txt"}, m.borrador)); if (!esEspañol(f)) b.append(botonTraducir(() => m.borrador)); }
-        w.append(b);
-      }
-      log.append(w);
-    });
-    if (conv.some(m => m.de === "pilar")) log.scrollTop = log.scrollHeight;
-  };
-
-  const guardar = async (conBorrador) => {
+  const guardar = async conBorrador => {
     const ib = ultimoBorrador();
-    try {
-      if (conBorrador && ib >= 0) await escribirHoja("Propuestas!H" + f._fila, [[conv[ib].borrador]]);
-      await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
-    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+    try { if (conBorrador && ib >= 0) await escribirHoja("Propuestas!H" + f._fila, [[conv[ib].borrador]]); await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]); }
+    catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
   };
-
   const aprobar = async () => {
     const ib = ultimoBorrador(); if (ib < 0) return;
     est.className = "estado"; est.textContent = "Guardando…";
     try {
       if (!(await mismaFila("Propuestas", f._fila, f.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
-      conv.push({de: "ellas", texto: "Hecho, queda aprobada para enviar."});
+      conv.push({de: "ellas", t: horaAhora(), texto: "Hecho, queda aprobada para enviar."});
       await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", conv[ib].borrador]]);
       await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
       D.t = 0; convs.delete(f.ID); trabajo.nota = "Aprobada la respuesta para " + (f.Clienta || "la clienta") + ". Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@."; trabajo.sel = null; recargar();
     } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
   };
 
-  const entrada = el("textarea", {rows:"3", placeholder:"Dile a " + nombre + " cómo tiene que contestar si no es así…", "aria-label":"Tu mensaje a " + nombre});
-  const enviar = boton("Enviar a " + nombre, "", async () => {
-    const v = entrada.value.trim(); if (!v) return;
+  const pintar = () => {
+    flujo.textContent = ""; const ib = ultimoBorrador(); let ultimaHora = "";
+    conv.forEach((m, i) => {
+      if (m.de === "pilar"){ const r = el("div", {class:"msgrow yo"}); const b = el("div", {class:"bub yo"}); b.append(el("p", {class:"txt-b"}, m.texto)); if (m.t) b.append(el("span", {class:"hora"}, m.t)); r.append(b); flujo.append(r); return; }
+      const r = el("div", {class:"msgrow"}); r.append(el("div", {class:"av ate sm"}, initials(p.name)));
+      const b = el("div", {class:"bub ellas"});
+      if (m.texto) b.append(el("p", {class:"txt-b"}, m.texto));
+      if (m.datos){ const g = el("div", {class:"tags"}); m.datos.forEach(([k, v]) => { const tg = el("span", {class:"tag-d"}); tg.append(el("em", {}, k), " " + v); g.append(tg); }); b.append(g); }
+      if (m.correo) b.append(pintaCorreoCard(f));
+      if (m.borrador != null){
+        const bo = el("div", {class:"borr" + (i === ib ? " actual" : "")});
+        if (i === ib && editando){ const ta = el("textarea", {rows:"10", "aria-label":"Editar el borrador"}); ta.value = m.borrador; bo.append(ta);
+          const ac = el("div", {class:"acciones"}); ac.append(boton("Guardar cambios", "ok", async () => { m.borrador = ta.value; editando = false; await guardar(true); pintar(); }), boton("Cancelar", "sec", () => { editando = false; pintar(); })); bo.append(ac); }
+        else { bo.append(el("pre", {class:"borr-txt"}, m.borrador)); if (!esEspañol(f)) bo.append(botonTraducir(() => m.borrador));
+          if (i === ib){ const ac = el("div", {class:"acciones"}); ac.append(boton("Aprobar este envío", "ok", aprobar), boton("Lo edito yo", "sec", () => { editando = true; pintar(); })); bo.append(ac); } }
+        b.append(bo);
+      }
+      if (m.t) b.append(el("span", {class:"hora"}, m.t));
+      r.append(b); flujo.append(r);
+    });
+    if (escribiendo){ const r = el("div", {class:"msgrow"}); r.append(el("div", {class:"av ate sm"}, initials(p.name))); const b = el("div", {class:"bub ellas escribiendo"}); b.append(el("span", {class:"pto"}), el("span", {class:"pto"}), el("span", {class:"pto"})); b.setAttribute("aria-label", nombre + " está escribiendo"); r.append(b); flujo.append(r); }
+    if (conv.some(m => m.de === "pilar")) flujo.scrollTop = flujo.scrollHeight;
+  };
+
+  const pie = el("footer", {class:"v-pie"});
+  const rap = el("div", {class:"rapidas"});
+  const entrada = el("textarea", {rows:"1", placeholder:"Escribe a " + nombre + "…", "aria-label":"Tu mensaje a " + nombre});
+  const enviarTxt = async v => {
+    v = String(v || "").trim(); if (!v || escribiendo) return;
     if (!sample){ est.className = "estado mal"; est.textContent = "Desde esta vista no puedo hablar con " + nombre + ". Usa Lo edito yo."; return; }
-    enviar.disabled = true; entrada.disabled = true; conv.push({de: "pilar", texto: v}); entrada.value = ""; pintar();
-    est.className = "estado"; est.textContent = nombre + " está con ello…";
+    conv.push({de: "pilar", t: horaAhora(), texto: v}); entrada.value = ""; escribiendo = true; entrada.disabled = true; pintar(); flujo.scrollTop = flujo.scrollHeight;
+    est.className = "estado"; est.textContent = "";
     try {
       if (duda && norm(duda.Estado) === "pendiente"){ try { await escribirHoja("Decisiones!G" + duda._fila + ":H" + duda._fila, [["Respondida", v]]); duda.Estado = "Respondida"; } catch (e){} }
       const hilo = conv.map(m => (m.de === "pilar" ? "PILAR: " : nombre.toUpperCase() + ": ") + (m.texto || "") + (m.borrador != null ? "\n[BORRADOR]\n" + m.borrador + "\n[/BORRADOR]" : "")).join("\n\n");
       const pedido = p.persona + "\n\n" + FACTS + "\n\nEstás hablando por chat con Pilar sobre un correo de una clienta. Ella te dice cómo tiene que ser la respuesta y tú reformulas el borrador. " + ESTILO + "\n\nIdioma del correo para la clienta: " + (f.Idioma || "el del correo") + ". Firma al final, tal cual:\n" + FIRMA + "\n\nDATOS: " + [f.Resumen, f.Prenda && "Prenda: " + f.Prenda, f.Pago && "Pago: " + f.Pago, f["Fecha ceremonia"] && "Ceremonia: " + f["Fecha ceremonia"], f.Falta && "Falta: " + f.Falta].filter(Boolean).join(" · ") + (f.Hilo ? "\n\nHILO DE CORREOS ANTERIOR:\n" + f.Hilo : "") + "\n\nÚLTIMO CORREO DE LA CLIENTA:\n" + (f["Correo original"] || "") + "\n\nCONVERSACIÓN HASTA AHORA:\n" + hilo + "\n\nResponde con DOS partes separadas por una línea que solo tenga ---. Primera: una frase corta dirigida a Pilar, en primera persona y natural (por ejemplo \"Vale, lo cambio así:\"). Segunda: el correo completo para la clienta, con la firma. Nada más. No inventes precios que Pilar no te haya dado.";
       const r = await sample(pedido, {cache: false}); const txt = (r && r.text) || "";
       const partes = txt.split(/\n-{3,}\n/); const comentario = partes.length > 1 ? partes[0].trim() : "Vale, aquí lo tienes:"; const correo = (partes.length > 1 ? partes.slice(1).join("\n---\n") : txt).trim();
-      conv.push({de: "ellas", texto: comentario, borrador: correo});
-      await guardar(true); est.className = "estado"; est.textContent = "";
-    } catch (e){ conv.pop(); est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que " + nombre + " pueda contestarte." : nombre + " no ha podido contestar. Inténtalo otra vez."; entrada.value = v; }
-    enviar.disabled = false; entrada.disabled = false; pintar();
+      conv.push({de: "ellas", t: horaAhora(), texto: comentario, borrador: correo});
+      escribiendo = false; await guardar(true);
+    } catch (e){ conv.pop(); escribiendo = false; est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que " + nombre + " pueda contestarte." : nombre + " no ha podido contestar. Inténtalo otra vez."; entrada.value = v; }
+    entrada.disabled = false; pintar(); entrada.focus();
+  };
+  RAPIDAS.forEach(q => rap.append(boton(q, "", () => enviarTxt(q))));
+  const fila = el("div", {class:"compositor"}); const envBtn = el("button", {type:"button", class:"env", "aria-label":"Enviar a " + nombre}, "Enviar"); envBtn.onclick = () => enviarTxt(entrada.value);
+  entrada.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); enviarTxt(entrada.value); } });
+  fila.append(entrada, envBtn); pie.append(rap, fila, est); w.append(pie);
+  pintar(); return w;
+}
+
+function itemsChat(t){
+  const out = [];
+  t.dudas.forEach(d => { const f = D.prop.find(x => x.ID === d["ID propuesta"]); out.push({tipo: "duda", id: d.ID, d, f, quien: d["Quién la pide"], nivel: f ? nivel(f.Urgencia) : 2, titulo: f ? (f.Clienta || f["Email clienta"] || "") : "", preview: "Duda: " + d["Qué hay que decidir"]}); });
+  t.decs.forEach(d => out.push({tipo: "dec", id: d.ID, d, quien: d["Quién la pide"], nivel: 2, titulo: "Decisión", preview: d["Qué hay que decidir"]}));
+  t.envios.forEach(f => { let prev = f.Resumen || f.Asunto || ""; try { const c = f["Conversación"] ? JSON.parse(f["Conversación"]) : null; if (c && c.length){ const u = c[c.length - 1]; prev = (u.de === "pilar" ? "Tú: " : "") + (u.texto || (u.borrador ? "Borrador nuevo" : prev)); } } catch (e){}
+    out.push({tipo: "envio", id: f.ID, f, quien: f.Persona, nivel: nivel(f.Urgencia), titulo: f.Clienta || f["Email clienta"] || "", preview: prev}); });
+  return out.sort((a, b) => b.nivel - a.nivel);
+}
+
+function chatApp(t, recargar, box){
+  const items = itemsChat(t);
+  if (!items.length) return el("p", {class:"vacio"}, "No te queda nada pendiente. Cuando entre un correo o una duda, aparecerá aquí como un mensaje.");
+  if (!trabajo.sel || !items.some(x => x.tipo === trabajo.sel.tipo && x.id === trabajo.sel.id)) trabajo.sel = {tipo: items[0].tipo, id: items[0].id};
+  const app = el("div", {class:"chatapp"}); const lista = el("nav", {class:"c-lista", "aria-label":"Conversaciones"});
+  items.forEach(it => {
+    const p = personaDe(it.quien); const sel = trabajo.sel.tipo === it.tipo && trabajo.sel.id === it.id;
+    const b = el("button", {type:"button", class:"c-item" + (sel ? " sel" : ""), "aria-pressed": String(sel)});
+    const txt = el("div", {class:"c-txt"}); const l1 = el("div", {class:"c-l1"}); l1.append(el("b", {}, p.name.split(" ")[0] + (it.titulo ? " · " + it.titulo : "")));
+    if (it.tipo === "duda") l1.append(chip("duda", "u2")); else if (it.tipo === "dec") l1.append(chip("decidir", "u2")); else if (it.nivel === 3) l1.append(chip("urgente", "u3"));
+    txt.append(l1, el("small", {}, it.preview));
+    b.append(el("div", {class:"av ate"}, initials(p.name)), txt); b.onclick = () => { trabajo.sel = {tipo: it.tipo, id: it.id}; pintarTrabajo(box); }; lista.append(b);
   });
-  entrada.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); enviar.click(); } });
-  const pie = el("div", {class:"pie-chat"}); const fila = el("div", {class:"acciones"});
-  fila.append(boton("Aprobar este envío", "ok", aprobar), boton("Lo edito yo", "sec", () => { editando = true; pintar(); }), enviar);
-  pie.append(entrada, fila, est); c.append(pie);
-  pintar(); return c;
+  const it = items.find(x => x.tipo === trabajo.sel.tipo && x.id === trabajo.sel.id);
+  app.append(lista, ventanaChat(it, recargar)); return app;
 }
 
 function detalleDuda(d, recargar){
@@ -1088,48 +1197,22 @@ function detalleDecision(d, recargar){
   c.append(nota, fila, est); return c;
 }
 
-function listaTareas(t, recargar){
-  const col = el("div", {class:"correos"});
-  const grupo = (titulo, items, tipo, pintaItem) => {
-    col.append(el("h3", {class:"grp"}, titulo + " (" + items.length + ")"));
-    if (!items.length) col.append(el("p", {class:"vacio"}, "Nada por aquí."));
-    items.forEach(x => { const id = x.ID; const b = el("button", {type:"button", class:"corr", "aria-pressed": String(trabajo.sel && trabajo.sel.tipo === tipo && trabajo.sel.id === id)}); pintaItem(b, x); b.onclick = () => { trabajo.sel = {tipo, id}; recargar(true); }; col.append(b); });
-  };
-  grupo("Dudas de mis empleadas", t.dudas, "duda", (b, d) => { b.className = "corr u2"; b.append(el("b", {}, d["Quién la pide"]), el("small", {}, d["Qué hay que decidir"]), el("span", {class:"mini"}, "Espera tu respuesta")); });
-  grupo("Envíos por aprobar", t.envios, "envio", (b, f) => { const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc); const u = nivel(f.Urgencia); b.className = "corr u" + u;
-    b.append(el("b", {}, f.Clienta || f["Email clienta"] || "Sin nombre"), el("small", {}, f.Asunto || ""), el("span", {class:"mini"}, f.Persona + " · " + (u ? nombreNivel(u) : "Sin valorar") + (fc && dd != null ? " · " + (dd >= 0 ? dd + " días" : "pasada") : " · sin fecha") + (f.Idioma && norm(f.Idioma) !== "es" ? " · " + f.Idioma.toUpperCase() : ""))); });
-  grupo("Decisiones", t.decs, "dec", (b, d) => { b.className = "corr u2"; b.append(el("b", {}, d["Quién la pide"]), el("small", {}, d["Qué hay que decidir"]), el("span", {class:"mini"}, "Confirmar o rechazar")); });
-  return col;
-}
-
 async function pintarTrabajo(box){
   box.textContent = "";
-  cabecera(box, "Mi panel de trabajo", "Cada tarea es una conversación con la empleada: te cuenta el caso, te propone la respuesta y tú le dices cómo cambiarla hasta que te guste.", () => { D.t = 0; pintarTrabajo(box); });
+  cabecera(box, "Mi panel de trabajo", "Tus empleadas te escriben cuando necesitan algo. Contéstales aquí como en un chat.", () => { D.t = 0; pintarTrabajo(box); });
   if (!mcp){ sinAcceso(box); box.append(...pilarFijo()); return; }
   const m = mensajeCarga(box);
   try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); return; }
   m.remove();
   const t = tareasDe(); contarTareas();
-  const k = el("div", {class:"kpis"});
-  k.append(kpi(t.dudas.length, "dudas por responder", t.dudas.length ? "ambar" : ""), kpi(t.envios.length, "envíos por aprobar", t.envios.length ? "ambar" : ""), kpi(t.envios.filter(f => nivel(f.Urgencia) === 3).length, "urgentes", "rojo"), kpi(t.decs.length, "decisiones"), kpi(D.prop.filter(f => f.Estado === "Aceptada").length, "aprobados", "verde"));
-  box.append(k);
-  const tabs = [["tareas", "Mis tareas (" + (t.dudas.length + t.envios.length + t.decs.length) + ")"], ["ajustes", "Fechas y ajustes"], ["hecho", "Hecho"], ["quien", "Con quién hablar"]];
+  const tabs = [["tareas", "Mis chats (" + (t.dudas.length + t.envios.length + t.decs.length) + ")"], ["ajustes", "Fechas y ajustes"], ["hecho", "Hecho"], ["quien", "Con quién hablar"]];
   const barra = el("div", {class:"tabs", role:"tablist"});
   tabs.forEach(([id, txt]) => { const b = el("button", {type:"button", role:"tab", class:"tab", "aria-selected": String(trabajo.tab === id)}, txt); b.onclick = () => { trabajo.tab = id; pintarTrabajo(box); }; barra.append(b); });
   box.append(barra);
   const cuerpo = el("div", {class:"tabcuerpo", role:"tabpanel"}); box.append(cuerpo);
   if (trabajo.tab === "tareas"){
     const aviso = el("p", {class:"estado ok", role:"status", "aria-live":"polite"}, trabajo.nota || ""); trabajo.nota = ""; cuerpo.append(aviso);
-    const todas = [].concat(t.dudas.map(x => ({tipo: "duda", id: x.ID})), t.envios.map(x => ({tipo: "envio", id: x.ID})), t.decs.map(x => ({tipo: "dec", id: x.ID})));
-    if (!todas.length){ cuerpo.append(el("p", {class:"vacio"}, "No te queda nada pendiente. Cuando entre un correo o una duda, aparecerá aquí.")); return; }
-    if (!trabajo.sel || !todas.some(x => x.tipo === trabajo.sel.tipo && x.id === trabajo.sel.id)) trabajo.sel = todas[0];
-    const recargar = () => pintarTrabajo(box);
-    const duo = el("div", {class:"duo"}); const det = el("div", {class:"detalle"});
-    duo.append(listaTareas(t, recargar), det); cuerpo.append(duo);
-    const s = trabajo.sel;
-    if (s.tipo === "duda"){ const d = t.dudas.find(x => x.ID === s.id); const f = D.prop.find(x => x.ID === d["ID propuesta"]); det.append(f ? chatTarea(f, personaDe(d["Quién la pide"]), d, recargar) : detalleDuda(d, recargar)); }
-    else if (s.tipo === "dec") det.append(detalleDecision(t.decs.find(x => x.ID === s.id), recargar));
-    else { const f = t.envios.find(x => x.ID === s.id); det.append(chatTarea(f, personaDe(f.Persona), null, recargar)); }
+    cuerpo.append(chatApp(t, () => pintarTrabajo(box), box));
   } else if (trabajo.tab === "ajustes") pintarAjustes(cuerpo, box);
   else if (trabajo.tab === "hecho"){
     const hs = D.prop.filter(f => f.Estado === "Aceptada").slice(-15).reverse();
