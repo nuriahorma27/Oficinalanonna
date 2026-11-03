@@ -704,7 +704,7 @@ async function traducir(texto){
   const t = (r && r.text) || ""; trad.set(texto, t); return t;
 }
 function bloqueTraduccion(f, ta, c){
-  const esEs = !f.Idioma || ["es", "espanol", "spanish"].includes(norm(f.Idioma));
+  const esEs = (!f.Idioma || ["es", "espanol", "spanish"].includes(norm(f.Idioma))) && idiomaDe(ta.value) === "es";
   if (esEs) return;
   const caja = el("div", {class:"trad"});
   const salida = el("p", {class:"trad-txt", hidden:"hidden"});
@@ -979,6 +979,18 @@ async function contarTareas(){
 /* ---------- Cada tarea es una conversación con la empleada ---------- */
 const convs = new Map();
 const ESTILO = "Escribe como Pilar en un correo normal, no como una empresa: cercano, corto, de tú (de usted solo si la clienta lo usa), respondiendo justo a lo que pregunta y sin frases de formulario (\"no dudes en\", \"quedamos a tu disposición\", \"gracias por contactar\", \"un abrazo\"). Cierra con \"Un saludo\". Nunca digas que algo de la web \"se puede estudiar\": los precios están en la web de La Nonna y no se inventan. Las medidas se toman por videollamada: la clienta necesita un metro de costura y al niño o niña delante, y se le envía un documento con cómo medirles. No hay fecha máxima para encargar: se recomienda hacerlo cuanto antes porque la agenda se va llenando y se rechazan pedidos. No confirmes citas, fechas ni plazos que no te haya dado Pilar. Si hablas de pago, pide el número de pedido en el concepto o el justificante.";
+
+function idiomaDe(t){
+  t = " " + String(t || "").toLowerCase().replace(/a t e l i e r[\s\S]*$/, "").replace(/[^a-záéíóúüñàâçèêëîïôùûœ\s]/g, " ").replace(/\s+/g, " ") + " ";
+  const cuenta = lista => lista.reduce((n, w) => n + (t.split(" " + w + " ").length - 1), 0);
+  const es = cuenta(["de", "que", "el", "la", "los", "las", "y", "en", "un", "una", "para", "con", "por", "gracias", "buenos", "buenas", "hola", "saludo", "te", "tu", "nos", "es", "muchas", "días", "dinos", "pedido", "si", "lo", "se"]);
+  const en = cuenta(["the", "and", "you", "your", "for", "thank", "thanks", "good", "morning", "afternoon", "best", "regards", "we", "is", "are", "to", "of", "with", "please", "will", "have", "this", "that", "our", "wishes", "hello", "dear"]);
+  const fr = cuenta(["le", "les", "des", "vous", "votre", "est", "nous", "pour", "bonjour", "merci", "avec", "une", "et", "cordialement", "je", "pas", "bonsoir", "du"]);
+  if (en > es && en >= fr) return "en";
+  if (fr > es && fr > en) return "fr";
+  return "es";
+}
+const NOMBRE_IDIOMA = {en: "inglés", fr: "francés"};
 const esEspañol = f => !f.Idioma || ["es", "espanol", "spanish"].includes(norm(f.Idioma));
 
 function botonTraducir(getTexto){
@@ -1047,7 +1059,7 @@ function ventanaChat(it, recargar){
   const p = personaDe(it.quien); const nombre = p.name.split(" ")[0]; const f = it.f; const duda = it.tipo === "duda" ? it.d : null;
   const w = el("section", {class:"ventana", "aria-label":"Chat con " + p.name});
   const cab = el("header", {class:"v-cab"}); const t = el("div"); t.append(el("b", {}, p.name), el("small", {}, p.role + (it.titulo ? " · " + it.titulo : "")));
-  const ch = el("div", {class:"chips-f"}); if (f){ const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u)); if (!esEspañol(f)) ch.append(chip("Se contesta en " + (norm(f.Idioma) === "en" ? "inglés" : norm(f.Idioma) === "fr" ? "francés" : f.Idioma), "u2")); }
+  const ch = el("div", {class:"chips-f"}); if (f){ const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u)); { const ib0 = (f["Respuesta propuesta"] || ""); const idi = idiomaDe(ib0); const nombreIdi = idi !== "es" ? NOMBRE_IDIOMA[idi] : (!esEspañol(f) ? (NOMBRE_IDIOMA[norm(f.Idioma)] || f.Idioma) : ""); if (nombreIdi) ch.append(chip("Se contesta en " + nombreIdi, "u2")); } }
   cab.append(el("div", {class:"av ate"}, initials(p.name)), t, ch); w.append(cab);
   const flujo = el("div", {class:"flujo", role:"log", "aria-live":"polite"}); w.append(flujo);
   const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
@@ -1103,7 +1115,7 @@ function ventanaChat(it, recargar){
         const bo = el("div", {class:"borr" + (i === ib ? " actual" : "")});
         if (i === ib && editando){ const ta = el("textarea", {rows:"10", "aria-label":"Editar el borrador"}); ta.value = m.borrador; bo.append(ta);
           const ac = el("div", {class:"acciones"}); ac.append(boton("Guardar cambios", "ok", async () => { m.borrador = ta.value; editando = false; await guardar(true); pintar(); }), boton("Cancelar", "sec", () => { editando = false; pintar(); })); bo.append(ac); }
-        else { bo.append(el("pre", {class:"borr-txt"}, m.borrador)); if (!esEspañol(f)) bo.append(botonTraducir(() => m.borrador));
+        else { bo.append(el("pre", {class:"borr-txt"}, m.borrador)); if (idiomaDe(m.borrador) !== "es" || !esEspañol(f)) bo.append(botonTraducir(() => m.borrador));
           if (i === ib){ const ac = el("div", {class:"acciones"}); ac.append(boton("Aprobar este envío", "ok", aprobar), boton("Lo edito yo", "sec", () => { editando = true; pintar(); })); bo.append(ac); } }
         b.append(bo);
       }
