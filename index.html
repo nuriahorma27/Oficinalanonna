@@ -236,6 +236,20 @@ form.send button:disabled{opacity:.5;cursor:default}
 .trad-txt{flex:1 1 100%;margin:0;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ate);border-radius:8px;white-space:pre-wrap;font-size:14px}
 .trad-txt[hidden]{display:none}
 .ficha details.ficha{padding:10px 12px}
+
+.conv{display:flex;flex-direction:column;gap:10px;max-height:min(62vh,640px);overflow-y:auto;padding:4px 2px}
+.burbuja{max-width:92%;padding:10px 12px;border-radius:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.burbuja.ellas{align-self:flex-start;background:var(--surface);border:1px solid var(--line)}
+.burbuja.yo{align-self:flex-end;background:var(--ink);color:var(--bg)}
+.quien-b{font-size:11.5px;font-weight:600;opacity:.7}
+.txt-b{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px}
+.borr{border:1px dashed var(--line);border-radius:8px;padding:10px;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;gap:8px}
+.borr.actual{border:2px solid var(--cont)}
+.borr-txt{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:14px}
+.pie-chat{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.burbuja .orig{max-height:220px}
+.burbuja details{font-size:13.5px}.burbuja summary{cursor:pointer;color:var(--muted)}
+.burbuja.yo .txt-b{color:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -909,6 +923,121 @@ async function contarTareas(){
   try { await cargarDatos(false); const t = tareasDe(); const n = t.dudas.length + t.envios.length + t.decs.length; const b = $("#navBadge"); if (b){ b.textContent = n ? String(n) : ""; b.hidden = !n; } } catch (e){}
 }
 
+
+/* ---------- Cada tarea es una conversación con la empleada ---------- */
+const convs = new Map();
+const ESTILO = "Escribe como Pilar en un correo normal, no como una empresa: cercano, corto, de tú (de usted solo si la clienta lo usa), respondiendo justo a lo que pregunta y sin frases de formulario (\"no dudes en\", \"quedamos a tu disposición\", \"gracias por contactar\", \"un abrazo\"). Cierra con \"Un saludo\". Nunca digas que algo de la web \"se puede estudiar\": los precios están en la web de La Nonna y no se inventan. Las medidas se toman por videollamada: la clienta necesita un metro de costura y al niño o niña delante, y se le envía un documento con cómo medirles. No hay fecha máxima para encargar: se recomienda hacerlo cuanto antes porque la agenda se va llenando y se rechazan pedidos. No confirmes citas, fechas ni plazos que no te haya dado Pilar. Si hablas de pago, pide el número de pedido en el concepto o el justificante.";
+const esEspañol = f => !f.Idioma || ["es", "espanol", "spanish"].includes(norm(f.Idioma));
+
+function botonTraducir(getTexto){
+  const caja = el("div", {class:"trad"}); const salida = el("p", {class:"trad-txt", hidden:"hidden"}); const est = el("span", {class:"estado"});
+  const b = boton("Ver traducción al español", "sec", async () => {
+    if (!sample){ est.className = "estado mal"; est.textContent = "La traducción no está disponible en esta vista."; return; }
+    b.disabled = true; est.className = "estado"; est.textContent = "Traduciendo…";
+    try { salida.textContent = await traducir(getTexto()); salida.hidden = false; est.textContent = ""; }
+    catch (e){ est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para traducir." : "No he podido traducirlo."; }
+    b.disabled = false;
+  });
+  caja.append(b, est, salida); return caja;
+}
+
+function convInicial(f, p, duda){
+  const nombre = p.name.split(" ")[0]; const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc);
+  const datos = [];
+  if (f.Prenda) datos.push("Prenda: " + f.Prenda);
+  datos.push("Ceremonia: " + (fc ? fmt(fc) + (dd != null && dd >= 0 ? " (faltan " + dd + " días)" : "") : "sin fecha todavía"));
+  if (f.Pago) datos.push("Pago: " + f.Pago);
+  if (f.Pedido) datos.push("Pedido: " + f.Pedido);
+  if (f.Falta) datos.push("Falta: " + f.Falta);
+  if (f.Alerta) datos.push("Ojo: " + f.Alerta);
+  const m = [{de: "ellas", contexto: true, texto: "Pilar, te cuento este correo de " + (f.Clienta || "una clienta") + (f.Asunto ? " (" + f.Asunto + ")" : "") + ".\n\n" + (f.Resumen || "") + "\n\n" + datos.join("\n")}];
+  if (duda) m.push({de: "ellas", texto: "Tengo una duda: " + duda["Qué hay que decidir"] + (duda["Recomendación"] ? "\n\nYo haría esto: " + duda["Recomendación"] : "") + "\n\nDime cómo lo hago y te rehago el borrador."});
+  m.push({de: "ellas", texto: duda ? "Mientras tanto, este es el borrador provisional:" : "Esto es lo que propongo contestar:", borrador: f["Respuesta propuesta"] || ""});
+  return m;
+}
+
+function chatTarea(f, p, duda, recargar){
+  const nombre = p.name.split(" ")[0];
+  let conv = convs.get(f.ID);
+  if (!conv){ try { conv = f["Conversación"] ? JSON.parse(f["Conversación"]) : null; } catch (e){ conv = null; } if (!conv || !conv.length) conv = convInicial(f, p, duda); convs.set(f.ID, conv); }
+  const c = el("article", {class:"ficha chat-t"});
+  const cab = el("div", {class:"ficha-cab"}); const t = el("div");
+  t.append(el("h3", {}, "Hablando con " + p.name), el("small", {}, p.role + " · " + (f.Clienta || f["Email clienta"] || "")));
+  const ch = el("div", {class:"chips-f"}); const u = nivel(f.Urgencia); ch.append(chip("Urgencia " + nombreNivel(u).toLowerCase(), "u" + u)); if (!esEspañol(f)) ch.append(chip("Se contesta en " + (norm(f.Idioma) === "en" ? "inglés" : norm(f.Idioma) === "fr" ? "francés" : f.Idioma), "u2"));
+  cab.append(t, ch); c.append(cab);
+  const log = el("div", {class:"conv", role:"log", "aria-live":"polite"}); c.append(log);
+  const est = el("p", {class:"estado", role:"status", "aria-live":"polite"});
+  const ultimoBorrador = () => { for (let i = conv.length - 1; i >= 0; i--) if (conv[i].borrador != null) return i; return -1; };
+  let editando = false;
+
+  const pintar = () => {
+    log.textContent = ""; const ib = ultimoBorrador();
+    conv.forEach((m, i) => {
+      const w = el("div", {class:"burbuja " + (m.de === "pilar" ? "yo" : "ellas")});
+      w.append(el("small", {class:"quien-b"}, m.de === "pilar" ? "Tú" : nombre));
+      if (m.texto) w.append(el("p", {class:"txt-b"}, m.texto));
+      if (m.contexto){
+        if (f.Hilo){ const d = el("details"); d.append(el("summary", {}, "Ver el hilo de correos"), el("pre", {class:"orig"}, f.Hilo)); w.append(d); }
+        const d2 = el("details"); d2.append(el("summary", {}, "Leer el último correo de " + (f.Clienta || "la clienta")), el("pre", {class:"orig"}, f["Correo original"] || "")); w.append(d2);
+        const hist = D.prop.filter(x => x.ID !== f.ID && x["Email clienta"] && norm(x["Email clienta"]) === norm(f["Email clienta"]));
+        if (hist.length){ const d3 = el("details"); d3.append(el("summary", {}, "Otros correos suyos (" + hist.length + ")"), el("pre", {class:"orig"}, hist.slice(-5).map(x => (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || "")).join("\n"))); w.append(d3); }
+      }
+      if (m.borrador != null){
+        const b = el("div", {class:"borr" + (i === ib ? " actual" : "")});
+        if (i === ib && editando){ const ta = el("textarea", {rows:"10", "aria-label":"Editar el borrador"}); ta.value = m.borrador; b.append(ta);
+          b.append(boton("Guardar cambios", "ok", async () => { m.borrador = ta.value; editando = false; await guardar(true); pintar(); }), boton("Cancelar", "sec", () => { editando = false; pintar(); })); }
+        else { b.append(el("pre", {class:"borr-txt"}, m.borrador)); if (!esEspañol(f)) b.append(botonTraducir(() => m.borrador)); }
+        w.append(b);
+      }
+      log.append(w);
+    });
+    if (conv.some(m => m.de === "pilar")) log.scrollTop = log.scrollHeight;
+  };
+
+  const guardar = async (conBorrador) => {
+    const ib = ultimoBorrador();
+    try {
+      if (conBorrador && ib >= 0) await escribirHoja("Propuestas!H" + f._fila, [[conv[ib].borrador]]);
+      await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
+    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+  };
+
+  const aprobar = async () => {
+    const ib = ultimoBorrador(); if (ib < 0) return;
+    est.className = "estado"; est.textContent = "Guardando…";
+    try {
+      if (!(await mismaFila("Propuestas", f._fila, f.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
+      conv.push({de: "ellas", texto: "Hecho, queda aprobada para enviar."});
+      await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", conv[ib].borrador]]);
+      await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
+      D.t = 0; convs.delete(f.ID); trabajo.nota = "Aprobada la respuesta para " + (f.Clienta || "la clienta") + ". Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@."; trabajo.sel = null; recargar();
+    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+  };
+
+  const entrada = el("textarea", {rows:"3", placeholder:"Dile a " + nombre + " cómo tiene que contestar si no es así…", "aria-label":"Tu mensaje a " + nombre});
+  const enviar = boton("Enviar a " + nombre, "", async () => {
+    const v = entrada.value.trim(); if (!v) return;
+    if (!sample){ est.className = "estado mal"; est.textContent = "Desde esta vista no puedo hablar con " + nombre + ". Usa Lo edito yo."; return; }
+    enviar.disabled = true; entrada.disabled = true; conv.push({de: "pilar", texto: v}); entrada.value = ""; pintar();
+    est.className = "estado"; est.textContent = nombre + " está con ello…";
+    try {
+      if (duda && norm(duda.Estado) === "pendiente"){ try { await escribirHoja("Decisiones!G" + duda._fila + ":H" + duda._fila, [["Respondida", v]]); duda.Estado = "Respondida"; } catch (e){} }
+      const hilo = conv.map(m => (m.de === "pilar" ? "PILAR: " : nombre.toUpperCase() + ": ") + (m.texto || "") + (m.borrador != null ? "\n[BORRADOR]\n" + m.borrador + "\n[/BORRADOR]" : "")).join("\n\n");
+      const pedido = p.persona + "\n\n" + FACTS + "\n\nEstás hablando por chat con Pilar sobre un correo de una clienta. Ella te dice cómo tiene que ser la respuesta y tú reformulas el borrador. " + ESTILO + "\n\nIdioma del correo para la clienta: " + (f.Idioma || "el del correo") + ". Firma al final, tal cual:\n" + FIRMA + "\n\nDATOS: " + [f.Resumen, f.Prenda && "Prenda: " + f.Prenda, f.Pago && "Pago: " + f.Pago, f["Fecha ceremonia"] && "Ceremonia: " + f["Fecha ceremonia"], f.Falta && "Falta: " + f.Falta].filter(Boolean).join(" · ") + (f.Hilo ? "\n\nHILO DE CORREOS ANTERIOR:\n" + f.Hilo : "") + "\n\nÚLTIMO CORREO DE LA CLIENTA:\n" + (f["Correo original"] || "") + "\n\nCONVERSACIÓN HASTA AHORA:\n" + hilo + "\n\nResponde con DOS partes separadas por una línea que solo tenga ---. Primera: una frase corta dirigida a Pilar, en primera persona y natural (por ejemplo \"Vale, lo cambio así:\"). Segunda: el correo completo para la clienta, con la firma. Nada más. No inventes precios que Pilar no te haya dado.";
+      const r = await sample(pedido, {cache: false}); const txt = (r && r.text) || "";
+      const partes = txt.split(/\n-{3,}\n/); const comentario = partes.length > 1 ? partes[0].trim() : "Vale, aquí lo tienes:"; const correo = (partes.length > 1 ? partes.slice(1).join("\n---\n") : txt).trim();
+      conv.push({de: "ellas", texto: comentario, borrador: correo});
+      await guardar(true); est.className = "estado"; est.textContent = "";
+    } catch (e){ conv.pop(); est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que " + nombre + " pueda contestarte." : nombre + " no ha podido contestar. Inténtalo otra vez."; entrada.value = v; }
+    enviar.disabled = false; entrada.disabled = false; pintar();
+  });
+  entrada.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); enviar.click(); } });
+  const pie = el("div", {class:"pie-chat"}); const fila = el("div", {class:"acciones"});
+  fila.append(boton("Aprobar este envío", "ok", aprobar), boton("Lo edito yo", "sec", () => { editando = true; pintar(); }), enviar);
+  pie.append(entrada, fila, est); c.append(pie);
+  pintar(); return c;
+}
+
 function detalleDuda(d, recargar){
   const c = el("article", {class:"ficha"});
   const quien = personaDe(d["Quién la pide"]);
@@ -975,7 +1104,7 @@ function listaTareas(t, recargar){
 
 async function pintarTrabajo(box){
   box.textContent = "";
-  cabecera(box, "Mi panel de trabajo", "Lo que me toca a mí: responder a las dudas de las chicas y aprobar los envíos.", () => { D.t = 0; pintarTrabajo(box); });
+  cabecera(box, "Mi panel de trabajo", "Cada tarea es una conversación con la empleada: te cuenta el caso, te propone la respuesta y tú le dices cómo cambiarla hasta que te guste.", () => { D.t = 0; pintarTrabajo(box); });
   if (!mcp){ sinAcceso(box); box.append(...pilarFijo()); return; }
   const m = mensajeCarga(box);
   try { await cargarDatos(true); } catch (e){ m.className = "estado mal"; m.textContent = mensajeHoja(e); return; }
@@ -998,9 +1127,9 @@ async function pintarTrabajo(box){
     const duo = el("div", {class:"duo"}); const det = el("div", {class:"detalle"});
     duo.append(listaTareas(t, recargar), det); cuerpo.append(duo);
     const s = trabajo.sel;
-    if (s.tipo === "duda") det.append(detalleDuda(t.dudas.find(x => x.ID === s.id), recargar));
+    if (s.tipo === "duda"){ const d = t.dudas.find(x => x.ID === s.id); const f = D.prop.find(x => x.ID === d["ID propuesta"]); det.append(f ? chatTarea(f, personaDe(d["Quién la pide"]), d, recargar) : detalleDuda(d, recargar)); }
     else if (s.tipo === "dec") det.append(detalleDecision(t.decs.find(x => x.ID === s.id), recargar));
-    else { const f = t.envios.find(x => x.ID === s.id); det.append(ficha(f, personaDe(f.Persona), D, txt => { trabajo.nota = txt; trabajo.sel = null; recargar(); })); }
+    else { const f = t.envios.find(x => x.ID === s.id); det.append(chatTarea(f, personaDe(f.Persona), null, recargar)); }
   } else if (trabajo.tab === "ajustes") pintarAjustes(cuerpo, box);
   else if (trabajo.tab === "hecho"){
     const hs = D.prop.filter(f => f.Estado === "Aceptada").slice(-15).reverse();
