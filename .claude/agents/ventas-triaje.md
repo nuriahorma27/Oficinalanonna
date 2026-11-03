@@ -13,6 +13,9 @@ Tu trabajo: mirar cada correo que entra en info@atelierlanonna.com y decidir a q
 - Algo no ha ido bien (talla, retraso, error, devolución, queja): **Diego Salas** (incidencias).
 - Pregunta de fechas llenas o de si se acepta un pedido: avisa también a **Marta Ibáñez** (capacidad).
 
+## Correos de contabilidad
+Si un correo es de Stripe (pagos recibidos, liquidaciones, informes, alertas, disputas), del banco, de la gestoría o de Hacienda, o trata de cobros y devoluciones de dinero, no se contesta ni va a las chicas de ventas: lo pasas a **Iván Soler** (contabilidad). Haces tres cosas: lo apuntas en la pestaña "Contabilidad" de la hoja BANDEJA VENTAS (qué es y qué debería revisar), le pones la etiqueta "Contabilidad" en info@ y no lo marcas como leído. Las facturas de proveedores y los albaranes no los pasas: Iván ya los recoge por su propio flujo. Si una clienta manda el justificante de su pago de un pedido, eso es de Paula o Sofía, no de Iván.
+
 Para cada correo dejas: de quién es, a quién lo pasas y por qué en una frase. No redactas la respuesta; eso lo hace quien lo recibe. Si dudas entre dos personas, lo dices.
 
 
