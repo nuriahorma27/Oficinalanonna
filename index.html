@@ -297,6 +297,11 @@ form.send button:disabled{opacity:.5;cursor:default}
 .chatapp .trad button{font:inherit;font-size:13px;border-radius:8px;padding:6px 12px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
 .chatapp .estado{margin:0;min-height:1.2em;color:var(--muted);font-size:13.5px}.chatapp .estado.mal{color:var(--com)}
 @media (max-width:820px){.chatapp{grid-template-columns:1fr;height:auto}.c-lista{max-height:220px;border-right:0;border-bottom:1px solid var(--line)}.ventana{height:min(72vh,640px)}}
+
+.rapidas button.ok-r{background:var(--cont);border-color:var(--cont);color:#fff;font-weight:600}
+.adjunto{font-size:13.5px}.adjunto summary{cursor:pointer;color:var(--muted)}.adjunto .correo-card{margin-top:6px}
+
+@media (max-width:820px){.c-lista{max-height:132px}.ventana{height:min(80vh,720px)}.rapidas{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.rapidas button{white-space:nowrap;flex:none}.v-cab{padding:10px 12px}.flujo{padding:12px}.bub{max-width:94%}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -992,32 +997,46 @@ function botonTraducir(getTexto){
 const horaAhora = () => new Date().toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"});
 const horaDe = x => { const m = String(x || "").match(/(\d{1,2}:\d{2})/); return m ? m[1] : ""; };
 
+const fin = t => { t = String(t || "").trim(); return /[.?!…]$/.test(t) ? t : t + "."; };
+function cuandoEscribio(f){
+  const d = f["Fecha correo"] ? new Date(f["Fecha correo"]) : null;
+  if (!d || isNaN(d)){ const h = horaDe(f.Recibido); return h ? "hoy a las " + h : "hoy"; }
+  const dif = Math.round((HOY - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5);
+  const hh = d.toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"});
+  const dia = dif === 0 ? "hoy" : dif === 1 ? "ayer" : "el " + d.toLocaleDateString("es-ES", {day: "numeric", month: "long"});
+  return dia + " a las " + hh;
+}
+
+/* Un solo mensaje claro de la empleada a Pilar, y debajo la propuesta de email */
 function convInicial(f, p, duda){
-  const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc); const h = horaDe(f.Recibido);
+  const fc = parseFecha(f["Fecha ISO"]) || parseFecha(f["Fecha ceremonia"]); const dd = dias(fc);
   const datos = [];
   if (f.Prenda) datos.push(["Prenda", f.Prenda]);
   datos.push(["Ceremonia", fc ? fmt(fc) + (dd != null && dd >= 0 ? " · faltan " + dd + " días" : "") : "sin fecha todavía"]);
   if (f.Pago) datos.push(["Pago", f.Pago]);
   if (f.Pedido) datos.push(["Pedido", f.Pedido]);
   if (f.Falta) datos.push(["Falta", f.Falta]);
-  const m = [];
-  m.push({de: "ellas", t: h, texto: "Pilar, ha entrado un correo de " + (f.Clienta || "una clienta") + (f.Asunto ? " (" + f.Asunto + ")" : "") + "."});
-  if (f.Resumen) m.push({de: "ellas", texto: f.Resumen});
-  m.push({de: "ellas", datos});
-  if (f.Alerta) m.push({de: "ellas", texto: "Ojo: " + f.Alerta});
-  m.push({de: "ellas", texto: "Esto es lo que nos ha escrito:", correo: true});
-  if (duda){ m.push({de: "ellas", texto: "Tengo una duda: " + duda["Qué hay que decidir"]}); if (duda["Recomendación"]) m.push({de: "ellas", texto: "Yo haría esto: " + duda["Recomendación"] + "\n\n¿Cómo lo hago?"}); }
-  m.push({de: "ellas", texto: duda ? "Mientras tanto, te dejo un borrador provisional:" : "Y esto es lo que propongo contestarle:", borrador: f["Respuesta propuesta"] || ""});
-  return m;
+  const quien = f.Clienta || f["Email clienta"] || "una clienta";
+  const cierre = "Te paso una propuesta de email; dime si ves que tengo que hacer algún cambio antes de mandarlo.";
+  let cuerpo = f["Mensaje a Pilar"];
+  if (!cuerpo){
+    if (duda) cuerpo = (f.Resumen ? fin(f.Resumen) + " " : "") + "Necesito que me digas esto: " + fin(duda["Qué hay que decidir"].replace(/\s*\([^()]*\)\s*$/, "")) + (duda["Recomendación"] ? " Yo le diría: " + fin(duda["Recomendación"]) : "") + " " + cierre;
+    else cuerpo = (f.Resumen ? fin(f.Resumen) + " " : "") + "Necesito que me digas si te parece bien lo que propongo contestarle. " + cierre;
+  }
+  return [
+    {de: "ellas", t: horaDe(f.Recibido), texto: "Hola Pilar, " + quien + " ha escrito un email " + cuandoEscribio(f) + (f.Asunto ? " (“" + f.Asunto + "”)" : "") + ".\n\n" + cuerpo + (f.Alerta ? "\n\nOjo: " + f.Alerta : ""), datos, correo: true},
+    {de: "ellas", texto: "Esta es mi propuesta de email:", borrador: f["Respuesta propuesta"] || ""}
+  ];
 }
 
 function pintaCorreoCard(f){
+  const d0 = el("details", {class:"adjunto"}); d0.append(el("summary", {}, "Ver el email de " + (f.Clienta || "la clienta") + (f.Hilo ? " y lo que se habló antes" : "")));
   const c = el("div", {class:"correo-card"});
   c.append(el("small", {}, (f.Clienta || "") + (f["Email clienta"] ? " · " + f["Email clienta"] : "")), el("pre", {class:"borr-txt"}, f["Correo original"] || ""));
-  if (f.Hilo){ const d = el("details"); d.append(el("summary", {}, "Ver lo que se habló antes en el hilo"), el("pre", {class:"orig"}, f.Hilo)); c.append(d); }
+  if (f.Hilo){ const d = el("details"); d.append(el("summary", {}, "Lo que se habló antes en el hilo"), el("pre", {class:"orig"}, f.Hilo)); c.append(d); }
   const hist = D.prop.filter(x => x.ID !== f.ID && x["Email clienta"] && norm(x["Email clienta"]) === norm(f["Email clienta"]));
   if (hist.length){ const d3 = el("details"); d3.append(el("summary", {}, "Otros correos suyos (" + hist.length + ")"), el("pre", {class:"orig"}, hist.slice(-5).map(x => (x.Recibido || "") + " · " + (x.Asunto || "") + " · " + (x.Estado || "")).join("\n"))); c.append(d3); }
-  return c;
+  d0.append(c); return d0;
 }
 
 const RAPIDAS = ["Más corto", "Más cercano", "Pídele primero la fecha de la ceremonia", "Dale el precio de la web"];
@@ -1097,7 +1116,7 @@ function ventanaChat(it, recargar){
 
   const pie = el("footer", {class:"v-pie"});
   const rap = el("div", {class:"rapidas"});
-  const entrada = el("textarea", {rows:"1", placeholder:"Escribe a " + nombre + "…", "aria-label":"Tu mensaje a " + nombre});
+  const entrada = el("textarea", {rows:"1", placeholder:"Dile a " + nombre + " qué cambiar o si te parece bien…", "aria-label":"Tu mensaje a " + nombre});
   const enviarTxt = async v => {
     v = String(v || "").trim(); if (!v || escribiendo) return;
     if (!sample){ est.className = "estado mal"; est.textContent = "Desde esta vista no puedo hablar con " + nombre + ". Usa Lo edito yo."; return; }
@@ -1114,6 +1133,7 @@ function ventanaChat(it, recargar){
     } catch (e){ conv.pop(); escribiendo = false; est.className = "estado mal"; est.textContent = e && e.code === "not_granted" ? "Permite que la página consulte a Claude para que " + nombre + " pueda contestarte." : nombre + " no ha podido contestar. Inténtalo otra vez."; entrada.value = v; }
     entrada.disabled = false; pintar(); entrada.focus();
   };
+  { const ok = boton("Me parece bien, aprobar", "", aprobar); ok.className = "ok-r"; rap.append(ok); }
   RAPIDAS.forEach(q => rap.append(boton(q, "", () => enviarTxt(q))));
   const fila = el("div", {class:"compositor"}); const envBtn = el("button", {type:"button", class:"env", "aria-label":"Enviar a " + nombre}, "Enviar"); envBtn.onclick = () => enviarTxt(entrada.value);
   entrada.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); enviarTxt(entrada.value); } });
