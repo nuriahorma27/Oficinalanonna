@@ -302,6 +302,11 @@ form.send button:disabled{opacity:.5;cursor:default}
 .adjunto{font-size:13.5px}.adjunto summary{cursor:pointer;color:var(--muted)}.adjunto .correo-card{margin-top:6px}
 
 @media (max-width:820px){.c-lista{max-height:132px}.ventana{height:min(80vh,720px)}.rapidas{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.rapidas button{white-space:nowrap;flex:none}.v-cab{padding:10px 12px}.flujo{padding:12px}.bub{max-width:94%}}
+
+.lista-iv{display:flex;flex-direction:column;gap:6px}
+.iv-item{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);font-size:13.5px}
+.iv-item summary{cursor:pointer;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.iv-item .motivo{margin:4px 0 0}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -477,7 +482,7 @@ function renderTeam(){
       const r = el("div", {class:"rhythm"}); r.append(el("h3", {}, "Ritmo del equipo"));
       const dl = el("dl"); d.rhythm.forEach(([a,b]) => dl.append(el("dt", {}, a), el("dd", {}, b))); r.append(dl); t.append(r);
     }
-    if (d.id === "contabilidad") t.append(bloqueExtracto());
+    if (d.id === "contabilidad"){ t.append(bloqueParaIvan()); t.append(bloqueExtracto()); }
   } else {
     const s = el("div", {class:"stack"}); d.people.forEach(p => s.append(personCard(p, d.c))); t.append(s);
   }
@@ -1298,6 +1303,32 @@ function renderTrabajo(){
 function renderNav(){
   $("#navOficina").setAttribute("aria-pressed", String(modo === "oficina")); $("#navPanel").setAttribute("aria-pressed", String(modo === "panel"));
   ["#floor", "#scene", "#mainGrid"].forEach(q => { $(q).hidden = modo === "panel"; });
+}
+
+
+/* ---------- Correos que Clara pasa a Iván (pestaña Contabilidad de la hoja, via mcp) ---------- */
+function bloqueParaIvan(){
+  const box = el("section", {class:"extracto", "aria-label":"Correos para Iván"});
+  box.append(el("h3", {}, "Correos que le ha pasado Clara a Iván"));
+  box.append(el("p", {}, "Stripe, banco, gestoría y cobros. Llevan la etiqueta Contabilidad en info@. Las facturas de proveedores no pasan por aquí: las recoge Iván por su cuenta."));
+  const lista = el("div", {class:"lista-iv"}); const est = el("p", {class:"estado", role:"status"});
+  box.append(est, lista);
+  if (!mcp){ est.textContent = "Desde esta vista no puedo leerlos."; return box; }
+  est.textContent = "Mirando…";
+  (async () => {
+    try {
+      const v = await leerHoja("Contabilidad!A1:I200"); const fs = aFilas(v).filter(x => x["ID mensaje Gmail"]);
+      est.textContent = ""; lista.textContent = "";
+      if (!fs.length){ est.textContent = "Todavía no le ha pasado ninguno."; return; }
+      fs.slice(-12).reverse().forEach(f => {
+        const d = el("details", {class:"iv-item"}); const sm = el("summary"); sm.append(el("b", {}, (f.De || "").replace(/<.*>/, "").trim() || "Sin remitente"), " · " + (f.Asunto || ""), chip(f.Estado || "Pendiente", norm(f.Estado) === "revisado" ? "okc" : "u2"));
+        d.append(sm, el("p", {class:"motivo"}, f["Qué es"] || ""), el("p", {class:"motivo"}, "Hay que revisar: " + (f["Qué hay que revisar"] || "—")));
+        if (f["Nota de Iván"]) d.append(el("p", {class:"motivo"}, "Nota de Iván: " + f["Nota de Iván"]));
+        lista.append(d);
+      });
+    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+  })();
+  return box;
 }
 
 /* ---------- Oficina isométrica ---------- */
