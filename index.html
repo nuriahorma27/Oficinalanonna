@@ -307,6 +307,11 @@ form.send button:disabled{opacity:.5;cursor:default}
 .iv-item{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);font-size:13.5px}
 .iv-item summary{cursor:pointer;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .iv-item .motivo{margin:4px 0 0}
+
+.sec-enc{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:10px;padding:0 12px;cursor:pointer;white-space:nowrap}
+.sec-enc:hover{border-color:var(--ink)}.sec-enc:disabled{opacity:.5}
+form.send{flex-wrap:wrap}
+form.send button.sec-enc{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500;font-size:13px;padding:0 12px}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
@@ -377,7 +382,7 @@ const DEPTS = [
         rep:"Informa a la dueña",
         persona:"Eres Álvaro Mena, director de Contabilidad de La Nonna. Tienes a Iván Soler, el contable, que hace todo el trabajo de apuntar gastos e ingresos; tú lo supervisas y reportas a la dueña. Cada semana preparas el informe de cómo queda la foto (ingresos, gastos, IVA, pendientes y alertas) y cada mes revisas la conciliación final contra el extracto del banco. No apuntas filas tú: se las pasas a Iván. Las dudas fiscales las anotas para la gestoría.",
         prompts:["¿Qué llevará el informe de la semana?","¿Cómo cerramos octubre?"] },
-      { id:"ivan", name:"Iván Soler", role:"Contable", agent:"contabilidad",
+      { id:"ivan", name:"Iván Soler", role:"Contable", agent:"contabilidad", encargos:true,
         tasks:["Apunta los gastos de las facturas de proveedores","Apunta los ingresos de los pedidos completados","Archiva cada factura en su año y trimestre"],
         rep:"Informa a Álvaro Mena",
         persona:"Eres Iván Soler, contable de La Nonna. Respondes ante Álvaro Mena. Haces todo el trabajo: lees las facturas de proveedores de la carpeta Facturas pendientes (descartas albaranes, packing lists y avisos del banco), las apuntas en Gastos con el trimestre de su fecha de factura, y apuntas en Ingresos los pedidos completados (IVA 21 % incluido) con el trimestre de su fecha de completado. Archivas cada PDF en su año y trimestre. Marcas lo dudoso, como una factura de la UE con IVA 0, un duplicado o un importe que no cuadra. También sabes poner el desglose de IVA en las facturas de WooCommerce (que solo traen subtotal, envío y total): recuperas los PDF del correo, calculas el IVA del 21 % incluido en el total (IVA = total x 21/121, neto = total - IVA), añades una línea de descuento si subtotal más envío no cuadra con el total, lo subes a Facturas emitidas en Drive (carpeta del año, subcarpeta con IVA desglosado), das acceso a Juan y a info@ y mandas un correo amistoso a Pilar y Juan, con el enlace y lo que tienen que comprobar. En este chat tú no puedes tocar archivos ni mandar correos: cuando te lo pidan, explica los pasos y di que el trabajo de verdad lo haces cuando te llaman como agente en Claude Code con @contabilidad.",
@@ -482,7 +487,7 @@ function renderTeam(){
       const r = el("div", {class:"rhythm"}); r.append(el("h3", {}, "Ritmo del equipo"));
       const dl = el("dl"); d.rhythm.forEach(([a,b]) => dl.append(el("dt", {}, a), el("dd", {}, b))); r.append(dl); t.append(r);
     }
-    if (d.id === "contabilidad"){ t.append(bloqueParaIvan()); t.append(bloqueExtracto()); }
+    if (d.id === "contabilidad"){ t.append(bloqueEncargos()); t.append(bloqueParaIvan()); t.append(bloqueExtracto()); }
   } else {
     const s = el("div", {class:"stack"}); d.people.forEach(p => s.append(personCard(p, d.c))); t.append(s);
   }
@@ -511,6 +516,24 @@ function renderChat(){
   const ta = el("textarea", {id:"msgInput", rows:"2", placeholder:"Escribe a " + p.name.split(" ")[0] + "…", "aria-label":"Mensaje"});
   const go = el("button", {type:"submit", id:"sendBtn"}, "Enviar");
   form.append(ta, go);
+  if (p.encargos){
+    const enc = el("button", {type:"button", class:"sec-enc"}, "Dejarle como encargo");
+    enc.onclick = async () => {
+      const hist = chats[p.id] || []; const ultimo = [...hist].reverse().find(m => m.role === "user");
+      const texto = ta.value.trim() || (ultimo ? ultimo.content : "");
+      if (!texto){ addMsg("aviso", "Escribe primero lo que quieres que haga y pulsa otra vez."); return; }
+      if (!mcp){ addMsg("aviso", "Desde esta vista no puedo apuntarlo. Llámale en Claude Code con @" + p.agent + "."); return; }
+      enc.disabled = true;
+      try {
+        const v = await leerHoja("Encargos!A1:H500"); const n = Math.max(v.length, 1) + 1; const hoy = new Date();
+        await escribirHoja("Encargos!A" + n + ":H" + n, [["E-" + hoy.getTime().toString(36), hoy.toISOString().slice(0, 16).replace("T", " "), "Pilar", p.name, texto, "Pendiente", "", ""]]);
+        ta.value = ""; addMsg("aviso", "Apuntado como encargo para " + p.name.split(" ")[0] + ". Lo hará cuando le llames en Claude Code con @" + p.agent + ": lo primero que mira son sus encargos pendientes.");
+        const lista = document.getElementById("listaEncargos"); if (lista) cargarEncargos(lista);
+      } catch (e){ addMsg("aviso", mensajeHoja(e)); }
+      enc.disabled = false;
+    };
+    form.append(enc);
+  }
   form.onsubmit = e => { e.preventDefault(); const v = ta.value.trim(); if (v) { ta.value = ""; send(v); } };
   ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); } });
   const n = el("p", {class:"note"}); n.append("Este chat sirve para planificar, redactar y aclarar dudas. Para que trabaje sobre Drive y la hoja, llámale en Claude Code: ");
@@ -1328,6 +1351,34 @@ function bloqueParaIvan(){
       });
     } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
   })();
+  return box;
+}
+
+
+/* ---------- Encargos que Pilar le deja a Iván (pestaña Encargos de la hoja, via mcp) ---------- */
+async function cargarEncargos(lista, est){
+  try {
+    const v = await leerHoja("Encargos!A1:H500"); const fs = aFilas(v).filter(x => x.ID && /iv[aá]n/i.test(x.Para || ""));
+    lista.textContent = ""; if (est) est.textContent = "";
+    if (!fs.length){ if (est) est.textContent = "Todavía no le has dejado ningún encargo."; return; }
+    fs.slice(-12).reverse().forEach(f => {
+      const d = el("details", {class:"iv-item"}); const sm = el("summary");
+      sm.append(el("b", {}, (f.Encargo || "").slice(0, 70) + ((f.Encargo || "").length > 70 ? "…" : "")), chip(f.Estado || "Pendiente", norm(f.Estado) === "hecho" ? "okc" : "u2"));
+      d.append(sm, el("p", {class:"motivo"}, (f.Fecha || "") + " · " + f.Encargo));
+      if (f.Resultado) d.append(el("p", {class:"motivo"}, "Resultado: " + f.Resultado));
+      if (f["Enlace o archivo"]) d.append(el("p", {class:"motivo"}, f["Enlace o archivo"]));
+      lista.append(d);
+    });
+  } catch (e){ if (est){ est.className = "estado mal"; est.textContent = mensajeHoja(e); } }
+}
+function bloqueEncargos(){
+  const box = el("section", {class:"extracto", "aria-label":"Encargos para Iván"});
+  box.append(el("h3", {}, "Encargos para Iván"));
+  box.append(el("p", {}, "Los que le dejas desde su chat con “Dejarle como encargo”. Él los recoge cuando le llamas en Claude Code y apunta aquí qué ha hecho."));
+  const lista = el("div", {class:"lista-iv", id:"listaEncargos"}); const est = el("p", {class:"estado", role:"status"});
+  box.append(est, lista);
+  if (!mcp){ est.textContent = "Desde esta vista no puedo leerlos."; return box; }
+  est.textContent = "Mirando…"; cargarEncargos(lista, est);
   return box;
 }
 

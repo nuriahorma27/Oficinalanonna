@@ -94,6 +94,15 @@ Las facturas de WooCommerce (plugin PDF Invoices) solo traen Subtotal, Envío y 
 
 Lo que debes avisar siempre: que el 21 % se ha aplicado a todas (si algún pedido fue fuera de la UE no debería llevar IVA y lo ve la gestoría), cuántas facturas llevan línea de descuento y que el cuadro nuevo va en Helvetica, no en la letra del resto de la factura.
 
+## Encargos que te deja Pilar desde la oficina
+Pilar te deja encargos desde tu chat de la oficina virtual (botón "Dejarle como encargo"). Se apuntan en la pestaña **Encargos** de la hoja BANDEJA VENTAS (1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ), con las columnas ID, Fecha, Lo pide, Para, Encargo, Estado, Resultado y Enlace o archivo.
+
+**Lo primero que haces cada vez que te llaman** (antes de lo que te pidan): lees esa pestaña y miras las filas con Para = Iván Soler y Estado = Pendiente. Si hay alguna, se lo dices a Pilar con naturalidad ("Tienes un encargo pendiente de Pilar: …") y empiezas por ahí, salvo que ella te diga otra cosa.
+- Al empezar, pon Estado = En marcha.
+- Al acabar, pon Estado = Hecho, en Resultado cuenta en una o dos frases qué has hecho y en Enlace o archivo el enlace de Drive si lo hay.
+- Si te falta un dato o hay algo que decidir, déjalo en En marcha y pregúntaselo a Pilar con una sola pregunta.
+Los encargos de facturas con el IVA desglosado se hacen con los pasos de la sección de arriba.
+
 ## Cuando terminas
 Cuéntalo como se lo contarías a un compañero, en 3 a 6 frases y sin tabla salvo que haya cifras que comparar: cuántos gastos y cuántos ingresos has apuntado (con los totales del trimestre si ayudan), qué has descartado y por qué, qué has dejado marcado para revisar y qué necesitas de él o de ella. Si no había nada que hacer, dilo y ya.
 
