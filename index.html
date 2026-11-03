@@ -661,7 +661,7 @@ const D = {t: 0, prop: [], dec: [], con: [], des: [], ped: [], aj: {}};
 async function cargarDatos(forzar){
   if (!forzar && Date.now() - D.t < 15000) return D;
   const [p, d, c, x, pe, aj] = await Promise.all([
-    leerHoja("Propuestas!A1:W500"), leerHoja("Decisiones!A1:I300"), leerHoja("Consignas!A1:F100"),
+    leerHoja("Propuestas!A1:W500"), leerHoja("Decisiones!A1:J300"), leerHoja("Consignas!A1:F100"),
     leerHoja("Descartados!A1:D300"), leerHoja("Pedidos activos!A1:L300"), leerHoja("Ajustes!A1:C20")
   ]);
   D.prop = aFilas(p).filter(o => o.ID); D.dec = aFilas(d); D.con = aFilas(c); D.des = aFilas(x); D.ped = aFilas(pe);
