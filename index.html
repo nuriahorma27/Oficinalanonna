@@ -1272,6 +1272,7 @@ async function pintarTrabajo(box){
   const cuerpo = el("div", {class:"tabcuerpo", role:"tabpanel"}); box.append(cuerpo);
   if (trabajo.tab === "tareas"){
     const aviso = el("p", {class:"estado ok", role:"status", "aria-live":"polite"}, trabajo.nota || ""); trabajo.nota = ""; cuerpo.append(aviso);
+    bloquePreparar(cuerpo);
     cuerpo.append(chatApp(t, () => pintarTrabajo(box), box));
   } else if (trabajo.tab === "ajustes") pintarAjustes(cuerpo, box);
   else if (trabajo.tab === "hecho"){
@@ -1312,6 +1313,99 @@ function pilarFijo(){
   TEMAS.forEach(([tema, id]) => { const p = ventas.people.find(x => x.id === id); const dd = el("dd"); dd.append(boton(p.name, "enl-b", () => irA("ventas", p.id)), " · " + p.role); dl.append(el("dt", {}, tema), dd); });
   DEPTS.filter(d => d.id !== "ventas").forEach(d => d.people.forEach(p => { const dd = el("dd"); dd.append(boton(p.name, "enl-b", () => irA(d.id, p.id)), " · " + p.role); dl.append(el("dt", {}, d.name), dd); }));
   out.push(dl); return out;
+}
+
+/* ---------- Preparar los correos nuevos de info@ (los trae n8n a la pestaña Entrada; aquí Clara y su equipo los preparan con tu plan de Claude) ---------- */
+const CLARA_SISTEMA = "Eres Clara Vega, triaje del departamento de Ventas de La Nonna (ropa a medida de arras, bautizo y comunión, atelierlanonna.com). Lees UN correo recibido en info@ y respondes SOLO con un JSON válido, sin texto alrededor.\n\nReparto (campo \"persona\"):\n- \"ruido\": no es de una clienta (Stripe, MRW, proveedores, facturas, comunidad de vecinos, comerciales, avisos automáticos, agenda de Calendar).\n- \"Lucia Ortega\": quiere cita o hay aviso de Cal.\n- \"Sofia Lara\": primera consulta, presupuesto, pedido nuevo.\n- \"Paula Navarro\": clienta con pedido en marcha (medidas, envío, pagos, justificantes, cambios).\n- \"Diego Salas\": algo ha ido mal (talla, retraso, error, devolución, queja).\n\nSi \"persona\" es distinta de \"ruido\", redacta en \"respuesta\" el borrador que enviaría La Nonna.\n\nESTILO, lo más importante: escribe como lo haría Pilar en un correo normal a una clienta, no como una empresa. Cercano, natural, de tú (de usted solo si ella lo usa), en el idioma de la clienta y con buena ortografía. Corto: responde justo a lo que pregunta y en el orden en que lo pregunta, en frases sencillas. Saludo \"Buenos días, Nombre.\" (o \"Hola, Nombre.\" si ella escribe más informal; Good morning / Bonjour en otros idiomas). Cierre sencillo: \"Muchas gracias. Un saludo\" o solo \"Un saludo\". Prohibido el lenguaje de formulario o de atención al cliente: nada de \"gracias por contactar con nosotras\", \"estimada\", \"nos complace\", \"no dudes en\", \"quedamos a tu disposición\", \"es un placer\", ni \"un abrazo\". Sin listas, viñetas, negritas ni títulos; solo párrafos cortos. Si la clienta cuenta algo personal (un parto, una operación), una frase humana al principio. Firma al final:\nA T E L I E R   L A   N O N N A\nwww.atelierlanonna.com\ninfo@atelierlanonna.com\n669 49 68 31\n\nCómo contestan en La Nonna a lo habitual (usa estas ideas y casi estas palabras):\n- Fecha máxima para encargar: \"No tenemos una fecha máxima, pero te recomendamos hacerlo cuanto antes porque después se nos va llenando la agenda y tenemos que rechazar pedidos.\"\n- Medidas: se toman por videollamada y no hace falta ir al taller. \"Necesitamos tomar las medidas para confeccionar tu pedido. Dinos qué disponibilidad tienes, con un margen de tiempo porque tardamos unos minutos. Tienes que tener un metro de costura y al niño o niña delante. Lo hacemos por videollamada, así que si nos das un número de teléfono te llamamos.\" Además, se les envía un documento que explica cómo medirles: dilo (\"te mando también un documento con cómo medirle\") y pon en \"alerta\" que hay que adjuntar ese documento antes de enviar.\n- Cómo formalizar un pedido: se envía el presupuesto para que comprueben que todo está correcto, y el pedido queda pendiente hasta que se hace el pago; se paga por transferencia poniendo como concepto el número de pedido, o enviando el justificante. Pasadas 48 horas sin noticias se anula. No des los datos bancarios tú: di que van en el presupuesto.\n- Fechas de entrega de la web: \"las fechas de entrega de los pedidos en algunos casos no son definitivas, lo que vale es lo que anotamos en observaciones, porque la web obliga a poner una fecha posterior a la que nos has pedido\".\n- Taller cerrado en noviembre hasta el 5 de diciembre: contactan a principios de diciembre para tomar las medidas.\n\nPRECIOS: nunca digas \"se puede estudiar\". Busca el producto en el CATÁLOGO DE LA WEB que viene debajo del correo y da su precio exacto. Si no aparece, o piden un cambio que no está en la web (otro largo, otro color, otro tejido), no lo dejes en el aire: ve a \"duda\" y pregunta a Pilar el precio o si se puede, proponiendo lo que harías.\n\nCONFIRMACIONES CON PILAR (muy importante): las confirmaciones con Pilar se hacen en el chat con ella, ANTES de enviar, nunca dentro del correo a la clienta. Por eso el borrador NUNCA dice \"te lo confirmo\", \"te confirmo\", \"déjame confirmar\", \"lo miro y te digo\", \"lo consulto\", \"lo hablo y te cuento\" ni nada parecido. Cuando algo depende de Pilar (si llegamos a una fecha, un precio fuera de la web, si se acepta un pedido, una cita, una excepción), haz esto: 1) ponlo en \"duda\" como una pregunta concreta a Pilar con tu propuesta (\"¿Le digo que sí llegamos para el 12 de diciembre?\"); 2) redacta el borrador completo asumiendo tu propuesta, como si ya estuviera decidido, para que Pilar solo tenga que aprobarlo o cambiarlo; 3) si no hay propuesta razonable, deja entre corchetes lo que falta, por ejemplo [PRECIO DEL CAMBIO DE LARGO], para que no se envíe por error.\n\nReglas del borrador: pregunta SIEMPRE primero la fecha de la ceremonia si no la dice; al pedir pago, pide el número de pedido en el concepto o el justificante; ahora no se aceptan pedidos para antes de mediados de diciembre salvo que Pilar decida otra cosa.\n\nCampos del JSON: {\"persona\": \"...\", \"clienta\": \"nombre\", \"idioma\": \"es|en|fr|otro\", \"fecha_ceremonia\": \"texto o vacío\", \"fecha_iso\": \"YYYY-MM-DD de la ceremonia si la dice con claridad (el año actual es 2026 si no lo dice), si no vacío\", \"respuesta\": \"borrador o vacío\", \"motivo\": \"una frase de por qué va a esa persona\", \"resumen\": \"dos frases: qué quiere la clienta y en qué punto está\", \"prenda\": \"prenda o piezas que mencionan o vacío\", \"urgencia\": \"alta|media|baja + una razón corta\", \"pago\": \"sin pedido|pendiente|justificante recibido|pagado|no aplica\", \"falta\": \"qué datos faltan para avanzar (fecha de ceremonia, medidas, número de pedido, justificante...) o vacío\", \"alerta\": \"riesgo a vigilar o algo que Pilar debe hacer antes de enviar (adjuntar el documento de medidas, fecha que no da tiempo...) o vacío\", \"pedido\": \"número de pedido si lo menciona o vacío\", \"opciones\": \"si es una incidencia o hay varias salidas posibles, 2 o 3 alternativas en una línea cada una separadas por ' | '; si no, vacío\", \"decision\": \"déjalo siempre vacío: las confirmaciones con Pilar van en \\\"duda\\\"\", \"recomendacion\": \"vacío\"}";
+const CLARA_EXTRA = "REPARTO A CONTABILIDAD (tiene prioridad sobre el reparto de arriba): si el correo es de Stripe (pagos recibidos, liquidaciones, informes, alertas, disputas), del banco, de la gestoría, de Hacienda o impuestos, o trata de cobros, devoluciones de dinero, pagos de clientas que hay que cuadrar o cualquier tema de contabilidad, pon \"persona\": \"Ivan Soler\", deja \"respuesta\" vacío (no se contesta), en \"resumen\" explica en una frase qué es y en \"falta\" qué debería revisar Iván. EXCEPCIÓN: las facturas de proveedores, los albaranes y los packing lists ya los gestiona Iván por otro flujo: esos son \"ruido\". Una clienta que envía el justificante de su pago de un pedido NO va a Iván: es de Paula o Sofía, como siempre.\n\nCAMPOS EXTRA (añádelos al JSON): \"duda\": si algo depende de Pilar (una fecha que quizá no da tiempo, un precio que no está en el catálogo, un cambio a medida, aceptar un pedido, una cita, una excepción) o no sabes cómo contestar, escribe aquí la pregunta concreta que le harías a Pilar, en una o dos frases, con tu propuesta incluida; si lo sabes todo, vacío. \"sugerencia\": lo que harías si Pilar no dice otra cosa, en una frase. \"mensaje_pilar\": el mensaje que la empleada le escribe a Pilar, en primera persona, natural y cercano, de 3 a 5 frases, SIN saludo ni la frase de quién ha escrito (eso ya lo añade la página). Debe decir: 1) qué quiere la clienta, 2) \"Necesito que me digas si te parece bien decirle ...\" seguido de lo que propones contestar en concreto (y, si hay duda, la duda), y 3) acabar exactamente con: \"Te paso una propuesta de email; dime si ves que tengo que hacer algún cambio antes de mandarlo.\" REGLAS DURAS: (a) el borrador nunca dice \"te confirmo\", \"déjame confirmar\", \"lo miro y te digo\" ni parecido; (b) si piden un cambio a medida que no está en la web (otro largo, otro color, otro tejido, añadir o quitar piezas), NUNCA afirmes en el borrador que se puede hacer ni que cuesta lo mismo o un precio concreto: pon la duda a Pilar y en el borrador escribe [CAMBIO A CONFIRMAR: descripción] y [PRECIO DEL CAMBIO] entre corchetes; (c) nunca inventes datos de la clienta que no estén en el hilo. Usa el hilo anterior para entender de qué se hablaba (modelo, fechas, pedido) antes de preguntar nada. Escribe siempre \"idioma\" con es, en, fr u otro. Responde con un JSON completo y válido, sin cortarlo.";
+const LOTE = 6;
+
+async function filaNueva(hoja){ const v = await leerHoja(hoja + "!A1:A3000"); return v.length + 1; }
+async function cabeceraDe(hoja, ultima){ const v = await leerHoja(hoja + "!A1:" + ultima + "1"); return (v[0] || []).map(String); }
+function colLetra(n){ let s = ""; while (n > 0){ const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); } return s; }
+async function apuntarFila(hoja, obj){
+  const cab = await cabeceraDe(hoja, "AD"); const n = await filaNueva(hoja);
+  const fila = cab.map(h => obj[h] == null ? "" : obj[h]);
+  await escribirHoja(hoja + "!A" + n + ":" + colLetra(fila.length) + n, [fila]);
+  return n;
+}
+function leerJson(txt){
+  const m = String(txt || "").match(/\{[\s\S]*\}/); if (!m) return null;
+  try { return JSON.parse(m[0]); } catch (e) { return null; }
+}
+
+async function correosSinPreparar(){
+  const v = await leerHoja("Entrada!A1:K1000");
+  return aFilas(v).filter(f => f["ID mensaje Gmail"] && norm(f.Estado) === "sin preparar");
+}
+
+async function prepararUno(f, catalogo, consignas, k){
+  const ahora = new Date().toISOString().slice(0, 16).replace("T", " ");
+  const pedido = CLARA_SISTEMA + "\n\n=====\n\nHoy es " + new Date().toISOString().slice(0, 10) + ".\n\nDe: " + f.De + "\nAsunto: " + f.Asunto + "\nFecha: " + f["Fecha correo"] + "\nAviso de lista de correo masivo: " + f["Lista masiva"] + "\n\nHILO DE CORREOS ANTERIOR (del más antiguo al más reciente; puede estar vacío):\n" + (f.Hilo || "") + "\n\nÚLTIMO CORREO DE LA CLIENTA (este es el que hay que contestar):\n" + f.Texto + "\n\n---\nCATÁLOGO DE LA WEB (precios reales, de aquí se sacan los precios):\n" + catalogo + (consignas ? "\n\n---\nCONSIGNAS VIGENTES DE PILAR:\n" + consignas : "") + "\n\n---\n" + CLARA_EXTRA;
+  let d = null;
+  try { const r = await sample(pedido, {cache: false}); d = leerJson(r && r.text); } catch (e) { if (e && (e.code === "not_granted" || e.code === "rate_limited")) throw e; d = null; }
+  const id = "P-" + Date.now().toString(36) + k;
+  const mail = f.Email || ""; const nombre = f.Nombre || "";
+  if (!d){
+    await apuntarFila("Propuestas", {ID: id, Recibido: ahora, Persona: "Clara Vega", Clienta: nombre, "Email clienta": mail, Asunto: f.Asunto, "Correo original": f.Texto, Motivo: "No he conseguido leer bien la respuesta de la IA para este correo", Estado: "Pendiente", "ID mensaje Gmail": f["ID mensaje Gmail"], Resumen: "No he podido preparar el borrador de este correo.", Urgencia: "media: sin valorar", Hilo: f.Hilo, "Fecha correo": f["Fecha correo"], "Mensaje a Pilar": "No he conseguido preparar bien el borrador de este correo. Léelo y dime cómo quieres contestarle, y te lo redacto."});
+    return "fallo";
+  }
+  const persona = String(d.persona || "");
+  if (!persona || /ruido/i.test(persona)){
+    await apuntarFila("Descartados", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: f.Asunto});
+    return "ruido";
+  }
+  if (/ivan/i.test(persona)){
+    await apuntarFila("Contabilidad", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: f.Asunto, "Qué es": d.resumen || "", "Qué hay que revisar": d.falta || d.motivo || "", Estado: "Pendiente", "Nota de Iván": "", "Texto del correo": String(f.Texto || "").slice(0, 3000)});
+    await apuntarFila("Descartados", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: "[Contabilidad] " + f.Asunto});
+    return "iván";
+  }
+  await apuntarFila("Propuestas", {ID: id, Recibido: ahora, Persona: persona, Clienta: d.clienta || nombre, "Email clienta": mail, Asunto: f.Asunto, "Correo original": f.Texto, "Respuesta propuesta": d.respuesta || "", Motivo: d.motivo || "", Estado: "Pendiente", Idioma: d.idioma || "", "Fecha ceremonia": d.fecha_ceremonia || "", "ID mensaje Gmail": f["ID mensaje Gmail"], Resumen: d.resumen || "", Prenda: d.prenda || "", Urgencia: d.urgencia || "", Pago: d.pago || "", Falta: d.falta || "", Alerta: d.alerta || "", "Fecha ISO": d.fecha_iso || "", Pedido: d.pedido || "", Opciones: d.opciones || "", Hilo: f.Hilo || "", "Fecha correo": f["Fecha correo"], "Mensaje a Pilar": d.mensaje_pilar || "", "_sugerencia": d.sugerencia || "", "_recomendacion": d.recomendacion || ""});
+  if (d.duda){
+    await apuntarFila("Decisiones", {ID: "D-" + Date.now().toString(36) + k, Creada: ahora, "Quién la pide": persona, Tipo: "Duda", "Qué hay que decidir": d.duda + " (" + (d.clienta || nombre) + " — " + f.Asunto + ")", "Recomendación": d.sugerencia || "", Estado: "Pendiente", "Decisión de Pilar": "", "Departamento con quien hablar": "Ventas — " + persona, "ID propuesta": id});
+  }
+  return "propuesta";
+}
+
+function bloquePreparar(box){
+  const w = el("section", {class:"extracto", "aria-label":"Correos por preparar"});
+  const est = el("p", {class:"estado", role:"status", "aria-live":"polite"}, "Mirando si hay correos nuevos…");
+  const acc = el("div", {class:"aj"});
+  w.append(el("h3", {}, "Correos nuevos de info@"), est, acc); box.append(w);
+  let pendientes = [];
+  const pintar = async () => {
+    acc.textContent = "";
+    try { pendientes = await correosSinPreparar(); } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); return; }
+    est.className = "estado";
+    if (!pendientes.length){ est.textContent = "No hay correos sin preparar. n8n mira info@ cada hora."; return; }
+    est.textContent = pendientes.length + (pendientes.length === 1 ? " correo espera" : " correos esperan") + " a que Clara y su equipo lo preparen. No se envía nada ni se marca como leído.";
+    if (!sample){ est.textContent += " Desde esta vista no puedo prepararlos."; return; }
+    const b = boton("Preparar propuestas", "", async () => {
+      b.disabled = true; est.className = "estado";
+      try {
+        const cat = await leerHoja("Catálogo!B2"); const catalogo = (cat[0] && cat[0][0]) || "(no he podido leer el catálogo de la web)";
+        await cargarDatos(true);
+        const consignas = D.con.filter(x => norm(x.Vigente) !== "no" && x.Consigna).map(x => "- " + x.Consigna + (x["Hasta (fecha ceremonia)"] ? " (hasta " + x["Hasta (fecha ceremonia)"] + ")" : "")).join("\n");
+        const lote = pendientes.slice(0, LOTE); const cuenta = {propuesta: 0, ruido: 0, "iván": 0, fallo: 0};
+        for (let i = 0; i < lote.length; i++){
+          est.textContent = "Preparando el correo " + (i + 1) + " de " + lote.length + "…";
+          const r = await prepararUno(lote[i], catalogo, consignas, i);
+          cuenta[r]++;
+          await escribirHoja("Entrada!K" + lote[i]._fila, [["Preparado"]]);
+        }
+        const partes = [cuenta.propuesta && cuenta.propuesta + " con propuesta", cuenta["iván"] && cuenta["iván"] + " para Iván", cuenta.ruido && cuenta.ruido + " descartados", cuenta.fallo && cuenta.fallo + " que no he sabido leer"].filter(Boolean);
+        trabajo.nota = "He preparado " + lote.length + ": " + partes.join(", ") + "." + (pendientes.length > LOTE ? " Quedan " + (pendientes.length - LOTE) + ": vuelve a pulsar." : "");
+        D.t = 0; pintarTrabajo(box);
+      } catch (e){
+        est.className = "estado mal";
+        est.textContent = (e && e.code === "rate_limited") ? "Voy muy seguido; espera un minuto y vuelve a pulsar." : (e && e.code === "not_granted") ? "Necesito que me dejes usar Claude desde esta página." : mensajeHoja(e);
+        b.disabled = false;
+      }
+    });
+    acc.append(b);
+  };
+  pintar();
+  return w;
 }
 
 function renderBandeja(){
