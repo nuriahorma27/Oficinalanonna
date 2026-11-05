@@ -1336,7 +1336,8 @@ function leerJson(txt){
 
 async function correosSinPreparar(){
   const v = await leerHoja("Entrada!A1:K1000");
-  return aFilas(v).filter(f => f["ID mensaje Gmail"] && norm(f.Estado) === "sin preparar");
+  const vistos = new Set();
+  return aFilas(v).filter(f => { const id = f["ID mensaje Gmail"]; if (!id || vistos.has(id)) return false; vistos.add(id); return norm(f.Estado) === "sin preparar"; });
 }
 
 async function prepararUno(f, catalogo, consignas, k){
