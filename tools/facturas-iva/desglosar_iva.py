@@ -2,7 +2,9 @@
 """Pone el desglose de IVA (subtotal, envío, descuento, base imponible, IVA y total) en las facturas
 de WooCommerce (plugin PDF Invoices) que solo traen Subtotal, Envío y Total.
 
-Uso:  python3 desglosar_iva.py CARPETA_PDFS CARPETA_SALIDA [--iva 21] [--numero-inicial 25001]
+Uso:  python3 desglosar_iva.py CARPETA_PDFS CARPETA_SALIDA [--iva 21] [--numero-inicial 25001] [--sin-iva 25110,25217]
+
+- Con --sin-iva, esas facturas salen con IVA 0 %: el neto es igual al total.
 
 - Con --numero-inicial N, además numera las facturas: N, N+1, N+2... en el orden en que aparecen (los PDF se leen por orden
   de nombre, de enero a diciembre) y escribe "Factura nº N" en la cabecera de la primera página de cada factura.
@@ -48,7 +50,7 @@ def quita_texto_original(pg, reader, lo, hi):
     pg.replace_contents(cs)
     return quitados
 
-def procesa(src, dst, iva_pct, filas_resumen, contador=None):
+def procesa(src, dst, iva_pct, filas_resumen, contador=None, sin_iva=()):
     reader = PdfReader(src); writer = PdfWriter(); n = 0; actual = ''
     with pdfplumber.open(src) as pl:
         for i, page in enumerate(pl.pages):
@@ -76,11 +78,12 @@ def procesa(src, dst, iva_pct, filas_resumen, contador=None):
                 fe, ft = fila('Envío'), fila('Total')
                 sv = num([w for w in words if abs(w['top'] - s['top']) < 3 and '€' in w['text']][-1]['text'])
                 env, tot = fe[1], ft[1]; ybot = ft[0]['bottom']
-                iva = round(tot * iva_pct / (100 + iva_pct), 2); neto = round(tot - iva, 2)
+                exento = actual in sin_iva
+                iva = 0.0 if exento else round(tot * iva_pct / (100 + iva_pct), 2); neto = round(tot - iva, 2)
                 desc = round(tot - (sv + env), 2)
                 filas = [('Subtotal', eur(sv)), ('Envío', eur(env))]
                 if abs(desc) > 0.004: filas.append(('Descuento', eur(desc, True)))
-                filas += [('Base imponible (neto)', eur(neto)), (f'IVA {iva_pct:g} %', eur(iva)), ('Total (IVA incluido)', eur(tot))]
+                filas += [('Base imponible (neto)', eur(neto)), ('IVA 0 %' if exento else f'IVA {iva_pct:g} %', eur(iva)), ('Total' if exento else 'Total (IVA incluido)', eur(tot))]
                 filas_resumen.append((os.path.basename(src), i + 1, actual, sv, env, desc, neto, iva, tot))
                 q = quita_texto_original(pg, reader, H - (ybot + 11), H - (y0 - 12))
                 assert q >= 6, (src, i, q)
@@ -107,11 +110,11 @@ def procesa(src, dst, iva_pct, filas_resumen, contador=None):
     return n
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('entrada'); ap.add_argument('salida'); ap.add_argument('--iva', type=float, default=21.0); ap.add_argument('--numero-inicial', type=int, default=None)
-    a = ap.parse_args(); os.makedirs(a.salida, exist_ok=True); resumen = []; contador = [a.numero_inicial] if a.numero_inicial is not None else None
+    ap = argparse.ArgumentParser(); ap.add_argument('entrada'); ap.add_argument('salida'); ap.add_argument('--iva', type=float, default=21.0); ap.add_argument('--numero-inicial', type=int, default=None); ap.add_argument('--sin-iva', default='', help='números de factura sin IVA, separados por comas (por ejemplo ventas al Reino Unido)')
+    a = ap.parse_args(); sin = {int(x) for x in a.sin_iva.split(',') if x.strip()}; os.makedirs(a.salida, exist_ok=True); resumen = []; contador = [a.numero_inicial] if a.numero_inicial is not None else None
     for src in sorted(glob.glob(os.path.join(a.entrada, '*.pdf'))):
         base = os.path.splitext(os.path.basename(src))[0]
-        n = procesa(src, os.path.join(a.salida, base + '-con-IVA.pdf'), a.iva, resumen, contador)
+        n = procesa(src, os.path.join(a.salida, base + '-con-IVA.pdf'), a.iva, resumen, contador, sin)
         print(f'{base}: {n} facturas')
     mal = [r for r in resumen if abs(r[6] + r[7] - r[8]) > 0.005]
     with open(os.path.join(a.salida, 'resumen-facturas.csv'), 'w', newline='', encoding='utf-8-sig') as f:
