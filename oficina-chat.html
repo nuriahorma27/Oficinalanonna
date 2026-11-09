@@ -1,0 +1,401 @@
+<title>Mensajes La Nonna</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap">
+<style>
+/* Layout: mensajería a dos columnas (contactos | conversación); en el móvil, una sola columna que cambia de vista. */
+:root{
+  --bg:#eef1ee; --panel:#ffffff; --line:#d9e0db; --ink:#18221d; --muted:#5d6b63;
+  --accent:#1f6f55; --accent-ink:#ffffff; --mine:#d7eee3; --theirs:#ffffff; --chip:#e5ece7;
+  --warn:#9a5b00; --warn-bg:#fff4df; --err:#a23a2a; --err-bg:#fbe9e5; --shadow:0 1px 2px rgba(20,40,30,.08);
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --f-display:"Young Serif",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101614; --panel:#17201c; --line:#26332d; --ink:#e6eee9; --muted:#9aaaa1;
+  --accent:#4fb08c; --accent-ink:#0d1512; --mine:#1f3b30; --theirs:#1d2722; --chip:#22302a;
+  --warn:#f0b65a; --warn-bg:#2d2414; --err:#f08c7a; --err-bg:#331b16; --shadow:none; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101614; --panel:#17201c; --line:#26332d; --ink:#e6eee9; --muted:#9aaaa1;
+  --accent:#4fb08c; --accent-ink:#0d1512; --mine:#1f3b30; --theirs:#1d2722; --chip:#22302a;
+  --warn:#f0b65a; --warn-bg:#2d2414; --err:#f08c7a; --err-bg:#331b16; --shadow:none; color-scheme:dark }
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;box-sizing:border-box}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{max-width:1080px;height:100%;margin:0 auto;display:grid;grid-template-columns:300px 1fr;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);min-height:0}
+/* contactos */
+.side{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.side header{padding:18px 18px 12px}
+.side h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;text-wrap:balance}
+.side .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+.dept{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 18px 6px}
+.contacts{list-style:none;margin:0;padding:0 8px;overflow:auto;flex:1}
+.contact{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;
+  padding:10px;border-radius:10px;cursor:pointer}
+.contact:hover{background:var(--chip)}
+.contact[aria-current="true"]{background:var(--mine)}
+.contact .who{min-width:0}
+.contact .n{font-weight:600}
+.contact .last{color:var(--muted);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact time{color:var(--muted);font-size:.75rem;align-self:start;margin-top:3px}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;letter-spacing:.02em;flex:none}
+.av.sm{width:36px;height:36px;font-size:.85rem}
+.side footer{border-top:1px solid var(--line);padding:12px 18px;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-align:left;font-size:.8rem}
+/* conversación */
+.chat{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
+.chat header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.chat header .n{font-weight:600}
+.chat header .st{color:var(--muted);font-size:.82rem;min-height:1.2em}
+.chat header .st.busy{color:var(--accent)}
+.back{display:none;border:0;background:none;font-size:1.4rem;line-height:1;padding:4px 8px 4px 0;cursor:pointer;color:var(--accent)}
+.msgs{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:6px;min-height:0}
+.day{align-self:center;font-size:.75rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:2px 10px;border-radius:99px;margin:8px 0}
+.b{max-width:min(78%,560px);padding:8px 12px 6px;border-radius:14px;box-shadow:var(--shadow);overflow-wrap:anywhere}
+.b.theirs{align-self:flex-start;background:var(--theirs);border:1px solid var(--line);border-top-left-radius:4px}
+.b.mine{align-self:flex-end;background:var(--mine);border-top-right-radius:4px}
+.b p{margin:0 0 6px}
+.b ul{margin:0 0 6px;padding-left:18px}
+.b .t{display:block;text-align:right;font-size:.7rem;color:var(--muted);margin-top:2px}
+.b.err{background:var(--err-bg);border-color:transparent;color:var(--err)}
+.typing{align-self:flex-start;background:var(--theirs);border:1px solid var(--line);border-radius:14px;border-top-left-radius:4px;padding:10px 14px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:dot 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){.typing i{animation:none;opacity:.6}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 10px}
+.chips button{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:6px 12px;font-size:.85rem;cursor:pointer}
+.chips button:hover{border-color:var(--accent)}
+form.write{display:flex;gap:8px;align-items:flex-end;padding:10px 16px 14px;background:var(--panel);border-top:1px solid var(--line)}
+form.write textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line);border-radius:20px;padding:10px 14px;background:var(--bg);max-height:140px}
+.send{border:0;border-radius:50%;width:42px;height:42px;background:var(--accent);color:var(--accent-ink);cursor:pointer;display:grid;place-items:center;flex:none}
+.send[disabled]{opacity:.45;cursor:default}
+.stop{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:8px 12px;cursor:pointer;font-size:.85rem}
+.notice{margin:12px 16px 0;padding:10px 12px;border-radius:10px;background:var(--warn-bg);color:var(--warn);font-size:.88rem}
+/* nombre */
+.welcome{position:fixed;inset:0;background:rgba(10,20,15,.45);display:grid;place-items:center;padding:16px;z-index:5}
+.welcome .card{background:var(--panel);border-radius:14px;padding:24px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px}
+.welcome h2{font-family:var(--f-display);font-weight:400;margin:0;font-size:1.3rem}
+.welcome input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.welcome button{border:0;border-radius:10px;padding:10px 12px;background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer}
+@media (max-width:760px){
+  body{padding-block:0;padding-left:0;padding-right:0}
+  .app{grid-template-columns:1fr;border-radius:0;border:0}
+  .app.in-chat .side{display:none}
+  .app:not(.in-chat) .chat{display:none}
+  .back{display:block}
+  .side header,.dept,.side footer{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .b{max-width:88%}
+}
+</style>
+
+<div class="app" id="app">
+  <aside class="side" aria-label="Contactos">
+    <header>
+      <h1>Mensajes La Nonna</h1>
+      <div class="sub" id="hola">Escribe a quien necesites, como en un chat.</div>
+    </header>
+    <div class="dept">Contabilidad</div>
+    <ul class="contacts" id="contacts"></ul>
+    <footer>
+      <span>Contestan como el equipo de la oficina: son asistentes que miran la contabilidad, las facturas de Drive y el correo de info@ sin cambiar nada.</span>
+      <button type="button" class="linkbtn" id="cambiarNombre">Cambiar mi nombre</button>
+    </footer>
+  </aside>
+  <section class="chat" aria-label="Conversación">
+    <header>
+      <button type="button" class="back" id="back" aria-label="Volver a los contactos">‹</button>
+      <div class="av sm" id="hAv"></div>
+      <div><div class="n" id="hName"></div><div class="st" id="hState" role="status" aria-live="polite"></div></div>
+    </header>
+    <div id="aviso"></div>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <div class="chips" id="chips"></div>
+    <form class="write" id="form">
+      <label for="txt" style="position:absolute;left:-9999px">Mensaje</label>
+      <textarea id="txt" rows="1" placeholder="Escribe un mensaje"></textarea>
+      <button type="button" class="stop" id="stop" hidden>Parar</button>
+      <button type="submit" class="send" id="send" aria-label="Enviar">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg>
+      </button>
+    </form>
+  </section>
+</div>
+<div class="welcome" id="welcome" hidden>
+  <form class="card" id="wForm">
+    <h2>Hola. ¿Cómo te llamas?</h2>
+    <div style="color:var(--muted);font-size:.9rem">Así el equipo sabe con quién habla y quién deja cada encargo.</div>
+    <input id="wName" autocomplete="given-name" placeholder="Tu nombre" required>
+    <button type="submit">Entrar</button>
+  </form>
+</div>
+
+<script>
+/* ---------- Datos de La Nonna ---------- */
+const BANDEJA = "1PM2BE1xAEv8YvCgStigz1fCtUAchEUa1B_MbvqgCuoQ";
+const CONCILIACION = "10m8hLDKQp26iL0s5wW-RUQqmVQjYc9myW-tGNbwDRKo";
+const T4_2026 = "1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8";
+const CARPETAS = {
+  facturas_pendientes: "1FtBib-KoabcZjQtU-z31vhQgJgVrli5W",
+  facturas_recibidas: "1--H0zUw7Uw4YECwu_9_t0RAX1LzATkda",
+  recibidas_2026: "1n8Of1zoi9ZHnHodK9iBIHwHU3Le7W9NB",
+  recibidas_2026_T4: "17Lci3JeM5BbGvRMCB7_fe_K1lO_GilnN",
+  facturas_emitidas: "1xkTiMUgOarK462JTpNumLOqCvTS0OAXS",
+  emitidas_pendientes: "1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg",
+  extractos_banco: "106soLlTKZT5tEYSpQlsKTWx9d5VvhtNP",
+  conciliacion: "1LRemgAXyVxEoQe3FidLh_LQfQIBJABgm"
+};
+
+const COMUN = `Trabajas en La Nonna (atelierlanonna.com), un taller de ropa a medida para arras, bautizo y comunión. La dueña es Pilar y es autónoma. Estás contestando por un chat de mensajes a una compañera o compañero del equipo.
+
+CÓMO HABLAS
+- Como una persona del equipo por mensajes: de tú, cercano, frases cortas y palabras de todos los días. Primero contestas a lo que te preguntan en una o dos frases; das más detalle solo si ayuda.
+- Nada de jerga técnica (ni hojas con nombres raros, ni identificadores, ni "API", "herramienta", "consulta", "fórmula"). Cuenta qué hay, no cómo lo has mirado.
+- Sin títulos, sin negritas de manual, sin tablas. Una lista corta solo si hay varias cifras que comparar. Sin emojis. Sin aperturas ni cierres de fórmula ("¡Claro!", "Espero haberte ayudado").
+- Si algo no cuadra o no lo sabes, dilo con naturalidad y pregunta una sola cosa.
+- Tú eres quien lo mira: no digas "voy a usar" ni "según el sistema". Di "lo he mirado" o "en la hoja del trimestre pone…".
+- Si alguien te pregunta en serio si eres una persona o una máquina, di la verdad: que eres un asistente de inteligencia artificial que hace el trabajo de tu puesto en la oficina de La Nonna.
+
+LO QUE PUEDES Y NO PUEDES HACER
+- Puedes mirar: la hoja de contabilidad del trimestre (pestañas Gastos, Ingresos, Proveedores, Revisión fiscal, Informe semanal), la hoja de la bandeja (pestañas Parte diario, Facturas recogidas, Contabilidad, Encargos), la hoja de conciliación (Resumen, Reglas aprendidas, Dudas para la reunión), las carpetas de facturas de Drive y el correo de info@ (solo leer).
+- No puedes cambiar nada: ni apuntar, ni corregir, ni mover archivos, ni enviar correos, ni pagar. Si te piden algo que hay que hacer, dilo y déjalo como encargo para Iván (o para Pilar si es una decisión suya). Iván mira sus encargos cada mañana a las 8:15. Antes de dejar un encargo, asegúrate de que está claro qué hay que hacer; si no, pregunta.
+- Nunca te inventes importes, fechas ni datos fiscales. Si no lo encuentras, dilo.
+- Los datos de clientas son confidenciales: usa solo lo necesario.
+
+CÓMO ESTÁ ORGANIZADO
+- Hoja del trimestre: en Gastos e Ingresos los totales están en la fila 2 y los datos desde la fila 6 (cabeceras en la fila 5). Gastos: Nº, Destinatario, Emisora (proveedor), Fecha factura, Número factura, Fecha pago, Importe total, IVA, Importe neto, Fecha real de pago, Subido. Ingresos: Nº factura, Pedido, Fecha, Importe con IVA, IVA, Importe neto, Cuenta corriente.
+- Cada mañana: a las 7:30 y 7:45 llegan a Drive las facturas del correo y las de los pedidos completados de la web; a las 8:15 Iván las apunta y Carmen revisa lo nuevo. Los lunes Álvaro hace el informe semanal.
+- Carpetas: facturas_pendientes (gastos por apuntar), recibidas_2026_T4 (gastos ya archivados del cuarto trimestre), emitidas_pendientes (facturas de pedidos por apuntar), facturas_emitidas, extractos_banco, conciliacion.
+- Trimestres: T1 enero-marzo, T2 abril-junio, T3 julio-septiembre, T4 octubre-diciembre. IVA: se presenta hasta el 20 de abril, julio y octubre, y hasta el 30 de enero el del cuarto trimestre.
+- Con Stripe: lo que paga la clienta es el ingreso; la comisión de Stripe es un gasto aparte (Stripe factura desde Irlanda sin IVA y ese IVA lo declara La Nonna). Los criterios fiscales los confirma siempre la gestoría.`;
+
+const PERSONAS = [
+  { id:"ivan", name:"Iván Soler", role:"Contable", color:"#2f7a5c",
+    intro:"Hola, soy Iván. Llevo los gastos y los ingresos: las facturas de proveedores y las de los pedidos de la web. Pregúntame lo que necesites.",
+    chips:["¿Qué has apuntado hoy?","¿Ha llegado la factura de Tejidos Rebes?","¿Cuánto llevamos de gastos este trimestre?"],
+    prompt:"Eres Iván Soler, el contable de La Nonna. Apuntas cada día los gastos (facturas de proveedores) y los ingresos (pedidos completados de la web) en la hoja del trimestre y archivas las facturas. Respondes ante Álvaro Mena. Sabes de facturas, proveedores, pedidos, vencimientos y de qué está apuntado y qué no." },
+  { id:"carmen", name:"Carmen Ortiz", role:"Fiscal", color:"#8a4f7d",
+    intro:"Hola, soy Carmen, la fiscal. Reviso que las facturas estén bien para presentarlas y te cuento qué habrá que pagar de IVA. ¿En qué te ayudo?",
+    chips:["¿Cuánto IVA nos va a tocar este trimestre?","¿Qué hacemos con las comisiones de Stripe?","¿Hay algo pendiente para la gestoría?"],
+    prompt:"Eres Carmen Ortiz, la fiscal de La Nonna. Revisas que las facturas emitidas lleven el IVA desglosado (tipo y cuota) y la numeración seguida, que los envíos fuera de la UE no lleven IVA, que las devoluciones tengan factura rectificativa, cómo se trata Stripe, y avisas de lo que hay que presentar (IVA trimestral y, al ser autónoma, el pago a cuenta del IRPF). Tus avisos están en la pestaña Revisión fiscal de la hoja del trimestre. Explicas todo sin palabras de Hacienda: en vez de 'inversión del sujeto pasivo' dices 'nos factura desde fuera sin IVA y ese IVA lo declaramos nosotras'. Propones, pero quien lo da por bueno es la gestoría." },
+  { id:"alvaro", name:"Álvaro Mena", role:"Director de Contabilidad", color:"#3d5f8f",
+    intro:"Hola, soy Álvaro. Superviso la contabilidad y cada lunes preparo cómo va el trimestre. Si quieres saber cómo vamos, pregúntame.",
+    chips:["¿Cómo va el trimestre?","¿Qué pagos tenemos pendientes?","¿Qué le falta por hacer a Iván?"],
+    prompt:"Eres Álvaro Mena, director de Contabilidad de La Nonna. Supervisas a Iván (contable) y a Carmen (fiscal) y das a Pilar la foto de cómo va todo: ingresos, gastos, resultado aproximado, IVA, pagos a proveedores que vencen y lo que queda pendiente. Tu informe semanal está en la pestaña Informe semanal de la hoja del trimestre." }
+];
+
+/* ---------- Estado (solo en este navegador) ---------- */
+const KEY = "nonna-mensajes-v1";
+let S = {me:"", active:"ivan", convs:{}};
+try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && typeof v === "object") S = Object.assign(S, v); } catch (e) {}
+const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const P = id => PERSONAS.find(p => p.id === id) || PERSONAS[0];
+const conv = id => (S.convs[id] = S.convs[id] || []);
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const el = (t, a, ...k) => { const e = document.createElement(t); for (const x in (a || {})) { if (x === "class") e.className = a[x]; else e.setAttribute(x, a[x]); } k.flat().forEach(c => c != null && e.append(c)); return e; };
+const ini = n => n.split(" ").map(w => w[0]).slice(0, 2).join("");
+const hora = ts => new Date(ts).toLocaleTimeString("es-ES", {hour:"2-digit", minute:"2-digit"});
+const dia = ts => { const d = new Date(ts), h = new Date(); const y = new Date(h); y.setDate(h.getDate() - 1);
+  if (d.toDateString() === h.toDateString()) return "Hoy"; if (d.toDateString() === y.toDateString()) return "Ayer";
+  return d.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"long"}); };
+function render(txt){
+  const frag = document.createDocumentFragment(); let ul = null;
+  String(txt).replace(/\r/g, "").split("\n").forEach(line => {
+    const m = line.match(/^\s*[-*•]\s+(.*)$/);
+    if (m){ if (!ul){ ul = el("ul"); frag.append(ul); } ul.append(inline(el("li"), m[1])); return; }
+    ul = null; if (!line.trim()) return;
+    frag.append(inline(el("p"), line.replace(/^#+\s*/, "")));
+  });
+  return frag;
+}
+function inline(node, s){ s.split(/(\*\*[^*]+\*\*)/).forEach(part => { if (/^\*\*[^*]+\*\*$/.test(part)) node.append(el("strong", {}, part.slice(2, -2))); else if (part) node.append(part); }); return node; }
+
+/* ---------- Conectores (solo lectura salvo los encargos) ---------- */
+let mcp = null, sample = null, conTools = true;
+const recorta = (v, n) => { const s = typeof v === "string" ? v : JSON.stringify(v); return s.length > n ? s.slice(0, n) + "… (recortado)" : s; };
+async function llamar(server, tool, input, signal){
+  if (!mcp) throw new Error("No puedo mirar los datos desde aquí.");
+  try { const r = await mcp.callTool(server, tool, input, {signal}); return r.payload; }
+  catch (e){
+    const c = e && e.code;
+    if (c === "server_not_connected" || c === "selection_required") throw new Error(server + " no está conectado en esta cuenta de Claude.");
+    if (c === "needs_reauth") throw new Error("La conexión con " + server + " ha caducado y hay que volver a conectarla.");
+    if (c === "not_in_manifest" || c === "approval_required" || c === "not_granted") throw new Error("No me han dado permiso para mirar " + server + " desde esta página.");
+    if (c === "server_unavailable") throw new Error(server + " no contesta ahora mismo.");
+    throw new Error((e && e.message) || "No he podido mirarlo.");
+  }
+}
+function trimestre(d = new Date()){ return {n: Math.floor(d.getMonth() / 3) + 1, y: d.getFullYear()}; }
+let hojaTrim = null;
+async function idHojaTrimestre(signal){
+  if (hojaTrim) return hojaTrim;
+  const {n, y} = trimestre();
+  try {
+    const r = await llamar("Google Drive", "search_files", {query: "title contains 'T" + n + " DETALLE INGRESOS Y GASTOS " + y + "' and mimeType = 'application/vnd.google-apps.spreadsheet'", excludeContentSnippets: true, pageSize: 10}, signal);
+    const f = ((r && r.files) || []).find(x => !/backup/i.test(x.title || ""));
+    if (f) return (hojaTrim = f.id);
+  } catch (e) {}
+  if (n === 4 && y === 2026) return (hojaTrim = T4_2026);
+  throw new Error("No encuentro la hoja del trimestre T" + n + " " + y + ". Puede que aún no esté creada.");
+}
+let estadoTool = () => {};
+const TOOLS = [
+  { name:"leer_hoja",
+    description:"Lee celdas de una hoja de La Nonna y devuelve las filas como lista de listas. hoja: 'trimestre' (contabilidad del trimestre actual: Gastos, Ingresos, Proveedores, Revisión fiscal, Informe semanal), 'bandeja' (Parte diario, Facturas recogidas, Contabilidad, Encargos) o 'conciliacion' (Resumen, Reglas aprendidas, Dudas para la reunión). rango en notación A1 con la pestaña, por ejemplo \"Gastos!A1:K200\".",
+    inputSchema:{type:"object", properties:{hoja:{type:"string", enum:["trimestre","bandeja","conciliacion"]}, rango:{type:"string"}}, required:["hoja","rango"]},
+    async execute(i, ctx){
+      estadoTool("está mirando la hoja de contabilidad…");
+      const h = String(i.hoja); const id = h === "bandeja" ? BANDEJA : h === "conciliacion" ? CONCILIACION : await idHojaTrimestre(ctx.signal);
+      const r = await llamar("Google Sheets", "get_values", {spreadsheetId: id, range: String(i.rango)}, ctx.signal);
+      const v = (r && (r.values || (r.valueRange && r.valueRange.values))) || [];
+      return recorta(v.slice(0, 400), 30000);
+    } },
+  { name:"buscar_en_drive",
+    description:"Busca archivos (facturas, extractos…) en Drive. Devuelve id, nombre, tipo, fecha de creación y enlace. Usa 'carpeta' para listar una carpeta concreta y/o 'texto' para buscar por contenido o nombre.",
+    inputSchema:{type:"object", properties:{texto:{type:"string"}, carpeta:{type:"string", enum:Object.keys(CARPETAS)}}},
+    async execute(i, ctx){
+      estadoTool("está buscando en las carpetas de facturas…");
+      const q = [];
+      if (i.texto) q.push("fullText contains '" + String(i.texto).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'");
+      if (i.carpeta && CARPETAS[i.carpeta]) q.push("parentId = '" + CARPETAS[i.carpeta] + "'");
+      if (!q.length) throw new Error("Dime qué buscar o en qué carpeta.");
+      const r = await llamar("Google Drive", "search_files", {query: q.join(" and "), excludeContentSnippets: true, pageSize: 40}, ctx.signal);
+      return ((r && r.files) || []).map(f => ({id: f.id, nombre: f.title, tipo: f.mimeType, creado: f.createdTime, enlace: f.viewUrl}));
+    } },
+  { name:"leer_archivo",
+    description:"Lee el contenido de un archivo de Drive (una factura en PDF, un extracto…) por su id, sacado de buscar_en_drive. Devuelve el texto.",
+    inputSchema:{type:"object", properties:{id:{type:"string"}}, required:["id"]},
+    async execute(i, ctx){
+      estadoTool("está leyendo la factura…");
+      const r = await llamar("Google Drive", "read_file_content", {fileId: String(i.id)}, ctx.signal);
+      return recorta(r, 20000);
+    } },
+  { name:"buscar_correo",
+    description:"Busca en el correo de info@atelierlanonna.com (solo lectura) con la sintaxis de búsqueda de Gmail, por ejemplo \"from:stripe newer_than:7d\" o \"factura Rebes\". Devuelve conversaciones con su threadId, remitente, fecha, asunto y un resumen.",
+    inputSchema:{type:"object", properties:{consulta:{type:"string"}}, required:["consulta"]},
+    async execute(i, ctx){
+      estadoTool("está mirando el correo de info@…");
+      const r = await llamar("Gmail", "search_threads", {query: String(i.consulta), pageSize: 10, view: "THREAD_VIEW_MINIMAL"}, ctx.signal);
+      return ((r && r.threads) || []).map(t => ({threadId: t.id, mensajes: (t.messages || []).map(m => ({de: m.sender, fecha: m.date, asunto: m.subject, resumen: m.snippet}))}));
+    } },
+  { name:"leer_correo",
+    description:"Lee una conversación entera del correo de info@ por su threadId (de buscar_correo). Devuelve cada mensaje con remitente, fecha, asunto, texto y nombres de adjuntos. Solo lectura: no marca nada como leído.",
+    inputSchema:{type:"object", properties:{threadId:{type:"string"}}, required:["threadId"]},
+    async execute(i, ctx){
+      estadoTool("está leyendo el correo…");
+      const r = await llamar("Gmail", "get_thread", {threadId: String(i.threadId), messageFormat: "PLAIN_TEXT"}, ctx.signal);
+      return recorta(((r && r.messages) || []).map(m => ({de: m.sender, fecha: m.date, asunto: m.subject, texto: String(m.plaintextBody || m.snippet || "").slice(0, 3500), adjuntos: (m.attachments || []).map(a => a.filename || a.name).filter(Boolean)})), 30000);
+    } },
+  { name:"dejar_encargo",
+    description:"Deja un encargo apuntado para Iván (cosas que hay que hacer en la contabilidad: apuntar, corregir, archivar, revisar) o para Pilar (decisiones). Úsalo solo cuando la persona pide que se haga algo y está claro qué. Devuelve el número del encargo.",
+    inputSchema:{type:"object", properties:{para:{type:"string", enum:["Iván Soler","Pilar"]}, encargo:{type:"string", description:"Qué hay que hacer, claro y completo, en una o dos frases"}}, required:["para","encargo"]},
+    async execute(i, ctx){
+      estadoTool("está apuntando el encargo…");
+      const id = "E-" + Date.now().toString(36);
+      const ahora = new Date(); const f = ahora.toLocaleDateString("es-ES") + " " + hora(ahora);
+      await llamar("Google Sheets", "append_values", {spreadsheetId: BANDEJA, range: "Encargos!A1", values: [[id, f, S.me || "Equipo", String(i.para), String(i.encargo).slice(0, 1000), "Pendiente", "", ""]]}, ctx.signal);
+      return "Encargo " + id + " apuntado para " + i.para + ".";
+    } }
+];
+
+function instrucciones(p){
+  const hoy = new Date(); const {n, y} = trimestre(hoy);
+  return p.prompt + "\n\n" + COMUN + "\n\nHoy es " + hoy.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"long", year:"numeric"}) + " (trimestre en curso: T" + n + " " + y + "). Hablas con " + (S.me || "alguien del equipo") + ". Lo que sigue es vuestra conversación por mensajes; contesta al último mensaje como " + p.name.split(" ")[0] + ".";
+}
+
+/* ---------- Interfaz ---------- */
+let ctl = null, ocupado = false;
+function pintarContactos(){
+  const ul = $("#contacts"); ul.textContent = "";
+  PERSONAS.forEach(p => {
+    const c = conv(p.id); const ult = c[c.length - 1];
+    const b = el("button", {type:"button", class:"contact", "aria-current": String(S.active === p.id)},
+      el("span", {class:"av", style:"background:" + p.color, "aria-hidden":"true"}, ini(p.name)),
+      el("span", {class:"who"}, el("div", {class:"n"}, p.name), el("div", {class:"last"}, ult ? (ult.role === "user" ? "Tú: " : "") + ult.content.replace(/\s+/g, " ") : p.role)),
+      el("time", {}, ult ? hora(ult.t) : ""));
+    b.onclick = () => { S.active = p.id; guardar(); $("#app").classList.add("in-chat"); pintar(); $("#txt").focus(); };
+    ul.append(el("li", {}, b));
+  });
+}
+function pintarCabecera(estado){
+  const p = P(S.active);
+  $("#hAv").textContent = ini(p.name); $("#hAv").style.background = p.color;
+  $("#hName").textContent = p.name;
+  const st = $("#hState"); st.textContent = estado || p.role; st.className = "st" + (estado ? " busy" : "");
+}
+function pintarMensajes(){
+  const box = $("#msgs"); box.textContent = ""; const p = P(S.active); const c = conv(p.id);
+  let ultimoDia = "";
+  const poner = m => { const d = dia(m.t); if (d !== ultimoDia){ box.append(el("div", {class:"day"}, d)); ultimoDia = d; }
+    const b = el("div", {class:"b " + (m.role === "user" ? "mine" : "theirs") + (m.error ? " err" : "")}); b.append(render(m.content)); b.append(el("span", {class:"t"}, hora(m.t))); box.append(b); };
+  if (!c.length) poner({role:"assistant", content:p.intro, t:Date.now()});
+  c.forEach(poner);
+  if (ocupado) box.append(el("div", {class:"typing", "aria-label": p.name.split(" ")[0] + " está escribiendo"}, el("i"), el("i"), el("i")));
+  box.scrollTop = box.scrollHeight;
+  const chips = $("#chips"); chips.textContent = "";
+  if (!ocupado && c.filter(m => m.role === "user").length < 1) p.chips.forEach(t => { const b = el("button", {type:"button"}, t); b.onclick = () => enviar(t); chips.append(b); });
+}
+function pintar(){ pintarContactos(); pintarCabecera(); pintarMensajes(); }
+
+const COPY = {
+  not_granted:"Para que el equipo te conteste, la página necesita tu permiso para usar Claude. Recarga la página y acepta el aviso.",
+  sampling_disabled:"Esta cuenta no tiene acceso al equipo desde aquí. Habla con Pilar.",
+  rate_limited:"Hay muchos mensajes seguidos. Espera un par de minutos y vuelve a escribir.",
+  session_expired:"Se ha cerrado la sesión. Vuelve a entrar en Claude y recarga la página.",
+  refused:"Ese mensaje no lo puedo contestar. Prueba a preguntarlo de otra forma.",
+  tools_unavailable:"Desde aquí no puedo mirar la contabilidad. Abre la página en claude.ai."
+};
+async function enviar(texto){
+  texto = String(texto || "").trim(); if (!texto || ocupado) return;
+  const p = P(S.active); const c = conv(p.id);
+  c.push({role:"user", content:texto, t:Date.now()}); guardar();
+  $("#txt").value = ""; autoSize();
+  if (!sample){ c.push({role:"assistant", content:"Ahora mismo no puedo contestar desde aquí. Abre esta página dentro de Claude (claude.ai) con tu cuenta.", t:Date.now(), error:true}); guardar(); pintar(); return; }
+  ocupado = true; ctl = new AbortController(); $("#stop").hidden = false; $("#send").disabled = true;
+  const nombre = p.name.split(" ")[0];
+  estadoTool = s => { if (!ctl.signal.aborted) pintarCabecera(nombre + " " + s); };
+  pintarContactos(); pintarCabecera("escribiendo…"); pintarMensajes();
+  const turnos = [{role:"user", content: instrucciones(p)}].concat(c.filter(m => !m.error).slice(-24).map(m => ({role: m.role, content: m.content})));
+  let respuesta = null;
+  try {
+    const opts = {signal: ctl.signal, onText: () => pintarCabecera("escribiendo…")};
+    if (conTools) opts.tools = TOOLS; else opts.cache = false;
+    const r = await sample(turnos, opts);
+    respuesta = {role:"assistant", content: r.text.trim(), t: Date.now()};
+  } catch (e){
+    const code = e && e.code;
+    if (code === "cancelled") respuesta = e.text ? {role:"assistant", content: e.text.trim(), t: Date.now()} : null;
+    else if (code === "tools_unavailable"){ conTools = false; respuesta = {role:"assistant", content: COPY.tools_unavailable, t: Date.now(), error:true}; }
+    else respuesta = {role:"assistant", content: (e && e.text ? e.text.trim() + "\n\n" : "") + (COPY[code] || "Se me ha cortado. Vuelve a enviarme el mensaje, por favor."), t: Date.now(), error: !e || !e.text};
+  }
+  if (respuesta && respuesta.content) c.push(respuesta);
+  ocupado = false; ctl = null; $("#stop").hidden = true; $("#send").disabled = false; guardar(); pintar();
+}
+
+function autoSize(){ const t = $("#txt"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 140) + "px"; }
+$("#txt").addEventListener("input", autoSize);
+$("#txt").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); enviar($("#txt").value); } });
+$("#form").addEventListener("submit", e => { e.preventDefault(); enviar($("#txt").value); });
+$("#stop").onclick = () => ctl && ctl.abort();
+$("#back").onclick = () => { $("#app").classList.remove("in-chat"); pintarContactos(); };
+function pedirNombre(){ $("#welcome").hidden = false; $("#wName").value = S.me || ""; setTimeout(() => $("#wName").focus(), 30); }
+$("#wForm").addEventListener("submit", e => { e.preventDefault(); const v = $("#wName").value.trim(); if (!v) return; S.me = v; guardar(); $("#welcome").hidden = true; saludo(); });
+$("#cambiarNombre").onclick = pedirNombre;
+function saludo(){ $("#hola").textContent = S.me ? "Hola, " + S.me + ". Escribe a quien necesites." : "Escribe a quien necesites, como en un chat."; }
+
+saludo(); pintar();
+if (!S.me) pedirNombre();
+(async () => {
+  try { sample = await window.claude?.use("sample"); } catch (e) { sample = null; }
+  try { mcp = await window.claude?.use("mcp"); } catch (e) { mcp = null; }
+  if (sample){ try { const l = await sample.limits(); if (!l || !l.tools) conTools = false; } catch (e) {} }
+  if (!sample) $("#aviso").replaceChildren(el("div", {class:"notice"}, "Para hablar con el equipo, abre esta página dentro de Claude con la cuenta de La Nonna."));
+  else if (!mcp || !conTools) $("#aviso").replaceChildren(el("div", {class:"notice"}, "Desde aquí el equipo puede contestarte, pero no mirar la contabilidad ni el correo."));
+})();
+</script>
