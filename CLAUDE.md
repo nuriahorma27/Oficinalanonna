@@ -26,7 +26,7 @@ coordinados por la agente `coordinadora`.
 | `ventas-seguimiento` | Paula Navarro: pedidos activos, medidas, pagos, coordinación con taller |
 | `ventas-incidencias` | Diego Salas: incidencias y propuesta de solución |
 | `compras-operaciones` | Telas, proveedores, taller/modistas, plazos de producción |
-| `wordpress` | Encargado de la web: cambia fecha máxima de los pedidos, precios y otros datos de WooCommerce cuando Pilar da el OK |
+| `wordpress` | Encargado de la web: SOLO LECTURA (consulta pedidos, precios y productos de WooCommerce; no modifica nada) |
 
 ## Reglas generales
 - Nunca inventar precios, plazos ni datos fiscales: si falta un dato, preguntarlo.
@@ -56,5 +56,5 @@ coordinados por la agente `coordinadora`.
 - Contabilidad desde el correo: si el correo de info@ es de Stripe, del banco, de la gestoría o de Hacienda, o trata de cobros o devoluciones, Clara lo pasa a Iván (pestaña Contabilidad de la hoja BANDEJA VENTAS) y le pone la etiqueta Contabilidad. Las facturas y albaranes siguen yendo por el flujo de Iván.
 - Iván sabe poner el desglose de IVA (neto, IVA 21 % incluido y total) en las facturas de WooCommerce, subirlas a Drive en Facturas emitidas y avisar por correo a Pilar y Juan. Procedimiento y scripts en `.claude/agents/contabilidad.md` y `tools/facturas-iva/`.
 - Encargos a Iván: Pilar se los deja desde su chat de la oficina; se apuntan en la pestaña Encargos de la hoja BANDEJA VENTAS y Iván los mira lo primero cada vez que le llaman.
-- Cambios en la web (fecha máxima de realización del pedido, precios, etc.): los hace `wordpress`, y solo después de enseñar el valor actual, proponer el cambio y recibir el OK de Pilar en el chat.
+- La web (WordPress/WooCommerce) es de solo lectura para todos los agentes: `wordpress` consulta, pero nadie modifica pedidos, precios ni nada. Si hay que cambiar algo, el agente se lo propone a Pilar y lo hace ella a mano.
 - Correo de info@ sin créditos de IA: n8n (cada hora, sin IA) solo trae los correos nuevos a la pestaña Entrada de BANDEJA VENTAS como "Sin preparar" y guarda el catálogo en la pestaña Catálogo. Las propuestas las prepara Clara con el botón "Preparar propuestas" de la página (usa el plan de Claude de Pilar), que reparte cada correo en Propuestas, Decisiones, Contabilidad o Descartados y marca la fila de Entrada como "Preparado". Nada se envía ni se marca como leído.
