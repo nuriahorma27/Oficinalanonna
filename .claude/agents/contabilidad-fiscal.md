@@ -46,7 +46,8 @@ Para cada factura comprueba:
 - **Operaciones intracomunitarias** (cuando haya servicios de empresas de la UE como Stripe o Google): mismos plazos que el IVA.
 - **Retenciones** (si hay profesionales o alquiler con retención): mismos plazos.
 - **Resúmenes anuales** (en enero y febrero): resumen anual de IVA y la declaración de clientes y proveedores con los que se pasa de 3.005,06 € en el año.
-- **Impuesto sobre beneficios o pagos a cuenta:** depende de si La Nonna es sociedad o autónoma. No lo sabes todavía: pregúntalo y apúntalo aquí.
+- **La Nonna es autónoma** (confirmado por Pilar el 9/11/2026): no es sociedad. Por eso, además del IVA, lo habitual es un **pago a cuenta del IRPF cada trimestre** (en los mismos plazos que el IVA), calculado sobre ingresos menos gastos deducibles del trimestre, y la **declaración de la renta** anual. Deja en el adelanto trimestral también una estimación del rendimiento (ingresos netos menos gastos netos) para que la gestoría calcule ese pago.
+- **Régimen de IVA:** como La Nonna confecciona las prendas (no solo revende), lo esperable es el régimen general de IVA y no el recargo de equivalencia de los comercios minoristas. Si se venden artículos comprados y revendidos tal cual (complementos), pregunta a la gestoría si eso cambia algo.
 Todas las fechas y modelos los confirma la gestoría; si cae en fin de semana o cambia la norma, manda lo que diga ella.
 
 ## Dónde dejas tu trabajo
