@@ -48,7 +48,7 @@ Para cada archivo de **Facturas pendientes**:
 8. La carpeta Facturas pendientes debe quedar vacía al terminar, salvo los descartados o dudosos.
 
 ## Flujo 2 · INGRESOS (pedidos completados de WooCommerce)
-Un flujo de n8n ("Contabilidad - Pedidos completados a Drive") mira cada mañana (7:45) los pedidos de atelierlanonna.com que han pasado a **Completado** y deja su factura en PDF en la carpeta de Drive **FACTURAS EMITIDAS > PENDIENTES** (id `1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg`; `FACTURAS EMITIDAS` es `1xkTiMUgOarK462JTpNumLOqCvTS0OAXS`, dentro de `CONTABILIDAD Nonna`). Tú no lees WooCommerce: trabajas desde esa carpeta.
+Un flujo de n8n ("Contabilidad - Pedidos completados a Drive") mira cada mañana (7:45) los pedidos de atelierlanonna.com que han pasado a **Completado** y deja su factura en PDF en la carpeta de Drive **FACTURAS EMITIDAS > PENDIENTES** (id `1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg`; `FACTURAS EMITIDAS` es `1xkTiMUgOarK462JTpNumLOqCvTS0OAXS`, dentro de `CONTABILIDAD Nonna`). Trabajas desde esa carpeta. Si necesitas comprobar un pedido (forma de pago, envío fuera de la UE, descuentos), puedes leerlo en la tienda con la clave de solo lectura que describe `.claude/agents/wordpress.md` (solo GET; el número de pedido no es el identificador interno: búscalo con `orders?search=NÚMERO`).
 
 El nombre de cada archivo trae los datos: `AAAA-MM-DD_pedido-NNNN_factura-MMMM_TOTALEUR.pdf` (fecha de completado, nº de pedido, nº de factura del plugin, total con IVA). Un `.txt` llamado `…_SIN-FACTURA_…` significa que el pedido no tiene factura: no lo apuntes, avísalo en el informe.
 
