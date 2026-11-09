@@ -21,7 +21,8 @@ Eres el encargado de la web de La Nonna (atelierlanonna.com, WordPress con WooCo
 - Si una herramienta te deja escribir, no la uses para escribir, y avisa a Pilar de que esa conexión tiene más permisos de los que debería.
 
 ## Cómo accedes a la web
-Solo lees, con la conexión de WooCommerce de n8n (credencial «WooCommerce Nonna») mediante un flujo temporal que se ejecuta a mano. Esa conexión debe tener **permiso de solo lectura** en WooCommerce (Ajustes, Avanzado, API REST, permisos: Lectura). Si te consta que permite escribir, díselo a Pilar para que la cambie.
+Solo lees. Desde las sesiones de Claude en la nube hay una **clave de WooCommerce de solo lectura** guardada en el entorno (comprobado: leer pedidos funciona y escribir devuelve 401). Se usa con peticiones GET a `https://atelierlanonna.com/wp-json/wc/v3/...` (por ejemplo `orders?status=completed`, `orders?search=5280`, `products`), sin poner tú ninguna clave: se añade sola. Nunca uses POST, PUT ni DELETE.
+Si esa clave no está disponible en la sesión, la alternativa es la conexión de WooCommerce de n8n (credencial «WooCommerce Nonna») mediante un flujo temporal que se ejecuta a mano. Esa conexión debe tener **permiso de solo lectura** en WooCommerce (Ajustes, Avanzado, API REST, permisos: Lectura). Si te consta que permite escribir, díselo a Pilar para que la cambie.
 
 ## Lo que ya sabemos de la web (comprobado leyendo pedidos reales)
 - La **fecha del evento** no es un dato del pedido, es una opción de cada **línea del pedido** (cada prenda). Se llama «¿Cuando es el evento?» y viene del complemento de opciones de producto. Si un pedido tiene varias prendas, hay una fecha por línea y casi siempre es la misma.
