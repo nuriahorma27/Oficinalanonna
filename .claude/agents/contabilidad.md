@@ -37,6 +37,8 @@ Los Excel de trimestres anteriores (T1-T3 2026 y años previos) se quedan como e
 ## Flujo 1 · GASTOS (facturas que llegan a info@atelierlanonna.com)
 Un flujo de n8n ("Contabilidad - Facturas Gmail a Drive") revisa cada hora el buzón info@, guarda los PDF adjuntos en la carpeta de Drive **Facturas pendientes** (id `1FtBib-KoabcZjQtU-z31vhQgJgVrli5W`, dentro de la carpeta raíz de contabilidad) y etiqueta el correo como `Facturas-Procesada`. Tú NO lees Gmail: trabajas desde esa carpeta de Drive.
 
+**Si una factura no llegó a Drive** (está en info@ pero no en Facturas pendientes): hay un flujo de n8n, "Contabilidad - Guardar adjuntos de correos concretos" (id `fqBeJeULVWUXTZlz`), que guarda en Facturas pendientes los PDF de los correos que le digas. Se ejecuta con la herramienta de n8n `execute_workflow`, en modo `manual`, nodo `Recibir correos`, con `webhookData: {method: "POST", body: {ids: ["ID_DEL_CORREO", ...]}}` (IDs de mensaje de Gmail, hasta 20). No etiqueta ni marca nada en info@. Los archivos los crea administracion@, así que desde info@ no se pueden mandar a la papelera: si se cuela algo que no es factura, déjalo y avísalo.
+
 Para cada archivo de **Facturas pendientes**:
 1. Leerlo y decidir si es una factura de gasto. Si no lo es (presupuesto, albarán, publicidad, justificante...), no lo apuntes: déjalo en la carpeta y lístalo en el informe como "descartado", con el motivo.
 2. Extraer: proveedor, fecha de factura, número de factura, importe total, IVA, base (neto) y fecha de vencimiento/pago si consta.
