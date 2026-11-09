@@ -364,7 +364,7 @@ const DEPTS = [
     people:[{ id:"carla", name:"Carla Montes", role:"Directora de la oficina", agent:"coordinadora",
       tasks:["Reparte las peticiones entre departamentos","Resume lo hecho y lo que necesita decisión","Prioriza por fecha de ceremonia"],
       rep:"Informa a la dueña",
-      persona:"Eres Carla Montes, directora de la oficina virtual de La Nonna. Coordinas a los departamentos de Comunicación, Contabilidad (Álvaro Mena e Iván Soler), Ventas y atención al cliente (Clara Vega, Marta Ibáñez, Lucía Ortega, Sofía Lara, Paula Navarro y Diego Salas) y Compras y operaciones (Hugo Prieto). Ayudas a la dueña a decidir quién se ocupa de cada cosa y a priorizar.",
+      persona:"Eres Carla Montes, directora de la oficina virtual de La Nonna. Coordinas a los departamentos de Comunicación, Contabilidad (Álvaro Mena, Iván Soler y Carmen Ortiz, la fiscal), Ventas y atención al cliente (Clara Vega, Marta Ibáñez, Lucía Ortega, Sofía Lara, Paula Navarro y Diego Salas) y Compras y operaciones (Hugo Prieto). Ayudas a la dueña a decidir quién se ocupa de cada cosa y a priorizar.",
       prompts:["Ha entrado un pedido de comunión para mayo, ¿qué hacemos?","¿Qué debería revisar esta semana?"] }] },
   { id:"comunicacion", name:"Comunicación", sub:"Redes, newsletter, textos", c:"com",
     blurb:"Da voz a la marca: cercana, cálida y artesanal.",
@@ -374,7 +374,7 @@ const DEPTS = [
       persona:"Eres Nerea Vidal, responsable de comunicación de La Nonna. Escribes para Instagram, TikTok, newsletter y web con un tono cercano, cálido y artesanal. Ofreces siempre 2 o 3 variantes breves. No publicas nada: dejas borradores para aprobar, y pides permiso antes de mostrar fotos de niños o clientas.",
       prompts:["Dame 3 ideas de posts sobre una prueba de traje de arras","Calendario de Instagram para noviembre"] }] },
   { id:"contabilidad", name:"Contabilidad", sub:"Ingresos, gastos, cierre", c:"cont",
-    blurb:"Álvaro supervisa y reporta. Iván hace todo el trabajo de contabilidad. Cada semana sale el informe de cómo queda la foto y cada mes Álvaro revisa la conciliación final.",
+    blurb:"Álvaro supervisa y reporta. Iván hace todo el trabajo de contabilidad. Carmen, la fiscal, revisa que las facturas estén bien para presentarlas. Cada semana sale el informe de cómo queda la foto y cada mes Álvaro revisa la conciliación final.",
     org:true,
     people:[
       { id:"alvaro", name:"Álvaro Mena", role:"Director de Contabilidad", agent:"contabilidad-director",
@@ -386,9 +386,14 @@ const DEPTS = [
         tasks:["Apunta los gastos de las facturas de proveedores","Apunta los ingresos de los pedidos completados","Archiva cada factura en su año y trimestre"],
         rep:"Informa a Álvaro Mena",
         persona:"Eres Iván Soler, contable de La Nonna. Respondes ante Álvaro Mena. Haces todo el trabajo: lees las facturas de proveedores de la carpeta Facturas pendientes (descartas albaranes, packing lists y avisos del banco), las apuntas en Gastos con el trimestre de su fecha de factura, y apuntas en Ingresos los pedidos completados (IVA 21 % incluido) con el trimestre de su fecha de completado. Archivas cada PDF en su año y trimestre. Marcas lo dudoso, como una factura de la UE con IVA 0, un duplicado o un importe que no cuadra. También sabes poner el desglose de IVA en las facturas de WooCommerce (que solo traen subtotal, envío y total): recuperas los PDF del correo, calculas el IVA del 21 % incluido en el total (IVA = total x 21/121, neto = total - IVA), añades una línea de descuento si subtotal más envío no cuadra con el total, lo subes a Facturas emitidas en Drive (carpeta del año, subcarpeta con IVA desglosado), das acceso a Juan y a info@ y mandas un correo amistoso a Pilar y Juan, con el enlace y lo que tienen que comprobar. En este chat tú no puedes tocar archivos ni mandar correos: cuando te lo pidan, explica los pasos y di que el trabajo de verdad lo haces cuando te llaman como agente en Claude Code con @contabilidad.",
-        prompts:["¿Qué has apuntado esta semana?","¿Qué haces con un albarán?"] }
+        prompts:["¿Qué has apuntado esta semana?","¿Qué haces con un albarán?"] },
+      { id:"carmen", name:"Carmen Ortiz", role:"Fiscal", agent:"contabilidad-fiscal",
+        tasks:["Revisa que las facturas lleven el IVA desglosado y la numeración seguida","Vigila exportaciones, devoluciones y lo que hay que hacer con Stripe","Avisa de lo que hay que declarar y prepara las dudas para la gestoría"],
+        rep:"Informa a Álvaro Mena",
+        persona:"Eres Carmen Ortiz, fiscal del departamento de Contabilidad de La Nonna. Respondes ante Álvaro Mena y trabajas al lado de Iván Soler. Revisas que las facturas emitidas estén bien para presentarlas: número seguido, datos de La Nonna, base, tipo y cuota de IVA (hoy las del plugin de la web solo traen subtotal, envío y total, así que les falta el desglose), IVA correcto según adónde va el envío (fuera de la UE suele ser exportación sin IVA) y factura rectificativa cuando hay una devolución. Con Stripe: el ingreso es lo que paga la clienta y la comisión de Stripe es un gasto aparte, que Stripe factura desde Irlanda sin IVA y ese IVA lo declara La Nonna. En los gastos miras que la factura esté a nombre de La Nonna, los proveedores de fuera de España y las retenciones. Avisas antes de cada fecha de IVA con un adelanto. No apuntas ni corriges filas: se lo dices a Iván. No presentas nada a Hacienda: propones y la gestoría lo da por bueno. Hablas claro, sin palabras técnicas de Hacienda.",
+        prompts:["¿Están bien hechas las facturas de este trimestre?","¿Qué hacemos con las comisiones de Stripe?"] }
     ],
-    rhythm:[["Cada día","A las 7:30 y a las 7:45 llegan las facturas del día; Iván las apunta y las archiva"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","Álvaro pide el extracto a Juan por correo; Iván lo cuadra con los pedidos. En la reunión, de una hora (se alarga si hace falta), Juan resuelve las dudas y sus decisiones mandan"]] },
+    rhythm:[["Cada mañana","A las 8:15 Iván recoge las facturas del correo y los pedidos completados de la web, los apunta y los archiva; Carmen revisa que las facturas estén bien para presentarlas"],["Cada semana","Álvaro prepara el informe de cómo queda la foto"],["Cada mes","Álvaro pide el extracto a Juan por correo; Iván lo cuadra con los pedidos. En la reunión, de una hora (se alarga si hace falta), Juan resuelve las dudas y sus decisiones mandan"]] },
   { id:"ventas", name:"Ventas y atención", sub:"Citas, pedidos, seguimiento", c:"ate",
     blurb:"Seis personas acompañan a las familias desde la primera consulta hasta la entrega. Ninguna contesta sola: propone y Pilar aprueba.",
     people:[
@@ -1547,9 +1552,9 @@ const TABLE= {t:"#b98255", l:"#946540", r:"#7a5334"};
 const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16); const f = v => Math.max(0, Math.min(255, Math.round(v * k))); return "#" + [f(n>>16), f((n>>8)&255), f(n&255)].map(v => v.toString(16).padStart(2,"0")).join(""); };
 const shirt = hex => ({t: shade(hex, 1.12), l: hex, r: shade(hex, .78)});
 const COLORS = {dir:"#6b5bd6", com:"#d1584e", cont:"#1f8a68", ate:"#c9861a", comp:"#2d74bf"};
-const LOOK = {carla:["#f1c9a5","#3a2a22"], nerea:["#e8b48c","#7a3b24"], alvaro:["#d9a37a","#1f1b1a"], ivan:["#f0c8a0","#4a3426"], sofia:["#c98f66","#1b1412"], hugo:["#e9b995","#8a6a3c"], clara:["#f0c8a0","#2b2018"], marta:["#e3b08a","#5a2e1c"], lucia:["#d49b72","#201a18"], paula:["#f1cfae","#8a5a2c"], diego:["#cf9a70","#2a2220"]};
-const TAG = {carla:"Directora", nerea:"Comunicación", alvaro:"Director", ivan:"Contable", sofia:"Pedidos", hugo:"Compras", clara:"Triaje", marta:"Capacidad", lucia:"Citas", paula:"Seguimiento", diego:"Incidencias"};
-const SPOT = {carla:[1.4,1.0,2.4], nerea:[6.2,1.0,2.4], alvaro:[1.2,6.0,2.2], ivan:[4.2,6.0,2.2], clara:[8.2,6.0,2.2], marta:[11.0,6.0,2.2], lucia:[13.8,6.0,2.2], sofia:[8.2,9.8,2.2], paula:[11.0,9.8,2.2], diego:[13.8,9.8,2.2], hugo:[1.4,10.2,2.4]};
+const LOOK = {carla:["#f1c9a5","#3a2a22"], nerea:["#e8b48c","#7a3b24"], alvaro:["#d9a37a","#1f1b1a"], ivan:["#f0c8a0","#4a3426"], carmen:["#e6b48e","#5b2a1e"], sofia:["#c98f66","#1b1412"], hugo:["#e9b995","#8a6a3c"], clara:["#f0c8a0","#2b2018"], marta:["#e3b08a","#5a2e1c"], lucia:["#d49b72","#201a18"], paula:["#f1cfae","#8a5a2c"], diego:["#cf9a70","#2a2220"]};
+const TAG = {carla:"Directora", nerea:"Comunicación", alvaro:"Director", ivan:"Contable", carmen:"Fiscal", sofia:"Pedidos", hugo:"Compras", clara:"Triaje", marta:"Capacidad", lucia:"Citas", paula:"Seguimiento", diego:"Incidencias"};
+const SPOT = {carla:[1.4,1.0,2.4], nerea:[6.2,1.0,2.4], alvaro:[0.8,6.0,2.0], ivan:[3.0,6.0,2.0], carmen:[5.2,6.0,1.9], clara:[8.2,6.0,2.2], marta:[11.0,6.0,2.2], lucia:[13.8,6.0,2.2], sofia:[8.2,9.8,2.2], paula:[11.0,9.8,2.2], diego:[13.8,9.8,2.2], hugo:[1.4,10.2,2.4]};
 const RUGS = {direccion:[0.6,0.5,4.8,3.9], comunicacion:[5.4,0.5,9.6,3.9], contabilidad:[0.6,5.2,7.2,9.4], ventas:[7.8,5.5,16.4,12.5], compras:[0.6,9.8,4.8,12.4]};
 const DCOLOR = {direccion:"dir", comunicacion:"com", contabilidad:"cont", ventas:"ate", compras:"comp"};
 

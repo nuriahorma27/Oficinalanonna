@@ -19,6 +19,7 @@ coordinados por la agente `coordinadora`.
 | `comunicacion` | Redes sociales, newsletter, textos, imagen de marca |
 | `contabilidad-director` | Álvaro Mena, director de Contabilidad: supervisa, reporta cada semana y revisa la conciliación mensual |
 | `contabilidad` | Iván Soler, contable: hace todo el trabajo (gastos e ingresos, archivo de facturas y hoja del trimestre) |
+| `contabilidad-fiscal` | Carmen Ortiz, fiscal: revisa que las facturas estén bien para presentarlas (IVA desglosado, exportaciones, rectificativas, Stripe) y avisa de lo que hay que declarar; la gestoría valida |
 | `ventas-triaje` | Clara Vega: lee la bandeja de info@ y reparte cada correo |
 | `ventas-capacidad` | Marta Ibáñez: vigila pedidos por semana/fecha y pide decisiones a la dueña |
 | `ventas-citas` | Lucía Ortega: solo citas (videollamada/showroom) y deriva |
@@ -58,5 +59,5 @@ coordinados por la agente `coordinadora`.
 - Encargos a Iván: Pilar se los deja desde su chat de la oficina; se apuntan en la pestaña Encargos de la hoja BANDEJA VENTAS y Iván los mira lo primero cada vez que le llaman.
 - La web (WordPress/WooCommerce) es de solo lectura para todos los agentes: `wordpress` consulta, pero nadie modifica pedidos, precios ni nada. Si hay que cambiar algo, el agente se lo propone a Pilar y lo hace ella a mano.
 - Correo de info@ conectado directamente (Gmail de info@, sin n8n) y SOLO EN LECTURA: al abrir la bandeja, la página trae a la pestaña Entrada de BANDEJA VENTAS los correos nuevos de info@ como "Sin preparar". Clara los prepara con el botón "Preparar propuestas" (usa el plan de Claude de Pilar) y reparte cada correo en Propuestas, Decisiones, Contabilidad o Descartados.
-- Por decisión de Pilar, ni la página ni ningún agente envía correos, crea borradores, etiqueta ni marca como leído nada en info@. Aprobar una respuesta solo la deja como "Aceptada" en la hoja; el correo sigue sin leer.
+- Por decisión de Pilar, ni la página ni ningún agente envía correos, crea borradores, etiqueta ni marca como leído nada en info@. Única excepción autorizada por Pilar: el correo mensual de Álvaro a Juan pidiendo el extracto del banco, con info@ (La Nonna) en copia. A clientas nunca. Aprobar una respuesta solo la deja como "Aceptada" en la hoja; el correo sigue sin leer.
 - n8n sigue solo para lo que necesita la tienda: el catálogo (pestaña Catálogo), las facturas de pedidos completados y los flujos de contabilidad que ya tiene.
