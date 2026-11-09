@@ -681,14 +681,12 @@ function aFilas(v){
 }
 const escribirHoja = (rango, valores) => mcp.callTool("Google Sheets", "update_values", {spreadsheetId: BANDEJA, range: rango, values: valores});
 
-/* ---------- Correo de info@ directamente con Gmail (sin n8n) ---------- */
-const LABEL_CONTABILIDAD = "Label_5578030044168664513";   // etiqueta CONTABILIDAD de info@
+/* ---------- Correo de info@ directamente con Gmail (sin n8n). SOLO LECTURA: solo search_threads y get_thread ---------- */
 const BUSQUEDA_INFO = "in:inbox newer_than:3d -category:promotions -category:social -category:forums -from:atelierlanonna.com";
 const gmail = (tool, input) => mcp.callTool("Gmail", tool, input, {cache: false}).then(r => (r && r.payload) || {}, e => { throw {gmail: true, code: e && e.code, message: e && e.message}; });
-const aprobada = f => ["Aceptada", "Enviada", "En borradores de Gmail"].includes(f.Estado);
+const aprobada = f => f.Estado === "Aceptada";
 function mensajeCorreo(e){
   const c = e && e.code;
-  if (c === "corchetes") return "La respuesta tiene algo entre corchetes sin rellenar. Cámbialo con Modificar y vuelve a aceptarla; no la he enviado.";
   if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "Permite que esta página use el correo de info@ cuando te lo pida y vuelve a pulsar.";
   if (c === "server_not_connected" || c === "selection_required") return "Gmail no está conectado en tu cuenta de Claude. Conéctalo en Ajustes → Conectores con info@.";
   if (c === "needs_reauth") return "La conexión con Gmail ha caducado. Vuelve a conectarla en Ajustes → Conectores.";
@@ -722,31 +720,11 @@ async function traerCorreosNuevos(){
   return nuevos;
 }
 
-// Envía desde info@ la respuesta que Pilar ha aprobado, en el mismo hilo. Si hay que adjuntar algo, la deja en borradores.
-async function enviarRespuesta(f, texto){
-  if (/\[[^\]]{2,}\]/.test(texto)) throw {code: "corchetes"};
-  const id = f["ID mensaje Gmail"]; if (!id) return "sin-correo";
-  if (/adjunt/i.test(f.Alerta || "")){
-    await gmail("create_draft", {replyToMessageId: id, to: [f["Email clienta"]].filter(Boolean), subject: /^re:/i.test(f.Asunto || "") ? f.Asunto : "Re: " + (f.Asunto || ""), body: texto});
-    return "borrador";
-  }
-  await gmail("reply", {messageId: id, body: texto});
-  try {
-    const m = await gmail("get_message", {messageId: id, messageFormat: "METADATA_ONLY"});
-    const h = await gmail("get_thread", {threadId: m.threadId || id, messageFormat: "METADATA_ONLY"});
-    for (const x of (h.messages || [])) if ((x.labelIds || []).includes("UNREAD")) await gmail("update_message_labels", {messageId: x.id, removeLabelIds: ["UNREAD"]});
-  } catch (e){ /* la respuesta ya ha salido; si no se marca como leído no pasa nada grave */ }
-  return "enviada";
-}
-// Aprueba: primero envía y después apunta el estado en la hoja.
-async function aprobarYEnviar(f, texto){
-  const r = await enviarRespuesta(f, texto);
-  const estado = r === "enviada" ? "Enviada" : r === "borrador" ? "En borradores de Gmail" : "Aceptada";
-  await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [[estado, texto]]);
-  const quien = f.Clienta || "la clienta";
-  return r === "enviada" ? "Enviada la respuesta a " + quien + " desde info@. Su correo ya está como leído."
-    : r === "borrador" ? "La respuesta a " + quien + " está en borradores de info@: adjunta el documento y envíala desde Gmail."
-    : "Aceptada la respuesta para " + quien + ". No encuentro su correo en info@, así que no la he enviado.";
+// Solo lectura: la página no envía correos, no crea borradores ni marca nada en info@.
+// Aprobar una respuesta solo la deja apuntada como "Aceptada" en la hoja.
+async function aprobarRespuesta(f, texto){
+  await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", texto]]);
+  return "Aceptada la respuesta para " + (f.Clienta || "la clienta") + ". No se envía desde aquí: el correo sigue sin leer en info@.";
 }
 
 async function mismaFila(hoja, fila, id){ const v = await leerHoja(hoja + "!A" + fila); return !!(v[0] && String(v[0][0]) === id); }
@@ -872,10 +850,9 @@ function ficha(f, p, datos, alCambiar){
     estado.className = "estado"; estado.textContent = "Guardando…";
     try {
       if (!(await mismaFila("Propuestas", f._fila, f.ID))){ estado.className = "estado mal"; estado.textContent = "Los datos han cambiado. Pulsa Actualizar y vuelve a mirarlo."; return; }
-      estado.textContent = "Enviando…";
-      const nota = await aprobarYEnviar(f, texto);
+      const nota = await aprobarRespuesta(f, texto);
       D.t = 0; alCambiar(nota);
-    } catch (e){ estado.className = "estado mal"; estado.textContent = e && (e.gmail || e.code === "corchetes") ? mensajeCorreo(e) : mensajeHoja(e); }
+    } catch (e){ estado.className = "estado mal"; estado.textContent = mensajeHoja(e); }
   };
   fila.append(boton("Aceptar", "ok", () => aceptar(ta.value)), boton("Rechazar", "sec", () => abrirRechazo()), boton("Modificar", "sec", () => abrirModificar()));
   const cerrar = () => { zona.textContent = ""; ta.readOnly = true; ta.value = f["Respuesta propuesta"] || ""; fila.hidden = false; estado.textContent = ""; };
@@ -1193,12 +1170,11 @@ function ventanaChat(it, recargar){
     est.className = "estado"; est.textContent = "Guardando…";
     try {
       if (!(await mismaFila("Propuestas", f._fila, f.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
-      est.textContent = "Enviando…";
-      const nota = await aprobarYEnviar(f, conv[ib].borrador);
+      const nota = await aprobarRespuesta(f, conv[ib].borrador);
       conv.push({de: "ellas", t: horaAhora(), texto: nota});
       await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
       D.t = 0; convs.delete(f.ID); trabajo.nota = nota; trabajo.sel = null; recargar();
-    } catch (e){ est.className = "estado mal"; est.textContent = e && (e.gmail || e.code === "corchetes") ? mensajeCorreo(e) : mensajeHoja(e); }
+    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
   };
 
   const pintar = () => {
@@ -1351,7 +1327,7 @@ async function pintarTrabajo(box){
     cuerpo.append(el("h4", {}, "Envíos que has aprobado"));
     if (!hs.length) cuerpo.append(el("p", {class:"vacio"}, "Todavía no has aprobado ninguno."));
     hs.forEach(f => { const dt = el("details", {class:"ficha"}); dt.append(el("summary", {}, (f.Clienta || f["Email clienta"] || "") + " · " + (f.Asunto || "") + " · " + f.Persona + " · " + f.Estado), el("pre", {class:"orig"}, f["Respuesta final"] || f["Respuesta propuesta"] || "")); cuerpo.append(dt); });
-    cuerpo.append(el("p", {class:"nota"}, "Al aprobar, la respuesta sale desde info@ en el mismo hilo y el correo de la clienta pasa a leído. Si había que adjuntar algo, se queda en borradores de Gmail para que la envíes tú."));
+    cuerpo.append(el("p", {class:"nota"}, "Las respuestas aprobadas no se envían desde aquí: la página solo lee info@ y el correo sigue sin leer."));
     const rs = D.dec.filter(x => norm(x.Estado) !== "pendiente").slice(-10).reverse();
     if (rs.length){ cuerpo.append(el("h4", {}, "Dudas y decisiones resueltas")); const ul = el("ul", {class:"hist"}); rs.forEach(x => ul.append(el("li", {}, x.Estado + " · " + x["Qué hay que decidir"] + (x["Decisión de Pilar"] ? " → " + x["Decisión de Pilar"] : "")))); cuerpo.append(ul); }
   } else cuerpo.append(...pilarFijo().slice(1));
@@ -1430,7 +1406,6 @@ async function prepararUno(f, catalogo, consignas, k){
   if (/ivan/i.test(persona)){
     await apuntarFila("Contabilidad", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: f.Asunto, "Qué es": d.resumen || "", "Qué hay que revisar": d.falta || d.motivo || "", Estado: "Pendiente", "Nota de Iván": "", "Texto del correo": String(f.Texto || "").slice(0, 3000)});
     await apuntarFila("Descartados", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: "[Contabilidad] " + f.Asunto});
-    try { await gmail("label_message", {messageId: f["ID mensaje Gmail"], labelIds: [LABEL_CONTABILIDAD]}); } catch (e){ /* la etiqueta es una ayuda; si falla, el correo ya está en la pestaña Contabilidad */ }
     return "iván";
   }
   await apuntarFila("Propuestas", {ID: id, Recibido: ahora, Persona: persona, Clienta: d.clienta || nombre, "Email clienta": mail, Asunto: f.Asunto, "Correo original": f.Texto, "Respuesta propuesta": d.respuesta || "", Motivo: d.motivo || "", Estado: "Pendiente", Idioma: d.idioma || "", "Fecha ceremonia": d.fecha_ceremonia || "", "ID mensaje Gmail": f["ID mensaje Gmail"], Resumen: d.resumen || "", Prenda: d.prenda || "", Urgencia: d.urgencia || "", Pago: d.pago || "", Falta: d.falta || "", Alerta: d.alerta || "", "Fecha ISO": d.fecha_iso || "", Pedido: d.pedido || "", Opciones: d.opciones || "", Hilo: f.Hilo || "", "Fecha correo": f["Fecha correo"], "Mensaje a Pilar": d.mensaje_pilar || "", "_sugerencia": d.sugerencia || "", "_recomendacion": d.recomendacion || ""});
