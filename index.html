@@ -680,6 +680,75 @@ function aFilas(v){
     .filter(o => Object.keys(o).some(k => k !== "_fila" && o[k]));
 }
 const escribirHoja = (rango, valores) => mcp.callTool("Google Sheets", "update_values", {spreadsheetId: BANDEJA, range: rango, values: valores});
+
+/* ---------- Correo de info@ directamente con Gmail (sin n8n) ---------- */
+const LABEL_CONTABILIDAD = "Label_5578030044168664513";   // etiqueta CONTABILIDAD de info@
+const BUSQUEDA_INFO = "in:inbox newer_than:3d -category:promotions -category:social -category:forums -from:atelierlanonna.com";
+const gmail = (tool, input) => mcp.callTool("Gmail", tool, input, {cache: false}).then(r => (r && r.payload) || {}, e => { throw {gmail: true, code: e && e.code, message: e && e.message}; });
+const aprobada = f => ["Aceptada", "Enviada", "En borradores de Gmail"].includes(f.Estado);
+function mensajeCorreo(e){
+  const c = e && e.code;
+  if (c === "corchetes") return "La respuesta tiene algo entre corchetes sin rellenar. Cámbialo con Modificar y vuelve a aceptarla; no la he enviado.";
+  if (c === "not_in_manifest" || c === "approval_required" || c === "consent_required" || c === "not_granted") return "Permite que esta página use el correo de info@ cuando te lo pida y vuelve a pulsar.";
+  if (c === "server_not_connected" || c === "selection_required") return "Gmail no está conectado en tu cuenta de Claude. Conéctalo en Ajustes → Conectores con info@.";
+  if (c === "needs_reauth") return "La conexión con Gmail ha caducado. Vuelve a conectarla en Ajustes → Conectores.";
+  if (c === "server_unavailable" || c === "upstream_error") return "Gmail no ha contestado. Vuelve a probar dentro de un momento.";
+  return "No he podido usar el correo de info@ (" + ((e && (e.message || c)) || "error") + ").";
+}
+const limpiarCuerpo = (t, max) => String(t || "").split(/\n\s*(?:El |On ).{0,160}(?:escribi|wrote)/i)[0].split(/\n>/)[0].replace(/\n\s*\n+/g, "\n").trim().slice(0, max);
+const esNuestro = m => /atelierlanonna\.com/i.test(m.sender || "") || (m.labelIds || []).includes("SENT");
+function remitente(m){
+  const mail = m.sender || ""; const n = (m.addressDisplayNames || []).find(a => norm(a.emailAddress) === norm(mail));
+  const nombre = (n && n.displayName) || ""; return {mail, nombre, de: nombre ? nombre + " <" + mail + ">" : mail};
+}
+
+// Trae a la pestaña Entrada los correos nuevos de info@. Solo lee: no marca nada como leído.
+async function traerCorreosNuevos(){
+  const [en, pr, de, co] = await Promise.all([leerHoja("Entrada!A1:K3000"), leerHoja("Propuestas!A1:W3000"), leerHoja("Descartados!A1:D3000"), leerHoja("Contabilidad!A1:I3000")]);
+  const vistos = new Set(); [en, pr, de, co].forEach(v => aFilas(v).forEach(f => { if (f["ID mensaje Gmail"]) vistos.add(f["ID mensaje Gmail"]); }));
+  const r = await gmail("search_threads", {query: BUSQUEDA_INFO, pageSize: 40, view: "THREAD_VIEW_SUMMARY"});
+  const hilos = (r.threads || []).filter(t => { const u = (t.messages || [])[0]; return u && !vistos.has(u.id) && !esNuestro(u); });
+  let nuevos = 0;
+  for (const t of hilos){
+    const h = await gmail("get_thread", {threadId: t.id, messageFormat: "PLAIN_TEXT"});
+    const ms = h.messages || []; const u = ms[ms.length - 1];
+    if (!u || esNuestro(u) || vistos.has(u.id)) continue;
+    const texto = limpiarCuerpo(u.plaintextBody || u.snippet, 3000); if (texto.length < 4) continue;
+    const previos = ms.slice(0, -1).slice(-6).map(m => (esNuestro(m) ? "LA NONNA" : "CLIENTA") + " (" + String(m.date || "").slice(0, 16).replace("T", " ") + "): " + limpiarCuerpo(m.plaintextBody || m.snippet, 700)).join("\n\n");
+    const q = remitente(u);
+    await apuntarFila("Entrada", {"ID mensaje Gmail": u.id, Recibido: new Date().toISOString().slice(0, 16).replace("T", " "), De: q.de, Email: q.mail, Nombre: q.nombre, Asunto: String(u.subject || "").slice(0, 150), "Fecha correo": u.date || "", Texto: texto, Hilo: previos.slice(0, 4000), "Lista masiva": /no-?reply|donotreply|notifications?@|newsletter|mailer|news@/i.test(q.mail) ? "sí" : "no", Estado: "Sin preparar"});
+    vistos.add(u.id); nuevos++;
+  }
+  return nuevos;
+}
+
+// Envía desde info@ la respuesta que Pilar ha aprobado, en el mismo hilo. Si hay que adjuntar algo, la deja en borradores.
+async function enviarRespuesta(f, texto){
+  if (/\[[^\]]{2,}\]/.test(texto)) throw {code: "corchetes"};
+  const id = f["ID mensaje Gmail"]; if (!id) return "sin-correo";
+  if (/adjunt/i.test(f.Alerta || "")){
+    await gmail("create_draft", {replyToMessageId: id, to: [f["Email clienta"]].filter(Boolean), subject: /^re:/i.test(f.Asunto || "") ? f.Asunto : "Re: " + (f.Asunto || ""), body: texto});
+    return "borrador";
+  }
+  await gmail("reply", {messageId: id, body: texto});
+  try {
+    const m = await gmail("get_message", {messageId: id, messageFormat: "METADATA_ONLY"});
+    const h = await gmail("get_thread", {threadId: m.threadId || id, messageFormat: "METADATA_ONLY"});
+    for (const x of (h.messages || [])) if ((x.labelIds || []).includes("UNREAD")) await gmail("update_message_labels", {messageId: x.id, removeLabelIds: ["UNREAD"]});
+  } catch (e){ /* la respuesta ya ha salido; si no se marca como leído no pasa nada grave */ }
+  return "enviada";
+}
+// Aprueba: primero envía y después apunta el estado en la hoja.
+async function aprobarYEnviar(f, texto){
+  const r = await enviarRespuesta(f, texto);
+  const estado = r === "enviada" ? "Enviada" : r === "borrador" ? "En borradores de Gmail" : "Aceptada";
+  await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [[estado, texto]]);
+  const quien = f.Clienta || "la clienta";
+  return r === "enviada" ? "Enviada la respuesta a " + quien + " desde info@. Su correo ya está como leído."
+    : r === "borrador" ? "La respuesta a " + quien + " está en borradores de info@: adjunta el documento y envíala desde Gmail."
+    : "Aceptada la respuesta para " + quien + ". No encuentro su correo en info@, así que no la he enviado.";
+}
+
 async function mismaFila(hoja, fila, id){ const v = await leerHoja(hoja + "!A" + fila); return !!(v[0] && String(v[0][0]) === id); }
 
 let modo = "oficina";                    // "oficina" | "pilar"
@@ -797,15 +866,16 @@ function ficha(f, p, datos, alCambiar){
   bloqueTraduccion(f, ta, c);
   if (f.Motivo) c.append(el("p", {class:"motivo"}, "Por qué le toca a " + p.name.split(" ")[0] + ": " + f.Motivo));
   const estado = el("p", {class:"estado", role:"status", "aria-live":"polite"});
-  if (!esPendiente(f)){ c.append(el("p", {class:"motivo"}, "Ya está " + (f.Estado || "").toLowerCase() + ". Queda lista para enviar cuando el envío esté activado; mientras tanto el correo sigue sin leer en info@."), estado); return c; }
+  if (!esPendiente(f)){ c.append(el("p", {class:"motivo"}, "Ya está " + (f.Estado || "").toLowerCase() + "."), estado); return c; }
   const zona = el("div", {class:"zona"}); const fila = el("div", {class:"acciones"});
   const aceptar = async texto => {
     estado.className = "estado"; estado.textContent = "Guardando…";
     try {
       if (!(await mismaFila("Propuestas", f._fila, f.ID))){ estado.className = "estado mal"; estado.textContent = "Los datos han cambiado. Pulsa Actualizar y vuelve a mirarlo."; return; }
-      await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", texto]]);
-      D.t = 0; alCambiar("Aceptada la respuesta para " + (f.Clienta || "la clienta") + ". Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@.");
-    } catch (e){ estado.className = "estado mal"; estado.textContent = mensajeHoja(e); }
+      estado.textContent = "Enviando…";
+      const nota = await aprobarYEnviar(f, texto);
+      D.t = 0; alCambiar(nota);
+    } catch (e){ estado.className = "estado mal"; estado.textContent = e && (e.gmail || e.code === "corchetes") ? mensajeCorreo(e) : mensajeHoja(e); }
   };
   fila.append(boton("Aceptar", "ok", () => aceptar(ta.value)), boton("Rechazar", "sec", () => abrirRechazo()), boton("Modificar", "sec", () => abrirModificar()));
   const cerrar = () => { zona.textContent = ""; ta.readOnly = true; ta.value = f["Respuesta propuesta"] || ""; fila.hidden = false; estado.textContent = ""; };
@@ -917,7 +987,7 @@ function tabPedidos(box, p){
 
 function tabFichas(box, p, recargar){
   box.append(el("h4", {}, "Fichas de pedido listas para crear en WordPress"));
-  const acept = D.prop.filter(f => f.Estado === "Aceptada" && norm(f.Persona) === norm(p.name));
+  const acept = D.prop.filter(f => aprobada(f) && norm(f.Persona) === norm(p.name));
   if (!acept.length){ box.append(el("p", {class:"vacio"}, "Cuando aceptes una respuesta mía de una clienta que confirma el pedido, aquí te dejo la ficha con todos los datos para crearlo y apuntarlo en el calendario.")); return; }
   acept.forEach(f => {
     const c = el("article", {class:"prop"});
@@ -1123,11 +1193,12 @@ function ventanaChat(it, recargar){
     est.className = "estado"; est.textContent = "Guardando…";
     try {
       if (!(await mismaFila("Propuestas", f._fila, f.ID))){ est.className = "estado mal"; est.textContent = "Los datos han cambiado. Pulsa Actualizar."; return; }
-      conv.push({de: "ellas", t: horaAhora(), texto: "Hecho, queda aprobada para enviar."});
-      await escribirHoja("Propuestas!J" + f._fila + ":K" + f._fila, [["Aceptada", conv[ib].borrador]]);
+      est.textContent = "Enviando…";
+      const nota = await aprobarYEnviar(f, conv[ib].borrador);
+      conv.push({de: "ellas", t: horaAhora(), texto: nota});
       await escribirHoja("Propuestas!Y" + f._fila, [[JSON.stringify(conv).slice(0, 45000)]]);
-      D.t = 0; convs.delete(f.ID); trabajo.nota = "Aprobada la respuesta para " + (f.Clienta || "la clienta") + ". Queda lista para enviar; el envío todavía no está activado, así que el correo sigue sin leer en info@."; trabajo.sel = null; recargar();
-    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+      D.t = 0; convs.delete(f.ID); trabajo.nota = nota; trabajo.sel = null; recargar();
+    } catch (e){ est.className = "estado mal"; est.textContent = e && (e.gmail || e.code === "corchetes") ? mensajeCorreo(e) : mensajeHoja(e); }
   };
 
   const pintar = () => {
@@ -1276,11 +1347,11 @@ async function pintarTrabajo(box){
     cuerpo.append(chatApp(t, () => pintarTrabajo(box), box));
   } else if (trabajo.tab === "ajustes") pintarAjustes(cuerpo, box);
   else if (trabajo.tab === "hecho"){
-    const hs = D.prop.filter(f => f.Estado === "Aceptada").slice(-15).reverse();
+    const hs = D.prop.filter(aprobada).slice(-15).reverse();
     cuerpo.append(el("h4", {}, "Envíos que has aprobado"));
     if (!hs.length) cuerpo.append(el("p", {class:"vacio"}, "Todavía no has aprobado ninguno."));
-    hs.forEach(f => { const dt = el("details", {class:"ficha"}); dt.append(el("summary", {}, (f.Clienta || f["Email clienta"] || "") + " · " + (f.Asunto || "") + " · " + f.Persona), el("pre", {class:"orig"}, f["Respuesta final"] || f["Respuesta propuesta"] || "")); cuerpo.append(dt); });
-    cuerpo.append(el("p", {class:"nota"}, "Quedan listos para enviar; el envío todavía no está activado y el correo sigue sin leer en info@."));
+    hs.forEach(f => { const dt = el("details", {class:"ficha"}); dt.append(el("summary", {}, (f.Clienta || f["Email clienta"] || "") + " · " + (f.Asunto || "") + " · " + f.Persona + " · " + f.Estado), el("pre", {class:"orig"}, f["Respuesta final"] || f["Respuesta propuesta"] || "")); cuerpo.append(dt); });
+    cuerpo.append(el("p", {class:"nota"}, "Al aprobar, la respuesta sale desde info@ en el mismo hilo y el correo de la clienta pasa a leído. Si había que adjuntar algo, se queda en borradores de Gmail para que la envíes tú."));
     const rs = D.dec.filter(x => norm(x.Estado) !== "pendiente").slice(-10).reverse();
     if (rs.length){ cuerpo.append(el("h4", {}, "Dudas y decisiones resueltas")); const ul = el("ul", {class:"hist"}); rs.forEach(x => ul.append(el("li", {}, x.Estado + " · " + x["Qué hay que decidir"] + (x["Decisión de Pilar"] ? " → " + x["Decisión de Pilar"] : "")))); cuerpo.append(ul); }
   } else cuerpo.append(...pilarFijo().slice(1));
@@ -1315,7 +1386,7 @@ function pilarFijo(){
   out.push(dl); return out;
 }
 
-/* ---------- Preparar los correos nuevos de info@ (los trae n8n a la pestaña Entrada; aquí Clara y su equipo los preparan con tu plan de Claude) ---------- */
+/* ---------- Preparar los correos nuevos de info@ (la página los trae de Gmail a la pestaña Entrada; aquí Clara y su equipo los preparan con tu plan de Claude) ---------- */
 const CLARA_SISTEMA = "Eres Clara Vega, triaje del departamento de Ventas de La Nonna (ropa a medida de arras, bautizo y comunión, atelierlanonna.com). Lees UN correo recibido en info@ y respondes SOLO con un JSON válido, sin texto alrededor.\n\nReparto (campo \"persona\"):\n- \"ruido\": no es de una clienta (Stripe, MRW, proveedores, facturas, comunidad de vecinos, comerciales, avisos automáticos, agenda de Calendar).\n- \"Lucia Ortega\": quiere cita o hay aviso de Cal.\n- \"Sofia Lara\": primera consulta, presupuesto, pedido nuevo.\n- \"Paula Navarro\": clienta con pedido en marcha (medidas, envío, pagos, justificantes, cambios).\n- \"Diego Salas\": algo ha ido mal (talla, retraso, error, devolución, queja).\n\nSi \"persona\" es distinta de \"ruido\", redacta en \"respuesta\" el borrador que enviaría La Nonna.\n\nESTILO, lo más importante: escribe como lo haría Pilar en un correo normal a una clienta, no como una empresa. Cercano, natural, de tú (de usted solo si ella lo usa), en el idioma de la clienta y con buena ortografía. Corto: responde justo a lo que pregunta y en el orden en que lo pregunta, en frases sencillas. Saludo \"Buenos días, Nombre.\" (o \"Hola, Nombre.\" si ella escribe más informal; Good morning / Bonjour en otros idiomas). Cierre sencillo: \"Muchas gracias. Un saludo\" o solo \"Un saludo\". Prohibido el lenguaje de formulario o de atención al cliente: nada de \"gracias por contactar con nosotras\", \"estimada\", \"nos complace\", \"no dudes en\", \"quedamos a tu disposición\", \"es un placer\", ni \"un abrazo\". Sin listas, viñetas, negritas ni títulos; solo párrafos cortos. Si la clienta cuenta algo personal (un parto, una operación), una frase humana al principio. Firma al final:\nA T E L I E R   L A   N O N N A\nwww.atelierlanonna.com\ninfo@atelierlanonna.com\n669 49 68 31\n\nCómo contestan en La Nonna a lo habitual (usa estas ideas y casi estas palabras):\n- Fecha máxima para encargar: \"No tenemos una fecha máxima, pero te recomendamos hacerlo cuanto antes porque después se nos va llenando la agenda y tenemos que rechazar pedidos.\"\n- Medidas: se toman por videollamada y no hace falta ir al taller. \"Necesitamos tomar las medidas para confeccionar tu pedido. Dinos qué disponibilidad tienes, con un margen de tiempo porque tardamos unos minutos. Tienes que tener un metro de costura y al niño o niña delante. Lo hacemos por videollamada, así que si nos das un número de teléfono te llamamos.\" Además, se les envía un documento que explica cómo medirles: dilo (\"te mando también un documento con cómo medirle\") y pon en \"alerta\" que hay que adjuntar ese documento antes de enviar.\n- Cómo formalizar un pedido: se envía el presupuesto para que comprueben que todo está correcto, y el pedido queda pendiente hasta que se hace el pago; se paga por transferencia poniendo como concepto el número de pedido, o enviando el justificante. Pasadas 48 horas sin noticias se anula. No des los datos bancarios tú: di que van en el presupuesto.\n- Fechas de entrega de la web: \"las fechas de entrega de los pedidos en algunos casos no son definitivas, lo que vale es lo que anotamos en observaciones, porque la web obliga a poner una fecha posterior a la que nos has pedido\".\n- Taller cerrado en noviembre hasta el 5 de diciembre: contactan a principios de diciembre para tomar las medidas.\n\nPRECIOS: nunca digas \"se puede estudiar\". Busca el producto en el CATÁLOGO DE LA WEB que viene debajo del correo y da su precio exacto. Si no aparece, o piden un cambio que no está en la web (otro largo, otro color, otro tejido), no lo dejes en el aire: ve a \"duda\" y pregunta a Pilar el precio o si se puede, proponiendo lo que harías.\n\nCONFIRMACIONES CON PILAR (muy importante): las confirmaciones con Pilar se hacen en el chat con ella, ANTES de enviar, nunca dentro del correo a la clienta. Por eso el borrador NUNCA dice \"te lo confirmo\", \"te confirmo\", \"déjame confirmar\", \"lo miro y te digo\", \"lo consulto\", \"lo hablo y te cuento\" ni nada parecido. Cuando algo depende de Pilar (si llegamos a una fecha, un precio fuera de la web, si se acepta un pedido, una cita, una excepción), haz esto: 1) ponlo en \"duda\" como una pregunta concreta a Pilar con tu propuesta (\"¿Le digo que sí llegamos para el 12 de diciembre?\"); 2) redacta el borrador completo asumiendo tu propuesta, como si ya estuviera decidido, para que Pilar solo tenga que aprobarlo o cambiarlo; 3) si no hay propuesta razonable, deja entre corchetes lo que falta, por ejemplo [PRECIO DEL CAMBIO DE LARGO], para que no se envíe por error.\n\nReglas del borrador: pregunta SIEMPRE primero la fecha de la ceremonia si no la dice; al pedir pago, pide el número de pedido en el concepto o el justificante; ahora no se aceptan pedidos para antes de mediados de diciembre salvo que Pilar decida otra cosa.\n\nCampos del JSON: {\"persona\": \"...\", \"clienta\": \"nombre\", \"idioma\": \"es|en|fr|otro\", \"fecha_ceremonia\": \"texto o vacío\", \"fecha_iso\": \"YYYY-MM-DD de la ceremonia si la dice con claridad (el año actual es 2026 si no lo dice), si no vacío\", \"respuesta\": \"borrador o vacío\", \"motivo\": \"una frase de por qué va a esa persona\", \"resumen\": \"dos frases: qué quiere la clienta y en qué punto está\", \"prenda\": \"prenda o piezas que mencionan o vacío\", \"urgencia\": \"alta|media|baja + una razón corta\", \"pago\": \"sin pedido|pendiente|justificante recibido|pagado|no aplica\", \"falta\": \"qué datos faltan para avanzar (fecha de ceremonia, medidas, número de pedido, justificante...) o vacío\", \"alerta\": \"riesgo a vigilar o algo que Pilar debe hacer antes de enviar (adjuntar el documento de medidas, fecha que no da tiempo...) o vacío\", \"pedido\": \"número de pedido si lo menciona o vacío\", \"opciones\": \"si es una incidencia o hay varias salidas posibles, 2 o 3 alternativas en una línea cada una separadas por ' | '; si no, vacío\", \"decision\": \"déjalo siempre vacío: las confirmaciones con Pilar van en \\\"duda\\\"\", \"recomendacion\": \"vacío\"}";
 const CLARA_EXTRA = "REPARTO A CONTABILIDAD (tiene prioridad sobre el reparto de arriba): si el correo es de Stripe (pagos recibidos, liquidaciones, informes, alertas, disputas), del banco, de la gestoría, de Hacienda o impuestos, o trata de cobros, devoluciones de dinero, pagos de clientas que hay que cuadrar o cualquier tema de contabilidad, pon \"persona\": \"Ivan Soler\", deja \"respuesta\" vacío (no se contesta), en \"resumen\" explica en una frase qué es y en \"falta\" qué debería revisar Iván. EXCEPCIÓN: las facturas de proveedores, los albaranes y los packing lists ya los gestiona Iván por otro flujo: esos son \"ruido\". Una clienta que envía el justificante de su pago de un pedido NO va a Iván: es de Paula o Sofía, como siempre.\n\nCAMPOS EXTRA (añádelos al JSON): \"duda\": si algo depende de Pilar (una fecha que quizá no da tiempo, un precio que no está en el catálogo, un cambio a medida, aceptar un pedido, una cita, una excepción) o no sabes cómo contestar, escribe aquí la pregunta concreta que le harías a Pilar, en una o dos frases, con tu propuesta incluida; si lo sabes todo, vacío. \"sugerencia\": lo que harías si Pilar no dice otra cosa, en una frase. \"mensaje_pilar\": el mensaje que la empleada le escribe a Pilar, en primera persona, natural y cercano, de 3 a 5 frases, SIN saludo ni la frase de quién ha escrito (eso ya lo añade la página). Debe decir: 1) qué quiere la clienta, 2) \"Necesito que me digas si te parece bien decirle ...\" seguido de lo que propones contestar en concreto (y, si hay duda, la duda), y 3) acabar exactamente con: \"Te paso una propuesta de email; dime si ves que tengo que hacer algún cambio antes de mandarlo.\" REGLAS DURAS: (a) el borrador nunca dice \"te confirmo\", \"déjame confirmar\", \"lo miro y te digo\" ni parecido; (b) si piden un cambio a medida que no está en la web (otro largo, otro color, otro tejido, añadir o quitar piezas), NUNCA afirmes en el borrador que se puede hacer ni que cuesta lo mismo o un precio concreto: pon la duda a Pilar y en el borrador escribe [CAMBIO A CONFIRMAR: descripción] y [PRECIO DEL CAMBIO] entre corchetes; (c) nunca inventes datos de la clienta que no estén en el hilo. Usa el hilo anterior para entender de qué se hablaba (modelo, fechas, pedido) antes de preguntar nada. Escribe siempre \"idioma\" con es, en, fr u otro. Responde con un JSON completo y válido, sin cortarlo.";
 const LOTE = 6;
@@ -1359,6 +1430,7 @@ async function prepararUno(f, catalogo, consignas, k){
   if (/ivan/i.test(persona)){
     await apuntarFila("Contabilidad", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: f.Asunto, "Qué es": d.resumen || "", "Qué hay que revisar": d.falta || d.motivo || "", Estado: "Pendiente", "Nota de Iván": "", "Texto del correo": String(f.Texto || "").slice(0, 3000)});
     await apuntarFila("Descartados", {"ID mensaje Gmail": f["ID mensaje Gmail"], Fecha: ahora, De: f.De, Asunto: "[Contabilidad] " + f.Asunto});
+    try { await gmail("label_message", {messageId: f["ID mensaje Gmail"], labelIds: [LABEL_CONTABILIDAD]}); } catch (e){ /* la etiqueta es una ayuda; si falla, el correo ya está en la pestaña Contabilidad */ }
     return "iván";
   }
   await apuntarFila("Propuestas", {ID: id, Recibido: ahora, Persona: persona, Clienta: d.clienta || nombre, "Email clienta": mail, Asunto: f.Asunto, "Correo original": f.Texto, "Respuesta propuesta": d.respuesta || "", Motivo: d.motivo || "", Estado: "Pendiente", Idioma: d.idioma || "", "Fecha ceremonia": d.fecha_ceremonia || "", "ID mensaje Gmail": f["ID mensaje Gmail"], Resumen: d.resumen || "", Prenda: d.prenda || "", Urgencia: d.urgencia || "", Pago: d.pago || "", Falta: d.falta || "", Alerta: d.alerta || "", "Fecha ISO": d.fecha_iso || "", Pedido: d.pedido || "", Opciones: d.opciones || "", Hilo: f.Hilo || "", "Fecha correo": f["Fecha correo"], "Mensaje a Pilar": d.mensaje_pilar || "", "_sugerencia": d.sugerencia || "", "_recomendacion": d.recomendacion || ""});
@@ -1376,10 +1448,13 @@ function bloquePreparar(box){
   let pendientes = [];
   const pintar = async () => {
     acc.textContent = "";
+    let aviso = "";
+    try { const n = await traerCorreosNuevos(); if (n) aviso = "He traído " + n + (n === 1 ? " correo nuevo" : " correos nuevos") + " de info@. "; }
+    catch (e){ aviso = mensajeCorreo(e) + " "; }
     try { pendientes = await correosSinPreparar(); } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); return; }
     est.className = "estado";
-    if (!pendientes.length){ est.textContent = "No hay correos sin preparar. n8n mira info@ cada hora."; return; }
-    est.textContent = pendientes.length + (pendientes.length === 1 ? " correo espera" : " correos esperan") + " a que Clara y su equipo lo preparen. No se envía nada ni se marca como leído.";
+    if (!pendientes.length){ est.textContent = aviso + "No hay correos sin preparar."; acc.append(boton("Mirar info@ otra vez", "sec", pintar)); return; }
+    est.textContent = aviso + pendientes.length + (pendientes.length === 1 ? " correo espera" : " correos esperan") + " a que Clara y su equipo lo preparen. No se envía nada ni se marca como leído.";
     if (!sample){ est.textContent += " Desde esta vista no puedo prepararlos."; return; }
     const b = boton("Preparar propuestas", "", async () => {
       b.disabled = true; est.className = "estado";
