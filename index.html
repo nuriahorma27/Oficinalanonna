@@ -325,6 +325,7 @@ form.send button.sec-enc{background:transparent;color:var(--ink);border:1px soli
       <a href="https://docs.google.com/spreadsheets/d/1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8/edit" target="_blank" rel="noopener">Hoja T4 2026</a>
       <a href="https://drive.google.com/drive/folders/1FtBib-KoabcZjQtU-z31vhQgJgVrli5W" target="_blank" rel="noopener">Facturas pendientes</a>
       <a href="https://drive.google.com/drive/folders/1awwchJnJt4aRXa1xJ2lEJxJXdjtT2sSg" target="_blank" rel="noopener">Emitidas pendientes</a>
+      <a href="https://docs.google.com/spreadsheets/d/1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8/edit#gid=1985647285" target="_blank" rel="noopener">Avisos de Carmen</a>
     </nav>
   </header>
 
@@ -492,7 +493,7 @@ function renderTeam(){
       const r = el("div", {class:"rhythm"}); r.append(el("h3", {}, "Ritmo del equipo"));
       const dl = el("dl"); d.rhythm.forEach(([a,b]) => dl.append(el("dt", {}, a), el("dd", {}, b))); r.append(dl); t.append(r);
     }
-    if (d.id === "contabilidad"){ t.append(bloqueEncargos()); t.append(bloqueParaIvan()); t.append(bloqueExtracto()); }
+    if (d.id === "contabilidad"){ t.append(bloqueAvisosCarmen()); t.append(bloqueEncargos()); t.append(bloqueParaIvan()); t.append(bloqueExtracto()); }
   } else {
     const s = el("div", {class:"stack"}); d.people.forEach(p => s.append(personCard(p, d.c))); t.append(s);
   }
@@ -1504,6 +1505,40 @@ function bloqueParaIvan(){
   return box;
 }
 
+
+/* ---------- Avisos de Carmen (pestaña Revisión fiscal de la hoja del trimestre, via mcp) ---------- */
+const HOJA_TRIMESTRE = "1UufvOGiwFVzn7HEuwg6y54l5MrZDmX4fuDu85En5wY8";
+const ENLACE_REVISION = "https://docs.google.com/spreadsheets/d/" + HOJA_TRIMESTRE + "/edit#gid=1985647285";
+function bloqueAvisosCarmen(){
+  const box = el("section", {class:"extracto", "aria-label":"Avisos de Carmen"});
+  box.append(el("h3", {}, "Avisos de Carmen"));
+  box.append(el("p", {}, "Lo que Carmen ha visto al revisar las facturas para presentarlas. Ella no corrige nada: propone, y la gestoría lo da por bueno."));
+  const lista = el("div", {class:"lista-iv"}); const est = el("p", {class:"estado", role:"status"});
+  const enlace = el("a", {href: ENLACE_REVISION, target:"_blank", rel:"noopener"}, "Abrir en la hoja del trimestre");
+  box.append(est, lista, enlace);
+  if (!mcp){ est.textContent = "Desde esta vista no puedo leerlos. Ábrelos en la hoja."; return box; }
+  est.textContent = "Mirando…";
+  (async () => {
+    try {
+      const r = await mcp.callTool("Google Sheets", "get_values", {spreadsheetId: HOJA_TRIMESTRE, range: "'Revisión fiscal'!A1:F300"}, {cache: false});
+      const fs = aFilas(celdas(r)).filter(x => x["Qué pasa"] || x.Documento);
+      est.textContent = ""; lista.textContent = "";
+      if (!fs.length){ est.textContent = "Carmen no tiene ningún aviso."; return; }
+      const pend = fs.filter(x => norm(x.Estado) !== "resuelto" && norm(x.Estado) !== "hecho");
+      const resto = fs.filter(x => !pend.includes(x));
+      est.textContent = pend.length ? pend.length + (pend.length === 1 ? " aviso pendiente." : " avisos pendientes.") : "No queda ningún aviso pendiente.";
+      [...pend.slice().reverse(), ...resto.slice(-5).reverse()].forEach(f => {
+        const d = el("details", {class:"iv-item"}); const sm = el("summary");
+        sm.append(el("b", {}, f.Documento || "Sin documento"), chip(f.Estado || "Pendiente", pend.includes(f) ? "u2" : "okc"));
+        d.append(sm, el("p", {class:"motivo"}, (f.Fecha ? f.Fecha + " · " : "") + (f["Qué pasa"] || "")));
+        if (f["Qué propongo"]) d.append(el("p", {class:"motivo"}, "Propone: " + f["Qué propongo"]));
+        if (f["Para quién"]) d.append(el("p", {class:"motivo"}, "Para: " + f["Para quién"]));
+        lista.append(d);
+      });
+    } catch (e){ est.className = "estado mal"; est.textContent = mensajeHoja(e); }
+  })();
+  return box;
+}
 
 /* ---------- Encargos que Pilar le deja a Iván (pestaña Encargos de la hoja, via mcp) ---------- */
 async function cargarEncargos(lista, est){
