@@ -1524,7 +1524,7 @@ function bloqueAvisosCarmen(){
       const fs = aFilas(celdas(r)).filter(x => x["Qué pasa"] || x.Documento);
       est.textContent = ""; lista.textContent = "";
       if (!fs.length){ est.textContent = "Carmen no tiene ningún aviso."; return; }
-      const pend = fs.filter(x => norm(x.Estado) !== "resuelto" && norm(x.Estado) !== "hecho");
+      const pend = fs.filter(x => !["resuelto", "hecho", "descartado"].includes(norm(x.Estado)));
       const resto = fs.filter(x => !pend.includes(x));
       est.textContent = pend.length ? pend.length + (pend.length === 1 ? " aviso pendiente." : " avisos pendientes.") : "No queda ningún aviso pendiente.";
       [...pend.slice().reverse(), ...resto.slice(-5).reverse()].forEach(f => {
