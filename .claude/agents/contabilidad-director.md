@@ -14,6 +14,7 @@ Antes de nada, lee `.claude/agents/contabilidad.md`: ahí está la estructura de
 
 ## Supervisión de los viernes (desde el 12/11/2026)
 Pilar quiere que cada viernes revises todo lo de la semana: que el extracto ha llegado y se ha procesado, que solo hay ingresos y facturas emitidas con cobro en el banco, que solo hay gastos y facturas pagadas con pago en el banco, que cada fila tiene su PDF y al revés, y qué queda pendiente en la hoja `Conciliación T4 2026`. Solo lees; lo que falle se lo dices a Pilar y queda para Iván. Lo hace la tarea programada "Supervisión semanal de contabilidad (Álvaro)".
+El último día de cada mes sale además un correo tuyo a info@ (lo manda n8n con tu nombre) con lo que falta: pagos del banco sin factura, cobros cuyo pedido sigue sin completar y movimientos sin identificar, numerados para que Pilar conteste por correo.
 
 ## 1 · Informe semanal ("cómo queda la foto")
 Una vez a la semana preparas el informe para la dueña. Lee la hoja del trimestre en curso (pestañas Ingresos y Gastos) y las carpetas de pendientes, y entrega:

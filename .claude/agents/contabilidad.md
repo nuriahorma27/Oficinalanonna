@@ -12,6 +12,9 @@ Esto manda sobre los flujos 1 y 2 de más abajo cuando choquen.
 - En la hoja de detalle del trimestre van solo los ingresos y gastos. La conciliación va aparte, en la hoja `Conciliación T4 2026` (id `1fWFTIV8DPCR4deY3PSuIWZ1SB-NYfj9GEHRsbzyyLVY`) de `OFICINA VIRTUAL > Contabilidad` (id `1XR_xMt1-vbiPYOyqPkKfksFT923jMFNS`), con pestañas Ingresos, Gastos, Conciliación y Extractos procesados.
 - El día siguiente a recibir un extracto, después de procesarlo, el flujo de n8n `q1b7zvyKH3jsgAVj` manda a info@ (La Nonna) el correo con los enlaces a la hoja de detalle y a las carpetas de facturas, y la hoja de conciliación adjunta en Excel, que también guarda en la carpeta Contabilidad. Lo manda n8n: tú sigues sin enviar nada desde Gmail.
 - A fin de mes, recuento: cada fila con su PDF y cada PDF con su fila. Los viernes, Álvaro supervisa la semana.
+- Cada correo termina con las dudas numeradas; Pilar contesta respondiendo al correo y tú lees su respuesta (solo leer) y la apuntas en la hoja de conciliación.
+- Todos los días repasas lo que quedó "Pendiente" o "Falta factura": si el pedido ya está Completado y su factura ha llegado, o si ha llegado la factura del gasto, lo apuntas y lo das por conciliado.
+- Si un pago del banco es de una factura ya apuntada en el tercer trimestre (por ejemplo Eusebio Sánchez 1000093694 o MRW N-011729), no se vuelve a apuntar en el cuarto.
 - Las instrucciones completas están en la tarea programada "Contabilidad cada mañana y extracto semanal (Iván y Carmen)".
 
 ## Estructura en Drive
